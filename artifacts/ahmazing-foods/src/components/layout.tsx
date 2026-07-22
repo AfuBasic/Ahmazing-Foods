@@ -1,13 +1,13 @@
 import { useLocation } from "wouter";
 import { Link } from "wouter";
-import { ChefHat, Menu, X, ArrowRight, Phone, Mail, MapPin } from "lucide-react";
+import { Menu, X, ArrowRight, Phone, Mail, MapPin } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 // Exact brand hex values — do not approximate with Tailwind classes
 const BRAND_RED = "#C81212";
 const BRAND_GREEN = "#0F9E0F";
+const LOGO_SRC = `${import.meta.env.BASE_URL}assets/logo.png`;
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
@@ -19,10 +19,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <header className="border-b border-border bg-card sticky top-0 z-40">
           <div className="container mx-auto px-4 h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-md text-white" style={{ background: BRAND_RED }}>
-                <ChefHat className="w-5 h-5" />
-              </div>
-              <span className="font-display font-bold text-lg">AHmazing Admin</span>
+              <img src={LOGO_SRC} alt="AHmazing Foods" className="h-8 w-auto" />
+              <span className="font-display font-bold text-lg text-muted-foreground">Admin</span>
             </div>
             <nav className="flex items-center gap-6 text-sm font-medium">
               <Link href="/admin" className={cn("transition-colors hover:text-primary", location === "/admin" ? "text-primary" : "text-muted-foreground")}>Dashboard</Link>
@@ -58,6 +56,7 @@ function SiteHeader({ location }: { location: string }) {
     { href: "/soups", label: "Soups" },
     { href: "/stews", label: "Stews" },
     { href: "/breakfast", label: "Breakfast" },
+    { href: "/products", label: "Products" },
   ];
 
   const closeMenu = () => setMobileMenuOpen(false);
@@ -86,12 +85,7 @@ function SiteHeader({ location }: { location: string }) {
       <header className="sticky top-0 z-40 w-full bg-white border-b border-border shadow-sm">
         <div className="container mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 z-50">
-            <div className="p-2 rounded-lg shadow-sm text-white" style={{ background: BRAND_RED }}>
-              <ChefHat className="w-6 h-6" />
-            </div>
-            <span className="font-display font-bold text-2xl tracking-tight text-foreground">
-              AHmazing Foods
-            </span>
+            <img src={LOGO_SRC} alt="AHmazing Foods" className="h-10 w-auto" />
           </Link>
 
           {/* Desktop Nav */}
@@ -109,13 +103,13 @@ function SiteHeader({ location }: { location: string }) {
               </Link>
             ))}
             {/* CTA — brand green */}
-            <a
+            <Link
               href="/book"
               className="rounded-full px-6 py-2.5 font-bold text-white shadow-md hover:shadow-lg transition-all hover:opacity-90 text-sm"
               style={{ background: BRAND_GREEN }}
             >
               Book Now
-            </a>
+            </Link>
           </nav>
 
           {/* Mobile Toggle — rendered above overlay */}
@@ -138,12 +132,7 @@ function SiteHeader({ location }: { location: string }) {
             {/* Close button inside overlay */}
             <div className="flex items-center justify-between px-4 h-20 border-b border-border">
               <Link href="/" className="flex items-center gap-2" onClick={closeMenu}>
-                <div className="p-2 rounded-lg text-white" style={{ background: BRAND_RED }}>
-                  <ChefHat className="w-6 h-6" />
-                </div>
-                <span className="font-display font-bold text-2xl tracking-tight text-foreground">
-                  AHmazing Foods
-                </span>
+                <img src={LOGO_SRC} alt="AHmazing Foods" className="h-10 w-auto" />
               </Link>
               <button
                 className="p-2 text-foreground"
@@ -171,14 +160,14 @@ function SiteHeader({ location }: { location: string }) {
             </nav>
 
             <div className="px-6 mt-8">
-              <a
+              <Link
                 href="/book"
                 className="flex items-center justify-center w-full rounded-full py-4 text-lg font-bold text-white shadow-lg"
                 style={{ background: BRAND_GREEN }}
                 onClick={closeMenu}
               >
                 Book Your Meal
-              </a>
+              </Link>
             </div>
           </div>
         )}
@@ -193,11 +182,8 @@ function SiteFooter() {
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div>
-            <div className="flex items-center gap-2 mb-6">
-              <div className="p-1.5 rounded-md text-white" style={{ background: BRAND_RED }}>
-                <ChefHat className="w-5 h-5" />
-              </div>
-              <span className="font-display font-bold text-xl">AHmazing Foods</span>
+            <div className="mb-6">
+              <img src={LOGO_SRC} alt="AHmazing Foods" className="h-10 w-auto brightness-0 invert" />
             </div>
             <p className="text-background/70 text-sm max-w-sm">
               Authentic, fresh, and deeply Nigerian. Every pot starts only once you book. No storefront, no shortcuts.
@@ -209,6 +195,7 @@ function SiteFooter() {
               <li><Link href="/soups" className="hover:text-primary transition-colors">Rich Soups</Link></li>
               <li><Link href="/stews" className="hover:text-primary transition-colors">Hearty Stews</Link></li>
               <li><Link href="/breakfast" className="hover:text-primary transition-colors">Weekend Breakfast</Link></li>
+              <li><Link href="/products" className="hover:text-primary transition-colors">Products</Link></li>
             </ul>
           </div>
           <div>

@@ -5,6 +5,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatNaira } from "@/lib/format";
 import { ArrowLeft } from "lucide-react";
 
+const BASE = import.meta.env.BASE_URL;
+const asset = (p: string) => `${BASE}assets/${p}`;
+
+const bannerImages: Record<string, string> = {
+  soups:     "food-egusi-hands.jpg",
+  stews:     "food-jollof-fish.jpg",
+  breakfast: "food-akara-pap.jpg",
+};
+
 export default function MenuPage() {
   const [location] = useLocation();
   
@@ -24,24 +33,35 @@ export default function MenuPage() {
   };
 
   const descriptions = {
-    soups: "Authentic, deeply flavored Nigerian soups cooked fresh with your choice of proteins.",
-    stews: "Classic and specialty stews perfect for rice, yam, or plaintain.",
-    breakfast: "Start your morning right with our traditional breakfast specials."
+    soups: "Every soup comes garnished with dried fish, stockfish and cowhide. Add extra protein below to customise further.",
+    stews: "Classic Nigerian stews cooked fresh in small batches, sized for a family meal or a full event.",
+    breakfast: "Savour fresh, authentic breakfast options. Every plate is cooked to order and delivered in your chosen window."
   };
+
+  const bannerImg = bannerImages[category];
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      <div className="bg-foreground text-background pt-16 pb-24 rounded-b-[3rem] shadow-xl mb-12">
+      <div className="bg-foreground text-background pt-16 pb-24 rounded-b-[3rem] shadow-xl mb-0">
         <div className="container mx-auto px-4 md:px-6">
-          <Button asChild variant="link" className="text-background/70 hover:text-background p-0 mb-8">
-            <Link href="/"><ArrowLeft className="w-4 h-4 mr-2" /> Back to Home</Link>
-          </Button>
-          <h1 className="text-5xl md:text-7xl font-bold font-display mb-6 capitalize">{titles[category] || category}</h1>
+          <Link href="/" className="inline-flex items-center gap-2 text-background/70 hover:text-background mb-8 text-sm font-medium transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back to Home
+          </Link>
+          <h1 className="text-5xl md:text-7xl font-bold font-display mb-6">{titles[category as keyof typeof titles] || category}</h1>
           <p className="text-xl text-background/80 max-w-2xl leading-relaxed">
             {descriptions[category as keyof typeof descriptions] || "Explore our menu options below."}
           </p>
         </div>
       </div>
+
+      {/* Banner photo */}
+      {bannerImg && (
+        <div className="container mx-auto px-4 md:px-6 -mt-12 mb-12">
+          <div className="rounded-2xl overflow-hidden shadow-xl h-56 md:h-72">
+            <img src={asset(bannerImg)} alt={titles[category as keyof typeof titles] || category} className="w-full h-full object-cover" />
+          </div>
+        </div>
+      )}
 
       <div className="container mx-auto px-4 md:px-6">
         {isLoading ? (

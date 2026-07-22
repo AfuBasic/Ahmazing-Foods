@@ -1,150 +1,211 @@
 import { Link } from "wouter";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Flame, Clock, Truck, ShieldCheck } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ArrowRight } from "lucide-react";
+
+const BASE = import.meta.env.BASE_URL;
+const asset = (p: string) => `${BASE}assets/${p}`;
+
+const BRAND_GREEN = "#0F9E0F";
 
 export default function Home() {
   return (
     <div className="flex flex-col w-full">
-      {/* Hero Section */}
-      <section className="relative w-full overflow-hidden bg-[#FFFBF5]">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/rice-paper-2.png')] opacity-30 mix-blend-multiply pointer-events-none"></div>
-        <div className="container mx-auto px-4 md:px-6 pt-24 pb-32 flex flex-col lg:flex-row items-center gap-12 relative z-10">
-          <div className="flex-1 space-y-8 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-medium text-sm">
-              <Flame className="w-4 h-4" />
-              Cooked fresh to order in Lagos
-            </div>
-            <h1 className="text-5xl lg:text-7xl font-bold font-display text-foreground leading-[1.1]">
-              The taste of home,<br />
-              <span className="text-primary">without the hassle.</span>
+
+      {/* ── HERO ───────────────────────────────────────────────────────── */}
+      <section className="bg-[#FCF1EF] relative overflow-hidden">
+        <div className="container mx-auto px-4 md:px-6 pt-16 pb-20 flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+
+          {/* Left copy */}
+          <div className="flex-1 space-y-8 text-center lg:text-left max-w-xl">
+            <span className="inline-block text-xs font-bold uppercase tracking-widest text-[#C81212] bg-[#C81212]/10 px-3 py-1 rounded-full">
+              Made to order · Lagos
+            </span>
+            <h1 className="text-5xl lg:text-6xl font-bold font-display text-foreground leading-[1.1]">
+              Real soup, cooked in a{" "}
+              <em className="not-italic text-primary">real kitchen</em>,
+              ready when you need it.
             </h1>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              Rich soups, hearty stews, and weekend breakfasts. No shortcuts, no batch-cooking. We start your pot only when you book your slot.
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              No storefront, no shortcuts — every pot is started only once it's booked.
+              Choose your soup, stew or breakfast, pick your delivery slot, and we get cooking.
             </p>
-            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start pt-4">
-              <Button asChild size="lg" className="rounded-full h-14 px-8 text-lg font-bold shadow-xl shadow-primary/20 hover:scale-105 transition-transform w-full sm:w-auto">
-                <Link href="/book">Book a Meal Slot</Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="rounded-full h-14 px-8 text-lg w-full sm:w-auto border-2">
-                <Link href="/soups">Explore Menu</Link>
-              </Button>
+            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start pt-2">
+              <a
+                href="/book"
+                onClick={(e) => { e.preventDefault(); window.location.href = `${BASE}book`; }}
+                className="w-full sm:w-auto text-center rounded-full h-14 px-8 text-lg font-bold text-white shadow-xl transition-opacity hover:opacity-90"
+                style={{ background: BRAND_GREEN, display: "inline-flex", alignItems: "center", justifyContent: "center" }}
+              >
+                Book Your Meal
+              </a>
+              <Link
+                href="/soups"
+                className="w-full sm:w-auto text-center rounded-full h-14 px-8 text-lg font-bold border-2 border-border text-foreground hover:bg-muted transition-colors"
+                style={{ display: "inline-flex", alignItems: "center", justifyContent: "center" }}
+              >
+                See What's Available
+              </Link>
             </div>
           </div>
+
+          {/* Right — hero image + ticket */}
           <div className="flex-1 relative w-full max-w-lg lg:max-w-none">
-            <div className="aspect-square rounded-full bg-secondary/10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] blur-3xl -z-10"></div>
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500 border-8 border-white">
-              {/* Using a placeholder for a rich pot of soup - ideally a generated image */}
-              <div className="w-full aspect-[4/3] bg-secondary flex items-center justify-center relative">
-                 <div className="absolute inset-0 bg-gradient-to-tr from-black/40 to-transparent"></div>
-                 <div className="text-white/80 font-display text-2xl font-bold italic tracking-wider absolute bottom-6 left-6">
-                    Freshly made.
-                 </div>
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl rotate-1 hover:rotate-0 transition-transform duration-500 border-8 border-white">
+              <img
+                src={asset("food-egusi-top.jpg")}
+                alt="Rich Nigerian soup with assorted meat, ready to eat"
+                className="w-full aspect-[4/3] object-cover"
+              />
+            </div>
+            {/* Order ticket overlay */}
+            <div className="absolute -bottom-6 -left-4 md:-left-10 bg-white rounded-2xl shadow-2xl border border-border p-4 w-64 z-10">
+              <div className="flex items-center justify-between mb-3 pb-2 border-b border-dashed border-border text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                <span>Order Ticket</span>
+                <span>#0148</span>
+              </div>
+              <div className="space-y-1.5 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-foreground">Onugbu Soup — 3L</span>
+                  <span className="font-bold">₦18,000</span>
+                </div>
+                <div className="flex justify-between text-muted-foreground">
+                  <span>+ Goat Meat</span>
+                  <span>₦3,000</span>
+                </div>
+              </div>
+              <div className="flex justify-between mt-3 pt-2 border-t border-dashed border-border font-bold">
+                <span>Total</span>
+                <span className="text-primary">₦21,000</span>
+              </div>
+              <div className="mt-3 text-center">
+                <span className="inline-block bg-primary/10 text-primary text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
+                  Booked ahead · No rush fee
+                </span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Categories */}
-      <section className="py-24 bg-white relative">
+      {/* ── GALLERY ────────────────────────────────────────────────────── */}
+      <section className="pt-20 pb-4">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold font-display mb-4">What's in the kitchen?</h2>
-            <p className="text-muted-foreground">Select a category to see our full menu and sizes.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <CategoryCard 
-              href="/soups"
-              title="Rich Soups"
-              desc="Egusi, Efo Riro, Afang, and more. Loaded with assorted meats."
-              color="bg-secondary"
-              textColor="text-secondary-foreground"
-            />
-            <CategoryCard 
-              href="/stews"
-              title="Hearty Stews"
-              desc="Ayamase, Ofe Akwu, and classic tomato stews for your rice and yam."
-              color="bg-primary"
-              textColor="text-primary-foreground"
-            />
-            <CategoryCard 
-              href="/breakfast"
-              title="Weekend Breakfast"
-              desc="Akara, Moi Moi, and Yam porridge to start your Saturday right."
-              color="bg-accent"
-              textColor="text-accent-foreground"
-            />
+          <div className="grid grid-cols-3 gap-3 md:gap-4">
+            <div className="col-span-1 row-span-2 rounded-2xl overflow-hidden aspect-[2/3]">
+              <img src={asset("food-egusi-hands.jpg")} alt="Hands holding a bowl of rich Nigerian soup" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="rounded-2xl overflow-hidden aspect-square">
+              <img src={asset("food-akara-pap.jpg")} alt="Akara served with pap" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="rounded-2xl overflow-hidden aspect-square">
+              <img src={asset("food-jollof-fish.jpg")} alt="Jollof rice plated with grilled fish" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="py-24 bg-muted/50 border-t border-border">
+      {/* ── WHAT'S ON ──────────────────────────────────────────────────── */}
+      <section className="py-20">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="max-w-3xl mx-auto text-center mb-16">
-            <h2 className="text-4xl font-bold font-display mb-4">How AHmazing works</h2>
-            <p className="text-muted-foreground text-lg">We don't do fast food. We do good food, cooked just for you.</p>
+          <div className="text-center mb-14">
+            <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">What's on right now</span>
+            <h2 className="text-4xl font-bold font-display mt-3 mb-4">Our menu grows with what we can actually deliver</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              We only offer what we can cook properly — categories come online as capacity allows,
+              so what you see here is what's truly bookable today.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
-            <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-0.5 bg-border -z-10"></div>
-            
-            <div className="flex flex-col items-center text-center space-y-4 bg-background p-8 rounded-2xl shadow-sm border border-border">
-              <div className="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-2">
-                <Clock className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold font-display">1. Book Your Slot</h3>
-              <p className="text-muted-foreground">Choose your meal, size, and preferred delivery date & time. Bookings close 24 hours prior (rush fees apply for late bookings).</p>
-            </div>
-            
-            <div className="flex flex-col items-center text-center space-y-4 bg-background p-8 rounded-2xl shadow-sm border border-border">
-              <div className="w-16 h-16 rounded-full bg-secondary/10 text-secondary flex items-center justify-center mb-2">
-                <Flame className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold font-display">2. We Start Cooking</h3>
-              <p className="text-muted-foreground">Your order isn't scooped from a large batch. We source fresh ingredients and cook your pot specifically for you.</p>
-            </div>
-            
-            <div className="flex flex-col items-center text-center space-y-4 bg-background p-8 rounded-2xl shadow-sm border border-border">
-              <div className="w-16 h-16 rounded-full bg-accent/20 text-accent-foreground flex items-center justify-center mb-2">
-                <Truck className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold font-display">3. Fresh Delivery</h3>
-              <p className="text-muted-foreground">Delivered hot or carefully cooled (your choice) right to your doorstep in Lagos, perfectly sealed.</p>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { num: "01", title: "Soups",     href: "/soups",     img: "food-egusi-hands.jpg",  desc: "Onugbu, Egusi, Banga, Afang, Ogbono and more — by the litre or by the cooler." },
+              { num: "02", title: "Stews",     href: "/stews",     img: "food-jollof-fish.jpg",  desc: "Classic Nigerian stews cooked fresh in small batches for families or events." },
+              { num: "03", title: "Breakfast", href: "/breakfast", img: "food-akara-pap.jpg",    desc: "Akara, moin-moin, pancakes and more — the kind of breakfast that takes real time." },
+              { num: "04", title: "Products",  href: "/products",  img: "assets/products/peanut-butter.jpg", desc: "Sauces, snacks and bottled drinks to stock your pantry — no MSG, no preservatives.", rawImg: true },
+            ].map(({ num, title, href, img, desc, rawImg }) => (
+              <Link key={href} href={href} className="group block">
+                <div className="rounded-2xl overflow-hidden border border-border bg-card hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                  <div className="aspect-[4/3] overflow-hidden">
+                    <img
+                      src={rawImg ? `${BASE}${img}` : asset(img)}
+                      alt={title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <div className="flex items-start justify-between mb-2">
+                      <span className="text-3xl font-display font-bold text-foreground/10">{num}</span>
+                      <ArrowRight className="w-5 h-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <h3 className="text-xl font-bold font-display mb-2">{title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-24 bg-foreground text-background">
-        <div className="container mx-auto px-4 md:px-6 text-center max-w-3xl">
-          <ShieldCheck className="w-12 h-12 mx-auto mb-6 text-primary" />
-          <h2 className="text-4xl md:text-5xl font-bold font-display mb-6">Ready for a taste of home?</h2>
-          <p className="text-lg text-background/80 mb-10">
-            Secure your slot for this weekend. Slots fill up fast, so book early to guarantee delivery.
-          </p>
-          <Button asChild size="lg" className="rounded-full h-14 px-10 text-lg font-bold bg-primary text-primary-foreground hover:bg-primary/90 border-none">
-            <Link href="/book">Start Booking</Link>
-          </Button>
+      {/* ── HOW IT WORKS ───────────────────────────────────────────────── */}
+      <section className="py-20 bg-[#FCF1EF] border-t border-b border-dashed border-border">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center mb-14">
+            <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">How booking works</span>
+            <h2 className="text-4xl font-bold font-display mt-3">Three steps, no back-and-forth</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            {[
+              {
+                n: "1",
+                title: "Pick your meal & slot",
+                body: "Choose your dish, size and protein, then tell us when you want it delivered.",
+              },
+              {
+                n: "2",
+                title: "Pay to confirm",
+                body: "Bank transfer or payment on delivery locks in your slot. Booking within 24 hours adds a rush fee — shown before you confirm, never a surprise.",
+              },
+              {
+                n: "3",
+                title: "We cook, you're notified",
+                body: "Your slot goes straight onto our kitchen calendar. We cook to order and get it to you in your chosen window.",
+              },
+            ].map(({ n, title, body }) => (
+              <div key={n} className="flex gap-5">
+                <div
+                  className="w-12 h-12 shrink-0 rounded-full text-white font-display font-bold text-xl flex items-center justify-center"
+                  style={{ background: "#C81212" }}
+                >
+                  {n}
+                </div>
+                <div>
+                  <h4 className="font-display font-bold text-lg mb-2">{title}</h4>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
+
+      {/* ── BOTTOM CTA ─────────────────────────────────────────────────── */}
+      <section className="py-20">
+        <div className="container mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h2 className="text-3xl font-bold font-display mb-2">Ready to book?</h2>
+            <p className="text-muted-foreground">Pick a delivery date and we'll take it from there.</p>
+          </div>
+          <Link
+            href="/book"
+            className="shrink-0 rounded-full px-10 py-4 text-lg font-bold text-white shadow-xl hover:opacity-90 transition-opacity"
+            style={{ background: BRAND_GREEN, display: "inline-flex", alignItems: "center" }}
+          >
+            Book Your Meal
+          </Link>
+        </div>
+      </section>
+
     </div>
-  );
-}
-
-function CategoryCard({ href, title, desc, color, textColor }: { href: string, title: string, desc: string, color: string, textColor: string }) {
-  return (
-    <Link href={href} className="group block h-full">
-      <div className={cn("rounded-2xl p-8 h-full flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-xl relative overflow-hidden", color, textColor)}>
-        <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity translate-x-4 group-hover:translate-x-0">
-          <ArrowRight className="w-8 h-8" />
-        </div>
-        <h3 className="text-3xl font-bold font-display mb-4 mt-auto pt-16 relative z-10">{title}</h3>
-        <p className="text-current/80 font-medium relative z-10">{desc}</p>
-      </div>
-    </Link>
   );
 }

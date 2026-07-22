@@ -7,6 +7,7 @@ import { Route, Switch, Router as WouterRouter } from 'wouter';
 import { Layout } from './components/layout';
 import Home from './pages/home';
 import MenuPage from './pages/menu';
+import ProductsPage from './pages/products';
 import BookPage from './pages/book';
 import BookingConfirmedPage from './pages/booking-confirmed';
 import AdminDashboard from './pages/admin/dashboard';
@@ -30,6 +31,7 @@ function Router() {
         <Route path="/soups" component={MenuPage} />
         <Route path="/stews" component={MenuPage} />
         <Route path="/breakfast" component={MenuPage} />
+        <Route path="/products" component={ProductsPage} />
         <Route path="/book" component={BookPage} />
         <Route path="/booking-confirmed/:id" component={BookingConfirmedPage} />
         
