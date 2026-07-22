@@ -291,6 +291,10 @@ components:
           type: string
         customerPhone:
           type: string
+        customerEmail:
+          type: ["string", "null"]
+        deliveryAddress:
+          type: ["string", "null"]
         deliveryDate:
           type: string
           format: date
@@ -333,6 +337,10 @@ components:
           type: string
         customerPhone:
           type: string
+        customerEmail:
+          type: ["string", "null"]
+        deliveryAddress:
+          type: ["string", "null"]
         deliveryDate:
           type: string
           format: date

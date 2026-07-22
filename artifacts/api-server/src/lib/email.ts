@@ -22,6 +22,8 @@ export interface BookingEmailData {
   orderId: number;
   customerName: string;
   customerPhone: string;
+  customerEmail: string | null;
+  deliveryAddress: string | null;
   menuItemName: string;
   category: string;
   selectedSize: string;
@@ -63,6 +65,16 @@ export async function sendBookingNotification(data: BookingEmailData): Promise<v
             <td style="padding: 6px 0; color: #6b5c55; font-size: 14px;">Phone</td>
             <td style="padding: 6px 0; font-size: 14px; font-weight: bold;">${data.customerPhone}</td>
           </tr>
+          ${data.customerEmail ? `
+          <tr>
+            <td style="padding: 6px 0; color: #6b5c55; font-size: 14px;">Email</td>
+            <td style="padding: 6px 0; font-size: 14px;">${data.customerEmail}</td>
+          </tr>` : ""}
+          ${data.deliveryAddress ? `
+          <tr>
+            <td style="padding: 6px 0; color: #6b5c55; font-size: 14px;">Delivery Address</td>
+            <td style="padding: 6px 0; font-size: 14px; font-weight: bold;">${data.deliveryAddress}</td>
+          </tr>` : ""}
         </table>
 
         <h2 style="margin: 0 0 12px; font-size: 16px; color: #e8440a;">Order Details</h2>

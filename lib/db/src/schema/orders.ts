@@ -14,6 +14,8 @@ export const ordersTable = pgTable("orders", {
   selectedProtein: text("selected_protein"),
   customerName: text("customer_name").notNull(),
   customerPhone: text("customer_phone").notNull(),
+  customerEmail: text("customer_email"),
+  deliveryAddress: text("delivery_address"),
   deliveryDate: date("delivery_date", { mode: "string" }).notNull(),
   deliverySlot: text("delivery_slot").notNull(),
   itemPrice: integer("item_price").notNull(),

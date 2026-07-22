@@ -78,6 +78,10 @@ export interface Order {
   selectedProtein: string | null;
   customerName: string;
   customerPhone: string;
+  /** @nullable */
+  customerEmail?: string | null;
+  /** @nullable */
+  deliveryAddress?: string | null;
   deliveryDate: string;
   deliverySlot: string;
   itemPrice: number;
@@ -98,6 +102,10 @@ export interface OrderInput {
   selectedProtein?: string | null;
   customerName: string;
   customerPhone: string;
+  /** @nullable */
+  customerEmail?: string | null;
+  /** @nullable */
+  deliveryAddress?: string | null;
   deliveryDate: string;
   deliverySlot: string;
   /** @nullable */

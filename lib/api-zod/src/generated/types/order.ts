@@ -18,6 +18,10 @@ export interface Order {
   selectedProtein: string | null;
   customerName: string;
   customerPhone: string;
+  /** @nullable */
+  customerEmail?: string | null;
+  /** @nullable */
+  deliveryAddress?: string | null;
   deliveryDate: Date;
   deliverySlot: string;
   itemPrice: number;

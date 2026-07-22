@@ -15,7 +15,7 @@ import { formatNaira } from "@/lib/format";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const RUSH_FEE = 2000;
+const RUSH_FEE = 20000;
 const DELIVERY_SLOTS = ["8–10am", "10am–12pm", "12–2pm", "2–4pm", "4–6pm"];
 
 const formSchema = z.object({
@@ -24,6 +24,8 @@ const formSchema = z.object({
   selectedProtein: z.string().optional().nullable(),
   customerName: z.string().min(2, "Name is required"),
   customerPhone: z.string().min(10, "Valid phone number required"),
+  customerEmail: z.string().email("Enter a valid email").optional().or(z.literal("")),
+  deliveryAddress: z.string().min(5, "Please enter your delivery address"),
   deliveryDate: z.string().min(1, "Delivery date is required"),
   deliverySlot: z.string().min(1, "Delivery slot is required"),
   notes: z.string().optional(),
@@ -49,6 +51,8 @@ export default function BookPage() {
       selectedProtein: "",
       customerName: "",
       customerPhone: "",
+      customerEmail: "",
+      deliveryAddress: "",
       deliveryDate: "",
       deliverySlot: "",
       notes: "",
@@ -271,6 +275,39 @@ export default function BookPage() {
                           <FormLabel>Phone Number</FormLabel>
                           <FormControl>
                             <Input placeholder="E.g. 08012345678" className="h-12" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <FormField
+                      control={form.control}
+                      name="customerEmail"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email Address <span className="text-muted-foreground font-normal">(Optional)</span></FormLabel>
+                          <FormControl>
+                            <Input placeholder="you@email.com" className="h-12" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div className="hidden md:block" />
+                  </div>
+
+                  <div className="mb-6">
+                    <FormField
+                      control={form.control}
+                      name="deliveryAddress"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Delivery Address</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Street, area, Lagos" className="h-12" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

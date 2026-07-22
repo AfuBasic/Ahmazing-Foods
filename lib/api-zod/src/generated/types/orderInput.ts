@@ -13,6 +13,10 @@ export interface OrderInput {
   selectedProtein?: string | null;
   customerName: string;
   customerPhone: string;
+  /** @nullable */
+  customerEmail?: string | null;
+  /** @nullable */
+  deliveryAddress?: string | null;
   deliveryDate: Date;
   deliverySlot: string;
   /** @nullable */
