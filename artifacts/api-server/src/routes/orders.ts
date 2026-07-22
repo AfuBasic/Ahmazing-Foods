@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
-import { eq, desc, sql, and, gte } from "drizzle-orm";
+import { eq, desc, gte } from "drizzle-orm";
 import { db, ordersTable, menuItemsTable } from "@workspace/db";
+import { sendBookingNotification } from "../lib/email";
 import {
   ListOrdersQueryParams,
   CreateOrderBody,
@@ -121,6 +122,23 @@ router.post("/orders", async (req, res): Promise<void> => {
       notes: data.notes ?? null,
     })
     .returning();
+
+  // Fire email notification — don't await so it doesn't block the response
+  sendBookingNotification({
+    orderId: order.id,
+    customerName: order.customerName,
+    customerPhone: order.customerPhone,
+    menuItemName: order.menuItemName,
+    category: order.category,
+    selectedSize: order.selectedSize,
+    selectedProtein: order.selectedProtein ?? null,
+    deliveryDate: order.deliveryDate,
+    deliverySlot: order.deliverySlot,
+    itemPrice: order.itemPrice,
+    rushFee: order.rushFee,
+    total: order.total,
+    notes: order.notes ?? null,
+  }).catch(() => {}); // errors are already logged inside sendBookingNotification
 
   res.status(201).json(CreateOrderResponse.parse(order));
 });
