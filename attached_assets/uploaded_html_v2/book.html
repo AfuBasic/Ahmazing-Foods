@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Your Meal — AHmazing Foods</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="contact-bar">
+  <div class="wrap">
+    <div class="contact-bar-left">
+      <span>+234 (810)-550-6052</span>
+      <span>ahmazingcuisine@gmail.com</span>
+      <span>Lagos State.</span>
+    </div>
+  </div>
+</div>
+<header class="site-header">
+  <div class="wrap">
+    <a href="index.html" class="logo"><img src="assets/logo.png" alt="AHmazing Foods"></a>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="main-nav" id="main-nav">
+      <a href="index.html">Home</a>
+      <a href="soups.html">Soups</a>
+      <a href="stews.html">Stews</a>
+      <a href="breakfast.html">Breakfast</a>
+      <a href="book.html" class="nav-book">Book a Meal</a>
+    </nav>
+    <a href="book.html" class="header-cta current">Book a Meal</a>
+  </div>
+</header>
+
+<section class="section" style="padding-top:48px;">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Booking</span>
+      <h2>Book your meal ahead of time</h2>
+      <p>Choose your dish and delivery window below. Requesting delivery within 24 hours adds a rush fee — you'll see it reflected in the total before you pay.</p>
+    </div>
+
+    <form id="booking-form" class="booking-grid">
+      <div>
+        <div class="field">
+          <label for="category">Category</label>
+          <select id="category">
+            <option value="soup">Soup</option>
+            <option value="stew">Stew</option>
+            <option value="breakfast">Breakfast</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="item">Dish</label>
+          <select id="item"></select>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label for="size">Size</label>
+            <select id="size"></select>
+          </div>
+          <div class="field">
+            <label for="qty">Quantity</label>
+            <input type="number" id="qty" min="1" value="1">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="protein">Extra protein</label>
+          <select id="protein">
+            <option value="none">No extra protein</option>
+            <option value="beef">Beef — ₦3,000</option>
+            <option value="chicken">Chicken — ₦3,000</option>
+            <option value="goat">Goat Meat — ₦3,000</option>
+            <option value="catfish">Catfish — ₦4,000</option>
+            <option value="snail">Snail — ₦15,000</option>
+          </select>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label for="date">Delivery date</label>
+            <input type="date" id="date">
+          </div>
+          <div class="field">
+            <label for="time">Delivery time</label>
+            <input type="time" id="time">
+            <div class="hint">Less than 24 hours away adds a rush fee automatically.</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="name">Full name</label>
+          <input type="text" id="name" placeholder="Your name" required>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" placeholder="080..." required>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="you@email.com" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="address">Delivery address</label>
+          <input type="text" id="address" placeholder="Street, area, Lagos" required>
+        </div>
+      </div>
+
+      <div>
+        <div id="rush-banner" class="rush-banner"></div>
+        <div class="ticket summary-ticket">
+          <div class="ticket-head"><span>Order Summary</span><span id="sum-status">Draft</span></div>
+          <div class="ticket-line">
+            <span id="sum-item">—</span>
+            <span id="sum-item-price">₦0</span>
+          </div>
+          <div class="ticket-line muted">
+            <span id="sum-protein">No extra protein</span>
+            <span id="sum-protein-price">—</span>
+          </div>
+          <div class="ticket-line" id="sum-rush-line" style="display:none;">
+            <span>Rush fee (under 24hrs)</span>
+            <span id="sum-rush">₦0</span>
+          </div>
+          <div class="ticket-total">
+            <span>Total due</span>
+            <span id="sum-total">₦0</span>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary pay-btn">Pay with Paystack to Confirm</button>
+        <p class="integration-note">Payment confirms your slot instantly and syncs to our kitchen calendar.</p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-links">
+      <a href="soups.html">Soups</a>
+      <a href="stews.html">Stews</a>
+      <a href="breakfast.html">Breakfast</a>
+      <a href="book.html">Book</a>
+    </div>
+    <span class="copy">AHmazing Foods · Lagos, Nigeria</span>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+<script src="nav.js"></script>
+</body>
+</html>
