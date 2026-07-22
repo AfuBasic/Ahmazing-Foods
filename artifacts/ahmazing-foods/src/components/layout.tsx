@@ -1,9 +1,13 @@
 import { useLocation } from "wouter";
 import { Link } from "wouter";
-import { ChefHat, Menu, X, ArrowRight } from "lucide-react";
+import { ChefHat, Menu, X, ArrowRight, Phone, Mail, MapPin } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+
+// Exact brand hex values — do not approximate with Tailwind classes
+const BRAND_RED = "#C81212";
+const BRAND_GREEN = "#0F9E0F";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
@@ -15,7 +19,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <header className="border-b border-border bg-card sticky top-0 z-40">
           <div className="container mx-auto px-4 h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="bg-primary text-primary-foreground p-1.5 rounded-md">
+              <div className="p-1.5 rounded-md text-white" style={{ background: BRAND_RED }}>
                 <ChefHat className="w-5 h-5" />
               </div>
               <span className="font-display font-bold text-lg">AHmazing Admin</span>
@@ -56,70 +60,130 @@ function SiteHeader({ location }: { location: string }) {
     { href: "/breakfast", label: "Breakfast" },
   ];
 
+  const closeMenu = () => setMobileMenuOpen(false);
+
   return (
-    <header className="sticky top-0 z-40 w-full bg-background/90 backdrop-blur-md border-b border-border">
-      <div className="container mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 z-50">
-          <div className="bg-primary text-primary-foreground p-2 rounded-lg shadow-sm">
-            <ChefHat className="w-6 h-6" />
-          </div>
-          <span className="font-display font-bold text-2xl tracking-tight text-foreground">
-            AHmazing Foods
+    <>
+      {/* Contact bar — brand red, full width */}
+      <div className="w-full text-white text-sm py-2 px-4" style={{ background: BRAND_RED }}>
+        <div className="container mx-auto flex flex-wrap items-center gap-x-6 gap-y-1">
+          <a href="tel:+2348105506052" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+            <Phone className="w-3.5 h-3.5 shrink-0" />
+            <span>+234 (810)-550-6052</span>
+          </a>
+          <a href="mailto:ahmazingcuisine@gmail.com" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+            <Mail className="w-3.5 h-3.5 shrink-0" />
+            <span>ahmazingcuisine@gmail.com</span>
+          </a>
+          <span className="flex items-center gap-1.5">
+            <MapPin className="w-3.5 h-3.5 shrink-0" />
+            <span>Lagos State</span>
           </span>
-        </Link>
+        </div>
+      </div>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link 
-              key={link.href} 
-              href={link.href}
-              className={cn(
-                "text-[15px] font-medium transition-all hover:text-primary",
-                location === link.href ? "text-primary border-b-2 border-primary py-1" : "text-foreground"
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
-          <Button asChild className="rounded-full px-6 font-bold shadow-md hover:shadow-lg transition-all">
-            <Link href="/book">Book Now</Link>
-          </Button>
-        </nav>
+      {/* Main header */}
+      <header className="sticky top-0 z-40 w-full bg-white border-b border-border shadow-sm">
+        <div className="container mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 z-50">
+            <div className="p-2 rounded-lg shadow-sm text-white" style={{ background: BRAND_RED }}>
+              <ChefHat className="w-6 h-6" />
+            </div>
+            <span className="font-display font-bold text-2xl tracking-tight text-foreground">
+              AHmazing Foods
+            </span>
+          </Link>
 
-        {/* Mobile Toggle */}
-        <button 
-          className="md:hidden p-2 text-foreground z-50"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
-
-        {/* Mobile Nav */}
-        {mobileMenuOpen && (
-          <div className="fixed inset-0 bg-background pt-24 px-6 z-40 flex flex-col gap-6 md:hidden">
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <Link 
-                key={link.href} 
+              <Link
+                key={link.href}
                 href={link.href}
                 className={cn(
-                  "text-2xl font-display font-semibold transition-colors",
-                  location === link.href ? "text-primary" : "text-foreground"
+                  "text-[15px] font-medium transition-all hover:text-primary",
+                  location === link.href ? "text-primary border-b-2 border-primary py-1" : "text-foreground"
                 )}
-                onClick={() => setMobileMenuOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
-            <div className="mt-8 pt-8 border-t border-border">
-              <Button asChild size="lg" className="w-full rounded-full text-lg h-14">
-                <Link href="/book" onClick={() => setMobileMenuOpen(false)}>Book Now</Link>
-              </Button>
+            {/* CTA — brand green */}
+            <a
+              href="/book"
+              className="rounded-full px-6 py-2.5 font-bold text-white shadow-md hover:shadow-lg transition-all hover:opacity-90 text-sm"
+              style={{ background: BRAND_GREEN }}
+            >
+              Book Now
+            </a>
+          </nav>
+
+          {/* Mobile Toggle — rendered above overlay */}
+          <button
+            className="md:hidden p-2 text-foreground relative z-[60]"
+            onClick={() => setMobileMenuOpen((o) => !o)}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileMenuOpen}
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+
+        {/* Mobile Nav — solid white, above all content */}
+        {mobileMenuOpen && (
+          <div
+            className="fixed inset-0 z-50 flex flex-col md:hidden"
+            style={{ backgroundColor: "#ffffff", top: 0 }}
+          >
+            {/* Close button inside overlay */}
+            <div className="flex items-center justify-between px-4 h-20 border-b border-border">
+              <Link href="/" className="flex items-center gap-2" onClick={closeMenu}>
+                <div className="p-2 rounded-lg text-white" style={{ background: BRAND_RED }}>
+                  <ChefHat className="w-6 h-6" />
+                </div>
+                <span className="font-display font-bold text-2xl tracking-tight text-foreground">
+                  AHmazing Foods
+                </span>
+              </Link>
+              <button
+                className="p-2 text-foreground"
+                onClick={closeMenu}
+                aria-label="Close menu"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <nav className="flex flex-col px-6 pt-8 gap-2">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    "text-2xl font-display font-semibold py-4 border-b border-border/50 transition-colors",
+                    location === link.href ? "text-primary" : "text-foreground"
+                  )}
+                  onClick={closeMenu}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+
+            <div className="px-6 mt-8">
+              <a
+                href="/book"
+                className="flex items-center justify-center w-full rounded-full py-4 text-lg font-bold text-white shadow-lg"
+                style={{ background: BRAND_GREEN }}
+                onClick={closeMenu}
+              >
+                Book Your Meal
+              </a>
             </div>
           </div>
         )}
-      </div>
-    </header>
+      </header>
+    </>
   );
 }
 
@@ -130,7 +194,7 @@ function SiteFooter() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div>
             <div className="flex items-center gap-2 mb-6">
-              <div className="bg-primary text-primary-foreground p-1.5 rounded-md">
+              <div className="p-1.5 rounded-md text-white" style={{ background: BRAND_RED }}>
                 <ChefHat className="w-5 h-5" />
               </div>
               <span className="font-display font-bold text-xl">AHmazing Foods</span>
@@ -150,9 +214,18 @@ function SiteFooter() {
           <div>
             <h4 className="font-display font-bold text-lg mb-6">Contact & Info</h4>
             <ul className="space-y-3 text-sm text-background/80">
-              <li>Lagos, Nigeria</li>
-              <li>Delivery within 24-48 hours</li>
-              <li>Rush orders available</li>
+              <li className="flex items-center gap-2">
+                <Phone className="w-4 h-4 shrink-0" />
+                <a href="tel:+2348105506052" className="hover:text-primary transition-colors">+234 (810)-550-6052</a>
+              </li>
+              <li className="flex items-center gap-2">
+                <Mail className="w-4 h-4 shrink-0" />
+                <a href="mailto:ahmazingcuisine@gmail.com" className="hover:text-primary transition-colors">ahmazingcuisine@gmail.com</a>
+              </li>
+              <li className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 shrink-0" />
+                <span>Lagos State, Nigeria</span>
+              </li>
               <li className="pt-4">
                 <Link href="/admin" className="text-xs opacity-50 hover:opacity-100 transition-opacity">Admin Login</Link>
               </li>

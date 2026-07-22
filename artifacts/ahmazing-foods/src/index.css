@@ -94,23 +94,23 @@
   --sidebar: 35 25% 95%; 
   --sidebar-foreground: 20 40% 15%; 
   --sidebar-border: 30 20% 88%; 
-  --sidebar-primary: 12 85% 55%; 
-  --sidebar-primary-foreground: 0 0% 100%; 
-  --sidebar-accent: 30 25% 90%; 
-  --sidebar-accent-foreground: 20 40% 15%; 
-  --sidebar-ring: 12 85% 55%; 
+  --sidebar-primary: 120 83% 34%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 30 25% 90%;
+  --sidebar-accent-foreground: 20 40% 15%;
+  --sidebar-ring: 120 83% 34%;
 
   --popover: 40 20% 99%; 
   --popover-foreground: 20 40% 15%; 
   --popover-border: 30 20% 90%; 
 
-  /* Vibrant Jollof Orange/Red */
-  --primary: 15 85% 55%; 
-  --primary-foreground: 0 0% 100%; 
+  /* Brand Green #0F9E0F — CTA / Book buttons */
+  --primary: 120 83% 34%;
+  --primary-foreground: 0 0% 100%;
 
-  /* Deep Earthy Green (Ugu / Plantain leaf) */
-  --secondary: 140 40% 25%; 
-  --secondary-foreground: 0 0% 100%; 
+  /* Brand Red #C81212 — contact bar, logo icon */
+  --secondary: 0 83% 43%;
+  --secondary-foreground: 0 0% 100%;
 
   /* Warm sandy muted tone */
   --muted: 35 25% 92%; 
@@ -125,13 +125,13 @@
   --destructive-foreground: 0 0% 100%; 
 
   --input: 30 20% 85%; 
-  --ring: 15 85% 55%; 
-  
-  --chart-1: 15 85% 55%; 
-  --chart-2: 140 40% 25%; 
-  --chart-3: 40 90% 55%; 
-  --chart-4: 30 25% 90%; 
-  --chart-5: 20 40% 15%; 
+  --ring: 120 83% 34%;
+
+  --chart-1: 120 83% 34%;
+  --chart-2: 0 83% 43%;
+  --chart-3: 40 90% 55%;
+  --chart-4: 30 25% 90%;
+  --chart-5: 20 40% 15%;
 
   --app-font-sans: 'DM Sans', sans-serif;
   --app-font-display: 'Outfit', sans-serif;
