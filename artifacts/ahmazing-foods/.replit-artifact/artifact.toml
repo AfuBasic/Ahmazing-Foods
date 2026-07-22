@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "AHmazing Foods"
+version = "1.0.0"
+id = "artifacts/ahmazing-foods"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18339
+
+[services.development]
+run = "pnpm --filter @workspace/ahmazing-foods run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/ahmazing-foods", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/ahmazing-foods/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18339"
+BASE_PATH = "/"
