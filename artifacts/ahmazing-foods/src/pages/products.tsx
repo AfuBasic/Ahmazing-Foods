@@ -17,33 +17,6 @@ interface Product {
 
 const groups: { heading: string; sub: string; products: Product[] }[] = [
   {
-    heading: "Seeds & Spices",
-    sub: "Freshly sourced, packed with flavour.",
-    products: [
-      { name: "Cameroon Pepper",  size: "",  price: "",  img: "" },
-      { name: "Chili Pepper",     size: "",  price: "",  img: "" },
-      { name: "Suya Mix",         size: "",  price: "",  img: "" },
-      { name: "Cinnamon Powder",  size: "",  price: "",  img: "" },
-      { name: "Chia Seeds",       size: "",  price: "",  img: "" },
-      { name: "Melon Seeds",      size: "",  price: "",  img: "" },
-    ],
-  },
-  {
-    heading: "Snacks",
-    sub: "High-protein, no-preservative snacking.",
-    products: [
-      { name: "Roasted Peanuts",               size: "Lightly salted · 200g",    price: "₦1,800",  img: "roasted_peanut.jpg" },
-      { name: "Coated Peanuts",                size: "Spicy BBQ · 200g",         price: "₦2,000",  img: "peanut_spicy.jpg" },
-      { name: "Yogurt Mix — Seed & Nut Blend", size: "200g",                     price: "₦2,800",  img: "parfait__toppings.jpg" },
-      { name: "Kwili Kwili",                   size: "Spicy & crunchy · 200g",   price: "₦2,000",  img: "kwilikwili.jpg" },
-      { name: "Cashew Nuts",                   size: "Roasted & delicious · 200g",price: "₦2,800", img: "cashew_nuts.jpg" },
-      { name: "Corn Sticks",                   size: "Crispy & delicious · 200g",price: "₦1,500",  img: "corn_sticks.jpg" },
-      { name: "Chin Chin",                     size: "Crunchy & delicious · 200g",price: "₦1,500", img: "chinchin.jpg" },
-      { name: "Plantain Chips — Ripe & Spicy", size: "150g",                     price: "₦1,800",  img: "plantain_ripe.jpg" },
-      { name: "Plantain Chips — Toasted & Crunchy", size: "150g",               price: "₦1,800",  img: "plantain__chips.jpg" },
-    ],
-  },
-  {
     heading: "Drinks & Wellness",
     sub: "Cold-pressed and brewed in small batches. All 500ml.",
     products: [
@@ -57,6 +30,33 @@ const groups: { heading: string; sub: string; products: Product[] }[] = [
       { name: "Lemon Honey Cleanser",    size: "Lemon · Honey · Cayenne · 500ml",     price: "₦1,800",  img: "lemon__honey.jpg" },
       { name: "Carrot Boost",            size: "100% carrot juice · 500ml",           price: "₦1,800",  img: "carrot.jpg" },
       { name: "Orange Drink",            size: "100% natural · 500ml",               price: "₦1,800",  img: "orange.jpg" },
+    ],
+  },
+  {
+    heading: "Snacks",
+    sub: "High-protein, no-preservative snacking.",
+    products: [
+      { name: "Roasted Peanuts",               size: "Lightly salted · 200g",     price: "₦1,800",  img: "roasted_peanut.jpg" },
+      { name: "Coated Peanuts",                size: "Spicy BBQ · 200g",          price: "₦2,000",  img: "peanut_spicy.jpg" },
+      { name: "Yogurt Mix — Seed & Nut Blend", size: "200g",                      price: "₦2,800",  img: "parfait__toppings.jpg" },
+      { name: "Kwili Kwili",                   size: "Spicy & crunchy · 200g",    price: "₦2,000",  img: "kwilikwili.jpg" },
+      { name: "Cashew Nuts",                   size: "Roasted & delicious · 200g",price: "₦2,800",  img: "cashew_nuts.jpg" },
+      { name: "Corn Sticks",                   size: "Crispy & delicious · 200g", price: "₦1,500",  img: "corn_sticks.jpg" },
+      { name: "Chin Chin",                     size: "Crunchy & delicious · 200g",price: "₦1,500",  img: "chinchin.jpg" },
+      { name: "Plantain Chips — Ripe & Spicy", size: "150g",                      price: "₦1,800",  img: "plantain_ripe.jpg" },
+      { name: "Plantain Chips — Toasted & Crunchy", size: "150g",                price: "₦1,800",  img: "plantain__chips.jpg" },
+    ],
+  },
+  {
+    heading: "Seeds & Spices",
+    sub: "Freshly sourced, packed with flavour.",
+    products: [
+      { name: "Cameroon Pepper",  size: "",  price: "",  img: "" },
+      { name: "Chili Pepper",     size: "",  price: "",  img: "" },
+      { name: "Suya Mix",         size: "",  price: "",  img: "" },
+      { name: "Cinnamon Powder",  size: "",  price: "",  img: "" },
+      { name: "Chia Seeds",       size: "",  price: "",  img: "" },
+      { name: "Melon Seeds",      size: "",  price: "",  img: "" },
     ],
   },
 ];
