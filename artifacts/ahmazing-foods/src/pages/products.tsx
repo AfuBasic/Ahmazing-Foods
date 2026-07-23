@@ -17,14 +17,15 @@ interface Product {
 
 const groups: { heading: string; sub: string; products: Product[] }[] = [
   {
-    heading: "Pantry & Sauces",
-    sub: "Bold, ready-to-use bases for your own cooking.",
+    heading: "Seeds & Spices",
+    sub: "Freshly sourced, packed with flavour.",
     products: [
-      { name: "Smoky Jollof Base",           size: "Glass jar · 250g",         price: "₦4,500",  img: "" },
-      { name: "Hibiscus Ginger Concentrate", size: "Glass bottle · 250ml",     price: "₦3,000",  img: "" },
-      { name: "Premium Pepper Mix",          size: "Stand-up pouch · 150g",    price: "₦3,500",  img: "" },
-      { name: "Suya Marinade",               size: "Spout pouch · 200g",       price: "₦3,000",  img: "" },
-      { name: "Coconut Curry Base",          size: "Resealable pouch · 200g",  price: "₦4,000",  img: "" },
+      { name: "Cameroon Pepper",  size: "",  price: "",  img: "" },
+      { name: "Chili Pepper",     size: "",  price: "",  img: "" },
+      { name: "Suya Mix",         size: "",  price: "",  img: "" },
+      { name: "Cinnamon Powder",  size: "",  price: "",  img: "" },
+      { name: "Chia Seeds",       size: "",  price: "",  img: "" },
+      { name: "Melon Seeds",      size: "",  price: "",  img: "" },
     ],
   },
   {
@@ -32,7 +33,6 @@ const groups: { heading: string; sub: string; products: Product[] }[] = [
     sub: "High-protein, no-preservative snacking.",
     products: [
       { name: "Roasted Peanuts",               size: "Lightly salted · 200g",    price: "₦1,800",  img: "roasted_peanut.jpg" },
-      { name: "Coconut Shavings",              size: "Toasted & crunchy · 150g", price: "₦2,200",  img: "" },
       { name: "Coated Peanuts",                size: "Spicy BBQ · 200g",         price: "₦2,000",  img: "peanut_spicy.jpg" },
       { name: "Yogurt Mix — Seed & Nut Blend", size: "200g",                     price: "₦2,800",  img: "parfait__toppings.jpg" },
       { name: "Kwili Kwili",                   size: "Spicy & crunchy · 200g",   price: "₦2,000",  img: "kwilikwili.jpg" },
