@@ -115,12 +115,13 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {[
               { num: "01", title: "Soups",     href: "/soups",     img: "food-egusi-hands.jpg",  desc: "Onugbu, Egusi, Banga, Afang, Ogbono and more — by the litre or by the cooler." },
               { num: "02", title: "Stews",     href: "/stews",     img: "food-jollof-fish.jpg",  desc: "Classic Nigerian stews cooked fresh in small batches for families or events." },
               { num: "03", title: "Breakfast", href: "/breakfast", img: "food-akara-pap.jpg",    desc: "Akara, moin-moin, pancakes and more — the kind of breakfast that takes real time." },
               { num: "04", title: "Products",  href: "/products",  img: "assets/products/peanut-butter.jpg", desc: "Sauces, snacks and bottled drinks to stock your pantry — no MSG, no preservatives.", rawImg: true },
+              { num: "05", title: "Catering",  href: "/catering",  img: "food-catering.jpg",     desc: "Weddings, birthdays, corporate events — tell us your guest count and we'll build a menu and quote." },
             ].map(({ num, title, href, img, desc, rawImg }) => (
               <Link key={href} href={href} className="group block">
                 <div className="rounded-2xl overflow-hidden border border-border bg-card hover:-translate-y-1 hover:shadow-xl transition-all duration-300">

@@ -8,6 +8,7 @@ import { Layout } from './components/layout';
 import Home from './pages/home';
 import MenuPage from './pages/menu';
 import ProductsPage from './pages/products';
+import CateringPage from './pages/catering';
 import BookPage from './pages/book';
 import BookingConfirmedPage from './pages/booking-confirmed';
 import AdminDashboard from './pages/admin/dashboard';
@@ -32,6 +33,7 @@ function Router() {
         <Route path="/stews" component={MenuPage} />
         <Route path="/breakfast" component={MenuPage} />
         <Route path="/products" component={ProductsPage} />
+        <Route path="/catering" component={CateringPage} />
         <Route path="/book" component={BookPage} />
         <Route path="/booking-confirmed/:id" component={BookingConfirmedPage} />
         
