@@ -11,6 +11,7 @@ import ProductsPage from './pages/products';
 import CateringPage from './pages/catering';
 import BookPage from './pages/book';
 import BookingConfirmedPage from './pages/booking-confirmed';
+import TraysAndPlattersPage from './pages/trays-platters';
 import AdminDashboard from './pages/admin/dashboard';
 import AdminOrdersList from './pages/admin/orders';
 import AdminOrderDetail from './pages/admin/order-detail';
@@ -33,6 +34,7 @@ function Router() {
         <Route path="/stews" component={MenuPage} />
         <Route path="/breakfast" component={MenuPage} />
         <Route path="/products" component={ProductsPage} />
+        <Route path="/trays-platters" component={TraysAndPlattersPage} />
         <Route path="/catering" component={CateringPage} />
         <Route path="/book" component={BookPage} />
         <Route path="/booking-confirmed/:id" component={BookingConfirmedPage} />

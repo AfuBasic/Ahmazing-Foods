@@ -57,6 +57,7 @@ function SiteHeader({ location }: { location: string }) {
     { href: "/stews", label: "Stews" },
     { href: "/breakfast", label: "Breakfast" },
     { href: "/products", label: "Products" },
+    { href: "/trays-platters", label: "Trays & Platters" },
     { href: "/catering", label: "Catering" },
   ];
 
@@ -197,6 +198,7 @@ function SiteFooter() {
               <li><Link href="/stews" className="hover:text-primary transition-colors">Hearty Stews</Link></li>
               <li><Link href="/breakfast" className="hover:text-primary transition-colors">Weekend Breakfast</Link></li>
               <li><Link href="/products" className="hover:text-primary transition-colors">Products</Link></li>
+              <li><Link href="/trays-platters" className="hover:text-primary transition-colors">Trays & Platters</Link></li>
               <li><Link href="/catering" className="hover:text-primary transition-colors">Catering</Link></li>
             </ul>
           </div>
