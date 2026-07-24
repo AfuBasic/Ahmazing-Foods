@@ -152,7 +152,7 @@ export default function Home() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-14">
             <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">How booking works</span>
-            <h2 className="text-4xl font-bold font-display mt-3">Three steps, no back-and-forth</h2>
+            <h2 className="text-4xl font-bold font-display mt-3">Three steps, nothing complicated</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">

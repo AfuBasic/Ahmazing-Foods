@@ -45,7 +45,7 @@ const groups: TrayGroup[] = [
         price: "₦247,500",
       },
     ],
-    note: "Add a vegetable-forward side (salad or steamed veg) and a dessert bite to balance the spread.",
+    note: "Add a fresh vegetable side (salad or steamed veg) and a dessert bite to balance the spread.",
   },
   {
     heading: "Trays",

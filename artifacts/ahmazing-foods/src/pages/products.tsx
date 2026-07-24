@@ -18,14 +18,14 @@ interface Product {
 const groups: { heading: string; sub: string; products: Product[] }[] = [
   {
     heading: "Drinks & Wellness",
-    sub: "Cold-pressed and brewed in small batches. All 500ml.",
+    sub: "Brewed fresh in small batches. All 500ml.",
     products: [
       { name: "Zobo Drink",              size: "Hibiscus infusion · 500ml",            price: "₦1,500",  img: "zobo.jpg" },
       { name: "Yogurt Drink",            size: "Probiotic · 500ml",                    price: "₦1,800",  img: "yoghurt.jpg" },
       { name: "Ginger Immune Booster",   size: "Ginger · Lemon · Honey · 500ml",      price: "₦2,000",  img: "ginger_immune_booster.jpg" },
       { name: "Turmeric Immune Booster", size: "Turmeric · Ginger · 500ml",           price: "₦2,000",  img: "Turmeric.jpg" },
       { name: "Pineapple Ginger Drink",  size: "500ml",                               price: "₦1,800",  img: "pineapple_ginger_lemon.jpg" },
-      { name: "Tiger Nut Milk",          size: "Plant-based · 500ml",                 price: "₦2,200",  img: "tigernut.jpg" },
+      { name: "Tiger Nut Milk",          size: "500ml",                 price: "₦2,200",  img: "tigernut.jpg" },
       { name: "Kale Cleanser",           size: "Kale · Cucumber · Apple · 500ml",     price: "₦2,200",  img: "kale.jpg" },
       { name: "Lemon Honey Cleanser",    size: "Lemon · Honey · Cayenne · 500ml",     price: "₦1,800",  img: "lemon__honey.jpg" },
       { name: "Carrot Boost",            size: "100% carrot juice · 500ml",           price: "₦1,800",  img: "carrot.jpg" },
@@ -34,7 +34,7 @@ const groups: { heading: string; sub: string; products: Product[] }[] = [
   },
   {
     heading: "Snacks",
-    sub: "High-protein, no-preservative snacking.",
+    sub: "Real snacks, no preservatives.",
     products: [
       { name: "Roasted Peanuts",               size: "Lightly salted · 200g",     price: "₦1,800",  img: "roasted_peanut.jpg" },
       { name: "Coated Peanuts",                size: "Spicy BBQ · 200g",          price: "₦2,000",  img: "peanut_spicy.jpg" },
