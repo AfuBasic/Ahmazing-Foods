@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { formatNaira } from "@/lib/format";
-import { Loader2, Trash2, PlusCircle, AlertCircle, ShoppingCart, ChevronRight } from "lucide-react";
+import { Loader2, Trash2, PlusCircle, AlertCircle, ShoppingCart, ChevronRight, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 // ── CONSTANTS ────────────────────────────────────────────────────────────────
@@ -57,6 +57,15 @@ const customerSchema = z.object({
   notes: z.string().optional(),
 });
 
+// ── SMOOTH SCROLL HELPER ─────────────────────────────────────────────────────
+function smoothScrollTo(el: HTMLElement | null, delay = 120) {
+  if (!el) return;
+  const t = setTimeout(() => {
+    el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, delay);
+  return () => clearTimeout(t);
+}
+
 export default function BookPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -70,13 +79,20 @@ export default function BookPage() {
 
   // ── CART STATE ─────────────────────────────────────────────────────────────
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [pepperLevel, setPepperLevel] = useState<number>(1); // 0=Low, 1=Medium, 2=Really Peppery
+  const [pepperLevel, setPepperLevel] = useState<number>(1);
   const [pepperTouched, setPepperTouched] = useState(false);
 
   // Item configuration (for adding to cart)
   const [configItemId, setConfigItemId] = useState<number>(0);
   const [configSize, setConfigSize] = useState<string>("");
   const [configProtein, setConfigProtein] = useState<string>("");
+
+  // ── SCROLL REFS ────────────────────────────────────────────────────────────
+  const sizeRef    = useRef<HTMLDivElement>(null);
+  const proteinRef = useRef<HTMLDivElement>(null);
+  const addBtnRef  = useRef<HTMLDivElement>(null);
+  const pepperRef  = useRef<HTMLDivElement>(null);
+  const step1Ref   = useRef<HTMLDivElement>(null);
 
   // ── CUSTOMER FORM ──────────────────────────────────────────────────────────
   const form = useForm<z.infer<typeof customerSchema>>({
@@ -134,15 +150,38 @@ export default function BookPage() {
 
   const canAddToCart = useMemo(() => {
     if (!configItem || !configSize) return false;
-    // Allow adding if it's a new distinct meal (up to MAX) or same meal again
     if (!distinctMealIds.has(configItemId) && distinctMealIds.size >= MAX_DISTINCT_MEALS) return false;
     return true;
   }, [configItem, configSize, configItemId, distinctMealIds]);
 
-  const availableDates = useMemo(() => 
+  const availableDates = useMemo(() =>
     Array.from({ length: 14 }).map((_, i) => format(addDays(new Date(), i), "yyyy-MM-dd")),
     []
   );
+
+  // ── AUTO-SCROLL: dish selected → scroll to size ────────────────────────────
+  useEffect(() => {
+    if (!configItem) return;
+    return smoothScrollTo(sizeRef.current);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [configItem?.id]);
+
+  // ── AUTO-SCROLL: size selected → scroll to protein or add button ───────────
+  useEffect(() => {
+    if (!configSize || !configItem) return;
+    if (configItem.proteins.length > 0) {
+      return smoothScrollTo(proteinRef.current);
+    } else {
+      return smoothScrollTo(addBtnRef.current);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [configSize]);
+
+  // ── AUTO-SCROLL: protein chosen → scroll to add button ────────────────────
+  useEffect(() => {
+    if (!configProtein) return;
+    return smoothScrollTo(addBtnRef.current);
+  }, [configProtein]);
 
   // ── HANDLERS ──────────────────────────────────────────────────────────────
   function addToCart() {
@@ -157,10 +196,12 @@ export default function BookPage() {
       price: configPrice,
     };
     setCart((prev) => [...prev, newItem]);
-    // Reset item config
+    setConfigItemId(0);
     setConfigSize("");
     setConfigProtein("");
     toast({ title: "Added to cart", description: `${configItem.name} — ${configSize}` });
+    // Scroll back to dish selector for next item
+    smoothScrollTo(step1Ref.current, 200);
   }
 
   function removeFromCart(id: string) {
@@ -174,12 +215,12 @@ export default function BookPage() {
     }
     if (!pepperTouched) {
       toast({ variant: "destructive", title: "Pepper level required", description: "Please set your pepper preference before confirming." });
+      smoothScrollTo(pepperRef.current, 0);
       return;
     }
 
     const primaryItem = cart[0];
 
-    // Build notes string for human-readable audit trail
     const cartSummary = cart
       .map((ci, idx) => `${idx + 1}. ${ci.menuItemName} — ${ci.selectedSize}${ci.selectedProtein ? ` + ${ci.selectedProtein}` : ""} (${formatNaira(ci.price)})`)
       .join("\n");
@@ -202,7 +243,6 @@ export default function BookPage() {
           deliveryDate: values.deliveryDate as unknown as Date,
           deliverySlot: values.deliverySlot,
           notes: notesStr,
-          // Extended fields — accepted by updated API
           // @ts-expect-error extended fields not in generated type
           cartItems: cart,
           // @ts-expect-error extended fields not in generated type
@@ -226,13 +266,13 @@ export default function BookPage() {
   const canSubmit = cart.length > 0 && pepperTouched && !isSubmitting;
 
   return (
-    <div className="min-h-screen bg-muted/30 pb-24">
+    <div className="min-h-screen bg-muted/30 pb-24" style={{ scrollBehavior: "smooth" }}>
       {/* Page header */}
       <div className="bg-foreground text-background pt-16 pb-20 rounded-b-[3rem] shadow-xl mb-12">
         <div className="container mx-auto px-4 md:px-6">
           <h1 className="text-5xl md:text-6xl font-bold font-display mb-4">Book a Slot</h1>
           <p className="text-xl text-background/70 max-w-xl">
-            Add your meals, set your pepper level, fill in delivery details — and we start cooking.
+            Add your meals, set your pepper level, fill in delivery details and we start cooking.
           </p>
         </div>
       </div>
@@ -244,7 +284,7 @@ export default function BookPage() {
           <div className="lg:col-span-2 space-y-8">
 
             {/* STEP 1: Build Your Order */}
-            <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+            <div ref={step1Ref} className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
               <div className="flex items-center gap-3 px-6 md:px-8 py-5 border-b border-border bg-muted/40">
                 <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shrink-0">1</div>
                 <h2 className="text-xl font-bold font-display">Build Your Order</h2>
@@ -256,14 +296,15 @@ export default function BookPage() {
               </div>
 
               <div className="p-6 md:p-8 space-y-6">
-                {/* Distinct meal count indicator */}
+
+                {/* Distinct meal count */}
                 {distinctMealIds.size > 0 && (
                   <div className="flex items-center gap-2 text-sm">
                     <div className="flex gap-1">
                       {Array.from({ length: MAX_DISTINCT_MEALS }).map((_, i) => (
                         <div
                           key={i}
-                          className="w-6 h-6 rounded-full border-2 transition-colors"
+                          className="w-6 h-6 rounded-full border-2 transition-colors duration-300"
                           style={{
                             background: i < distinctMealIds.size ? "#0F9E0F" : "transparent",
                             borderColor: i < distinctMealIds.size ? "#0F9E0F" : "#e5e7eb",
@@ -277,9 +318,9 @@ export default function BookPage() {
                   </div>
                 )}
 
-                {/* Dish selector */}
+                {/* ── A: Dish selector ──────────────────────────────────── */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Select a Dish</label>
+                  <SubStepLabel letter="A" done={!!configItem}>Select a Dish</SubStepLabel>
                   <Select
                     disabled={loadingMenu || distinctMealIds.size >= MAX_DISTINCT_MEALS}
                     onValueChange={(val) => {
@@ -296,14 +337,15 @@ export default function BookPage() {
                         : "Choose a dish"
                       } />
                     </SelectTrigger>
-                    <SelectContent>
+                    {/* max-h keeps the dropdown from filling the whole screen */}
+                    <SelectContent className="max-h-72 overflow-y-auto">
                       {["soups", "stews", "breakfast"].map((cat) => {
                         const catItems = menuItems?.filter((i) => i.available && i.category === cat) ?? [];
                         if (catItems.length === 0) return null;
                         return (
                           <div key={cat}>
-                            <div className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border/50">
-                              {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                            <div className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border/50 sticky top-0 bg-popover z-10">
+                              {cat === "breakfast" ? "Breakfast" : cat.charAt(0).toUpperCase() + cat.slice(1)}
                             </div>
                             {catItems.map((item) => (
                               <SelectItem key={item.id} value={item.id.toString()}>
@@ -317,23 +359,34 @@ export default function BookPage() {
                   </Select>
                 </div>
 
-                {/* Size selector */}
+                {/* ── B: Size selector (revealed after dish pick) ───────── */}
                 {configItem && (
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Choose Size</label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div
+                    ref={sizeRef}
+                    className="space-y-3 animate-in fade-in slide-in-from-bottom-3 duration-300"
+                  >
+                    <SubStepLabel letter="B" done={!!configSize}>
+                      Choose Size
+                      <span className="ml-2 text-xs font-normal text-muted-foreground">— {configItem.name}</span>
+                    </SubStepLabel>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {configItem.sizes.map((size) => (
                         <button
                           key={size.label}
                           type="button"
                           onClick={() => setConfigSize(size.label)}
-                          className={`text-left px-4 py-3 rounded-xl border-2 transition-all ${
+                          className={`relative text-left px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
                             configSize === size.label
-                              ? "border-primary bg-primary/5"
-                              : "border-border hover:border-primary/50"
+                              ? "border-primary bg-primary/5 shadow-sm"
+                              : "border-border hover:border-primary/40 hover:bg-muted/50"
                           }`}
                         >
-                          <div className="font-medium text-sm">{size.label}</div>
+                          {configSize === size.label && (
+                            <span className="absolute top-2 right-2 w-4 h-4 rounded-full bg-primary flex items-center justify-center">
+                              <Check className="w-2.5 h-2.5 text-white" />
+                            </span>
+                          )}
+                          <div className="font-medium text-sm pr-5">{size.label}</div>
                           <div className="font-bold text-base mt-0.5">{formatNaira(size.price)}</div>
                         </button>
                       ))}
@@ -341,55 +394,74 @@ export default function BookPage() {
                   </div>
                 )}
 
-                {/* Protein selector */}
+                {/* ── C: Protein selector (revealed after size pick) ────── */}
                 {configItem && configItem.proteins.length > 0 && configSize && (
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Add Protein (optional)</label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  <div
+                    ref={proteinRef}
+                    className="space-y-3 animate-in fade-in slide-in-from-bottom-3 duration-300"
+                  >
+                    <SubStepLabel
+                      letter="C"
+                      done={!!(configProtein && configProtein !== "")}
+                    >
+                      Add Protein
+                      <span className="ml-2 text-xs font-normal text-muted-foreground">— optional</span>
+                    </SubStepLabel>
+
+                    {/* Scrollable protein row on small screens; wrapping grid on larger */}
+                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
+                      {/* No protein option */}
                       <button
                         type="button"
                         onClick={() => setConfigProtein("none")}
-                        className={`text-left px-3 py-2.5 rounded-xl border-2 transition-all ${
+                        className={`text-center px-2 py-2.5 rounded-xl border-2 transition-all duration-200 ${
                           configProtein === "none" || configProtein === ""
                             ? "border-border bg-muted"
-                            : "border-border hover:border-primary/50"
+                            : "border-border hover:border-primary/40 hover:bg-muted/50"
                         }`}
                       >
-                        <div className="text-xs font-medium text-muted-foreground">No protein</div>
-                        <div className="text-sm font-bold">—</div>
+                        <div className="text-[11px] font-medium text-muted-foreground leading-tight">None</div>
+                        <div className="text-xs font-bold mt-0.5">—</div>
                       </button>
+
                       {configItem.proteins.map((p) => (
                         <button
                           key={p.name}
                           type="button"
                           onClick={() => setConfigProtein(p.name)}
-                          className={`text-left px-3 py-2.5 rounded-xl border-2 transition-all ${
+                          className={`relative text-center px-2 py-2.5 rounded-xl border-2 transition-all duration-200 ${
                             configProtein === p.name
-                              ? "border-primary bg-primary/5"
-                              : "border-border hover:border-primary/50"
+                              ? "border-primary bg-primary/5 shadow-sm"
+                              : "border-border hover:border-primary/40 hover:bg-muted/50"
                           }`}
                         >
-                          <div className="text-xs font-medium text-muted-foreground">{p.name}</div>
-                          <div className="text-sm font-bold">+{formatNaira(p.extraCost)}</div>
+                          {configProtein === p.name && (
+                            <span className="absolute top-1 right-1 w-3 h-3 rounded-full bg-primary flex items-center justify-center">
+                              <Check className="w-2 h-2 text-white" />
+                            </span>
+                          )}
+                          <div className="text-[11px] font-medium leading-tight pr-2">{p.name}</div>
+                          <div className="text-xs font-bold mt-0.5 text-primary">+{formatNaira(p.extraCost)}</div>
                         </button>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {/* Add to Cart button */}
-                {configItem && (
-                  <div className="flex items-center gap-4 pt-2">
-                    {configSize && (
-                      <div className="text-sm text-muted-foreground">
-                        Subtotal: <span className="font-bold text-foreground">{formatNaira(configPrice)}</span>
-                      </div>
-                    )}
+                {/* ── Add to Cart ──────────────────────────────────────── */}
+                {configItem && configSize && (
+                  <div
+                    ref={addBtnRef}
+                    className="flex items-center gap-4 pt-1 animate-in fade-in duration-200"
+                  >
+                    <div className="text-sm text-muted-foreground">
+                      Subtotal: <span className="font-bold text-foreground text-base">{formatNaira(configPrice)}</span>
+                    </div>
                     <Button
                       type="button"
                       onClick={addToCart}
                       disabled={!canAddToCart}
-                      className="ml-auto gap-2"
+                      className="ml-auto gap-2 h-11 px-6 rounded-xl font-bold"
                       style={{ background: "#0F9E0F" }}
                     >
                       <PlusCircle className="w-4 h-4" />
@@ -398,9 +470,9 @@ export default function BookPage() {
                   </div>
                 )}
 
-                {/* Cart items list */}
+                {/* ── Cart items list ──────────────────────────────────── */}
                 {cart.length > 0 && (
-                  <div className="rounded-xl border border-border overflow-hidden mt-4">
+                  <div className="rounded-xl border border-border overflow-hidden mt-2 animate-in fade-in duration-300">
                     <div className="flex items-center gap-2 px-4 py-3 bg-muted/40 border-b border-border">
                       <ShoppingCart className="w-4 h-4 text-muted-foreground" />
                       <span className="font-bold text-sm">Your Cart</span>
@@ -431,7 +503,7 @@ export default function BookPage() {
             </div>
 
             {/* STEP 2: Pepper Level */}
-            <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+            <div ref={pepperRef} className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
               <div className="flex items-center gap-3 px-6 md:px-8 py-5 border-b border-border bg-muted/40">
                 <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shrink-0">2</div>
                 <h2 className="text-xl font-bold font-display">How Hot?</h2>
@@ -441,8 +513,8 @@ export default function BookPage() {
                   </span>
                 )}
                 {pepperTouched && (
-                  <span className="ml-auto text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1">
-                    ✓ Set
+                  <span className="ml-auto text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1 flex items-center gap-1">
+                    <Check className="w-3 h-3" /> Set
                   </span>
                 )}
               </div>
@@ -525,7 +597,7 @@ export default function BookPage() {
                                 <SelectValue placeholder="Pick a date" />
                               </SelectTrigger>
                             </FormControl>
-                            <SelectContent>
+                            <SelectContent className="max-h-64 overflow-y-auto">
                               {availableDates.map((d) => {
                                 const isToday = d === format(new Date(), "yyyy-MM-dd");
                                 return (
@@ -593,7 +665,6 @@ export default function BookPage() {
                 </div>
               ) : (
                 <div className="px-6 py-5 space-y-4">
-                  {/* Cart items */}
                   <div className="space-y-3">
                     {cart.map((item) => (
                       <div key={item.id} className="flex justify-between items-start gap-2 text-sm">
@@ -608,7 +679,6 @@ export default function BookPage() {
                     ))}
                   </div>
 
-                  {/* Rush fee */}
                   {rushFee > 0 && (
                     <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-sm">
                       <div className="flex justify-between items-center font-bold text-amber-800 mb-1">
@@ -621,13 +691,11 @@ export default function BookPage() {
                     </div>
                   )}
 
-                  {/* Total */}
                   <div className="border-t border-dashed border-border pt-3 flex justify-between font-bold text-lg">
                     <span>Total</span>
                     <span style={{ color: "#0F9E0F" }}>{formatNaira(grandTotal)}</span>
                   </div>
 
-                  {/* Pepper level preview */}
                   {pepperTouched && (
                     <div className="text-xs text-muted-foreground bg-muted rounded-xl px-3 py-2">
                       Pepper level: <span className={`font-bold ${PEPPER_COLORS[pepperLevel]}`}>{PEPPER_LABELS[pepperLevel]}</span>
@@ -695,5 +763,31 @@ export default function BookPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// ── SUB-STEP LABEL ────────────────────────────────────────────────────────────
+function SubStepLabel({
+  letter,
+  done,
+  children,
+}: {
+  letter: string;
+  done: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="text-sm font-semibold flex items-center gap-2">
+      <span
+        className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 transition-colors duration-300 ${
+          done
+            ? "bg-primary text-primary-foreground"
+            : "bg-muted text-muted-foreground border border-border"
+        }`}
+      >
+        {done ? <Check className="w-2.5 h-2.5" /> : letter}
+      </span>
+      {children}
+    </label>
   );
 }
