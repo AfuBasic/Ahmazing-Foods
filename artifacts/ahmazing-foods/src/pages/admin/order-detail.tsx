@@ -18,10 +18,31 @@ import {
   Calendar, 
   Clock, 
   CreditCard, 
-  MessageSquare
+  MessageSquare,
+  MessageCircle
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect } from "react";
+
+function toWaNumber(phone: string): string {
+  const d = phone.replace(/\D/g, "");
+  if (d.startsWith("0")) return "234" + d.slice(1);
+  if (!d.startsWith("234")) return "234" + d;
+  return d;
+}
+
+function buildWaMessage(order: { customerName: string; menuItemName: string; selectedSize: string; deliveryDate: string; deliverySlot: string; total: number }, orderId: number, status: string): string {
+  const id = orderId.toString().padStart(4, "0");
+  const total = `₦${order.total.toLocaleString("en-NG")}`;
+  if (status === "confirmed") {
+    return encodeURIComponent(
+      `Hi ${order.customerName}! 👋\n\nYour AHmazing Foods booking is confirmed (Order #${id}).\n\n📋 ${order.menuItemName} — ${order.selectedSize}\n📅 Delivery: ${order.deliveryDate}, ${order.deliverySlot}\n💰 Total: ${total}\n\nPlease make payment to lock in your slot — we only start cooking once payment clears. We'll send our account details shortly.\n\nThank you! — AHmazing Foods`
+    );
+  }
+  return encodeURIComponent(
+    `Hi ${order.customerName}! 🔥\n\nGreat news — we've started cooking your order right now!\n\n📋 ${order.menuItemName} — ${order.selectedSize} (Order #${id})\n📅 Delivery: ${order.deliveryDate}, ${order.deliverySlot}\n\nYour meal will be fresh and ready on time. Thank you for choosing AHmazing Foods! 🍲`
+  );
+}
 
 export default function AdminOrderDetail() {
   const { id } = useParams();
@@ -246,6 +267,24 @@ export default function AdminOrderDetail() {
                   </div>
                 )}
              </div>
+
+             {/* WhatsApp Notification */}
+             {(localStatus === "confirmed" || localStatus === "cooking") && (
+               <div className="mt-6 pt-6 border-t border-background/20">
+                 <p className="text-xs text-background/60 uppercase tracking-wider mb-3 font-bold">Notify Customer</p>
+                 <a
+                   href={`https://wa.me/${toWaNumber(order.customerPhone)}?text=${buildWaMessage(order, orderId, localStatus)}`}
+                   target="_blank"
+                   rel="noreferrer"
+                   className="flex items-center justify-center gap-2 w-full font-bold text-sm px-4 py-3 rounded-xl transition-colors"
+                   style={{ background: "#25D366", color: "#fff" }}
+                 >
+                   <MessageCircle className="w-4 h-4" />
+                   {localStatus === "confirmed" ? "Send Payment Request" : "Notify: Cooking Started"}
+                 </a>
+                 <p className="mt-2 text-center text-xs text-background/50">Opens WhatsApp with message pre-filled</p>
+               </div>
+             )}
            </div>
         </div>
 

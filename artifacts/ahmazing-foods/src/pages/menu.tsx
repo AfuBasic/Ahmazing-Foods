@@ -3,15 +3,34 @@ import { useListMenuItems, ListMenuItemsCategory } from "@workspace/api-client-r
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNaira } from "@/lib/format";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Leaf } from "lucide-react";
 
 const BASE = import.meta.env.BASE_URL;
 const asset = (p: string) => `${BASE}assets/${p}`;
+const BRAND_GREEN = "#0F9E0F";
 
 const bannerImages: Record<string, string> = {
   soups:     "food-egusi-hands.jpg",
   stews:     "food-jollof-fish.jpg",
   breakfast: "food-akara-pap.jpg",
+};
+
+const mindfulPicks: Record<string, Array<{ name: string; why: string }>> = {
+  soups: [
+    { name: "Edikang Ikong (Vegetable Soup)", why: "One of Nigeria's most vegetable-dense soups — loaded with ugu and waterleaf. Choose fish protein for the lightest version." },
+    { name: "Onugbu Soup (Bitterleaf)",        why: "Bitterleaf has long been associated with detoxifying properties. Pair with a smaller portion of swallow for a well-balanced meal." },
+    { name: "Efo-Riro",                         why: "Spinach-based and lower in fat than most. A solid daily soup choice — especially with fish." },
+  ],
+  stews: [
+    { name: "Peppered Chicken Stew",  why: "Chicken is leaner than beef. A good everyday protein choice in a well-spiced base." },
+    { name: "Peppered Turkey Stew",   why: "Turkey is one of the leanest proteins available. The pepper-based stew adds flavour without extra fat." },
+    { name: "Ata Din-Din (Fried Pepper Stew)", why: "Rich in pepper, which is high in vitamin C and antioxidants. Bold flavour with a clean base." },
+  ],
+  breakfast: [
+    { name: "The Classic Nigerian",  why: "Akara is made from beans — high protein, high fiber, lower glycemic index than most breakfast carbs." },
+    { name: "The Sweet Start",       why: "Oats + fresh fruit: slow-release energy and natural sugars only. One of the most considered breakfast options available." },
+    { name: "The Hearty Plate",      why: "Boiled yam (not fried) with egg stew: fills you up steadily and adds good protein from the eggs." },
+  ],
 };
 
 export default function MenuPage() {
@@ -29,16 +48,17 @@ export default function MenuPage() {
   const titles = {
     soups: "Rich Soups",
     stews: "Hearty Stews",
-    breakfast: "Weekend Breakfast"
+    breakfast: "Weekend Specials"
   };
 
   const descriptions = {
     soups: "Every soup comes garnished with dried fish, stockfish and cowhide. Add extra protein below to customise further.",
     stews: "Classic Nigerian stews cooked fresh in small batches, sized for a family meal or a full event.",
-    breakfast: "Savour fresh, authentic breakfast options. Every plate is cooked to order and delivered in your chosen window."
+    breakfast: "Always-available weekend combo plates, cooked fresh to order."
   };
 
   const bannerImg = bannerImages[category];
+  const picks = mindfulPicks[category] ?? [];
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -78,80 +98,113 @@ export default function MenuPage() {
         ) : error ? (
           <div className="text-center py-24 bg-card rounded-2xl border border-border">
             <h3 className="text-2xl font-bold text-destructive mb-2">Could not load menu</h3>
-            <p className="text-muted-foreground mb-6">There was a problem fetching the menu items.</p>
-            <Button onClick={() => window.location.reload()}>Try Again</Button>
+            <p className="text-muted-foreground">Check your connection and try again.</p>
           </div>
-        ) : menuItems?.length === 0 ? (
+        ) : !menuItems?.length ? (
           <div className="text-center py-24 bg-card rounded-2xl border border-border">
-            <h3 className="text-2xl font-bold text-foreground mb-2">No items found</h3>
-            <p className="text-muted-foreground">Check back later for new additions to this category.</p>
+            <h3 className="text-2xl font-bold mb-2">Nothing here yet</h3>
+            <p className="text-muted-foreground">This category is coming soon — check back shortly.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            {menuItems?.map(item => (
-              <div key={item.id} className="bg-card rounded-3xl border border-border overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row">
-                {/* Visual Placeholder */}
-                <div className="w-full sm:w-2/5 min-h-[200px] bg-muted relative">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {menuItems.filter(item => item.available).map((item) => (
+              <div key={item.id} className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-shadow flex flex-col">
+                <div className="aspect-video bg-muted relative overflow-hidden">
                   {item.imageUrl ? (
-                    <img src={item.imageUrl} alt={item.name} className="absolute inset-0 w-full h-full object-cover" />
+                    <img
+                      src={item.imageUrl.startsWith("assets/") ? `${BASE}${item.imageUrl}` : item.imageUrl}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                       <span className="font-display font-bold text-foreground/20 text-4xl truncate max-w-[80%]">AH</span>
-                    </div>
-                  )}
-                  {!item.available && (
-                    <div className="absolute top-4 left-4 bg-foreground text-background text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                      Sold Out
-                    </div>
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground/30 text-5xl">🍲</div>
                   )}
                 </div>
-                
-                <div className="p-6 sm:p-8 w-full sm:w-3/5 flex flex-col">
-                  <h3 className="text-2xl font-bold font-display mb-2 text-foreground">{item.name}</h3>
-                  <p className="text-muted-foreground mb-6 flex-1 text-sm">{item.description}</p>
-                  
-                  <div className="space-y-4 mb-6">
+                <div className="p-6 flex flex-col flex-1 gap-3">
+                  <h3 className="text-xl font-bold font-display leading-tight">{item.name}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+
+                  {item.sizes.length > 0 && (
                     <div>
-                      <h4 className="text-xs font-bold text-foreground uppercase tracking-wider mb-2">Sizes</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {item.sizes.map(size => (
-                          <div key={size.label} className="bg-muted px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-2">
-                            <span>{size.label}</span>
-                            <span className="text-muted-foreground">•</span>
-                            <span className="text-primary">{formatNaira(size.price)}</span>
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Sizes & Prices</p>
+                      <div className="space-y-1.5">
+                        {item.sizes.map((size) => (
+                          <div key={size.label} className="flex justify-between text-sm">
+                            <span className="text-foreground">{size.label}</span>
+                            <span className="font-bold">{formatNaira(size.price)}</span>
                           </div>
                         ))}
                       </div>
                     </div>
+                  )}
 
-                    {item.proteins && item.proteins.length > 0 && (
-                      <div>
-                        <h4 className="text-xs font-bold text-foreground uppercase tracking-wider mb-2">Proteins</h4>
-                        <div className="flex flex-wrap gap-x-2 gap-y-1 text-sm text-muted-foreground">
-                          {item.proteins.map((p, idx) => (
-                            <span key={p.name}>
-                              {p.name} <span className="text-xs opacity-70">({formatNaira(p.extraCost)})</span>
-                              {idx < item.proteins.length - 1 ? ", " : ""}
-                            </span>
-                          ))}
-                        </div>
+                  {item.proteins.length > 0 && (
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Add Protein</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {item.proteins.map((protein) => (
+                          <span key={protein.name} className="inline-flex items-center text-xs bg-muted rounded-full px-2.5 py-1 gap-1">
+                            {protein.name}
+                            <span className="font-bold text-foreground">+{formatNaira(protein.extraCost)}</span>
+                          </span>
+                        ))}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
 
-                  <Button 
-                    asChild 
-                    className="w-full mt-auto rounded-xl"
-                    disabled={!item.available}
-                  >
-                    <Link href={`/book?item=${item.id}`}>
-                      {item.available ? "Book This" : "Currently Unavailable"}
-                    </Link>
-                  </Button>
+                  <div className="mt-auto pt-4">
+                    <Button
+                      asChild
+                      className="w-full text-white font-bold"
+                      style={{ background: "#0F9E0F" }}
+                    >
+                      <Link href={`/book?item=${item.id}`}>Book This →</Link>
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
+        )}
+
+        {/* ── MINDFUL PICKS SECTION ───────────────────────────────────── */}
+        {picks.length > 0 && (
+          <section className="mt-20 pt-16 border-t border-border">
+            <div className="flex items-start justify-between gap-6 mb-10 flex-wrap">
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <Leaf className="w-5 h-5" style={{ color: BRAND_GREEN }} />
+                  <span className="text-xs font-bold uppercase tracking-wider" style={{ color: BRAND_GREEN }}>Mindful Picks</span>
+                </div>
+                <h2 className="text-3xl font-bold font-display mb-2">The healthier choices on this menu</h2>
+                <p className="text-muted-foreground max-w-xl">
+                  Not a diet plan — just specific dishes from this category that are nutritionally worth knowing about.
+                </p>
+              </div>
+              <Link
+                href="/mindful-meals"
+                className="shrink-0 rounded-full px-6 py-2.5 font-bold text-white text-sm hover:opacity-90 transition-opacity"
+                style={{ background: BRAND_GREEN }}
+              >
+                Full Mindful Meals Guide →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {picks.map((pick) => (
+                <div
+                  key={pick.name}
+                  className="rounded-2xl border-2 p-5 flex flex-col gap-3"
+                  style={{ borderColor: BRAND_GREEN + "40", background: BRAND_GREEN + "08" }}
+                >
+                  <div className="flex items-center gap-2">
+                    <Leaf className="w-4 h-4 shrink-0" style={{ color: BRAND_GREEN }} />
+                    <span className="font-bold text-sm leading-tight">{pick.name}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{pick.why}</p>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
       </div>
     </div>

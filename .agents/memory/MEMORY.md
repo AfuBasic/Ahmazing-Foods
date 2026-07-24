@@ -1,0 +1,4 @@
+- [Zod import conventions](zod-import.md) — api-server uses `zod` not `zod/v4`; lib/db schema files use `zod` too; never `zod/v4` anywhere in this project
+- [API server seed runner](seed-runner.md) — run seed via `scripts/node_modules/.bin/tsx artifacts/api-server/src/seed-menu.ts` from workspace root
+- [Cart + pepper schema](cart-schema.md) — orders table has cartItems (jsonb nullable) + pepperLevel (text nullable); API parses extra fields manually (no zod) since zod is not a direct api-server dep
+- [Menu seed state](menu-seed.md) — 18 items: 8 soups, 6 stews, 4 breakfast combos; Seafood Okro is 5L/Cooler only; stews Medium/Large only; proteins trimmed to 10

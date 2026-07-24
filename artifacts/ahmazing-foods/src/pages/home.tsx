@@ -1,9 +1,10 @@
 import { Link } from "wouter";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Leaf } from "lucide-react";
 
 const BASE = import.meta.env.BASE_URL;
 const asset = (p: string) => `${BASE}assets/${p}`;
 
+const BRAND_RED = "#C81212";
 const BRAND_GREEN = "#0F9E0F";
 
 export default function Home() {
@@ -26,21 +27,19 @@ export default function Home() {
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
               No storefront, no shortcuts — every pot is started only once it's booked.
-              Choose your soup, stew or breakfast, pick your delivery slot, and we get cooking.
+              Choose your soup, stew or weekend special, pick your delivery slot, and we get cooking.
             </p>
             <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start pt-2">
-              <a
+              <Link
                 href="/book"
-                onClick={(e) => { e.preventDefault(); window.location.href = `${BASE}book`; }}
-                className="w-full sm:w-auto text-center rounded-full h-14 px-8 text-lg font-bold text-white shadow-xl transition-opacity hover:opacity-90"
-                style={{ background: BRAND_GREEN, display: "inline-flex", alignItems: "center", justifyContent: "center" }}
+                className="w-full sm:w-auto text-center rounded-full h-14 px-8 text-lg font-bold text-white shadow-xl transition-opacity hover:opacity-90 inline-flex items-center justify-center"
+                style={{ background: BRAND_GREEN }}
               >
                 Book Your Meal
-              </a>
+              </Link>
               <Link
                 href="/soups"
-                className="w-full sm:w-auto text-center rounded-full h-14 px-8 text-lg font-bold border-2 border-border text-foreground hover:bg-muted transition-colors"
-                style={{ display: "inline-flex", alignItems: "center", justifyContent: "center" }}
+                className="w-full sm:w-auto text-center rounded-full h-14 px-8 text-lg font-bold border-2 border-border text-foreground hover:bg-muted transition-colors inline-flex items-center justify-center"
               >
                 See What's Available
               </Link>
@@ -68,7 +67,7 @@ export default function Home() {
                   <span className="font-bold">₦18,000</span>
                 </div>
                 <div className="flex justify-between text-muted-foreground">
-                  <span>+ Goat Meat</span>
+                  <span>+ Chicken</span>
                   <span>₦3,000</span>
                 </div>
               </div>
@@ -103,6 +102,48 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── MINDFUL MEALS DIFFERENTIATOR BANNER ─────────────────────── */}
+      <section className="py-24 bg-foreground text-background overflow-hidden">
+        <div className="container mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center gap-12">
+          <div className="flex-1 space-y-6 max-w-lg">
+            <div className="flex items-center gap-2">
+              <Leaf className="w-5 h-5 opacity-60" />
+              <span className="text-background/60 text-xs font-bold uppercase tracking-wider">What sets us apart</span>
+            </div>
+            <h2 className="text-4xl font-bold font-display leading-tight">
+              Nigerian food can work for your health goals too
+            </h2>
+            <p className="text-background/70 leading-relaxed">
+              We have curated specific meals from our menu — real dishes, cooked the same way —
+              chosen because they genuinely support healthy eating.
+              No supplements, no meal replacements, no removing everything you love.
+            </p>
+            <Link
+              href="/mindful-meals"
+              className="inline-flex items-center gap-2 rounded-full px-8 py-3 font-bold text-foreground shadow-lg hover:opacity-90 transition-opacity"
+              style={{ background: "#FCF1EF" }}
+            >
+              See Mindful Meals <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className="flex-1 flex items-center justify-center">
+            <div className="grid grid-cols-2 gap-3 max-w-xs">
+              {[
+                { label: "No MSG", sub: "Seasoned with crayfish and dried fish" },
+                { label: "No preservatives", sub: "Cooked fresh, delivered same day" },
+                { label: "Made to order", sub: "Your pot starts when you book" },
+                { label: "Real ingredients", sub: "Nothing artificial, nothing processed" },
+              ].map(({ label, sub }) => (
+                <div key={label} className="bg-white/10 rounded-2xl p-4 border border-white/10">
+                  <p className="font-bold text-sm text-background mb-1">{label}</p>
+                  <p className="text-xs text-background/50 leading-relaxed">{sub}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── WHAT'S ON ──────────────────────────────────────────────────── */}
       <section className="py-20">
         <div className="container mx-auto px-4 md:px-6">
@@ -115,19 +156,56 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { num: "01", title: "Soups",     href: "/soups",     img: "food-egusi-hands.jpg",  desc: "Onugbu, Egusi, Banga, Afang, Ogbono and more — by the litre or by the cooler." },
-              { num: "02", title: "Stews",     href: "/stews",     img: "food-jollof-fish.jpg",  desc: "Classic Nigerian stews cooked fresh in small batches for families or events." },
-              { num: "03", title: "Breakfast", href: "/breakfast", img: "food-akara-pap.jpg",    desc: "Akara, moin-moin, pancakes and more — the kind of breakfast that takes real time." },
-              { num: "04", title: "Products",  href: "/products",  img: "assets/products/peanut-butter.jpg", desc: "Sauces, snacks and bottled drinks to stock your pantry — no MSG, no preservatives.", rawImg: true },
-              { num: "05", title: "Catering",  href: "/catering",  img: "food-catering.jpg",     desc: "Weddings, birthdays, corporate events — tell us your guest count and we'll build a menu and quote." },
-            ].map(({ num, title, href, img, desc, rawImg }) => (
+              {
+                num: "01",
+                title: "Soups",
+                href: "/soups",
+                img: "food-egusi-hands.jpg",
+                desc: "Onugbu, Egusi, Banga, Oha, Efo-Riro and more — by the litre or by the cooler.",
+              },
+              {
+                num: "02",
+                title: "Stews",
+                href: "/stews",
+                img: "food-jollof-fish.jpg",
+                desc: "Classic Nigerian stews cooked fresh in small batches for families or events.",
+              },
+              {
+                num: "03",
+                title: "Weekend Specials",
+                href: "/weekend-specials",
+                img: "food-akara-pap.jpg",
+                desc: "Nkwobi, Isi Ewu, Abacha and more — plus the weekly vote for what we cook on Saturday.",
+              },
+              {
+                num: "04",
+                title: "Products",
+                href: "/products",
+                img: "food-egusi-hands.jpg",
+                desc: "Drinks, snacks and seeds to stock your pantry — no MSG, no preservatives.",
+              },
+              {
+                num: "05",
+                title: "Mindful Meals",
+                href: "/mindful-meals",
+                img: "food-akara-pap.jpg",
+                desc: "Specific picks from our menu chosen to support healthy eating without giving up Nigerian food.",
+              },
+              {
+                num: "06",
+                title: "Catering",
+                href: "/catering",
+                img: "food-jollof-fish.jpg",
+                desc: "Weddings, birthdays, corporate events — tell us your guest count and we'll build a menu.",
+              },
+            ].map(({ num, title, href, img, desc }) => (
               <Link key={href} href={href} className="group block">
                 <div className="rounded-2xl overflow-hidden border border-border bg-card hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
                   <div className="aspect-[4/3] overflow-hidden">
                     <img
-                      src={rawImg ? `${BASE}${img}` : asset(img)}
+                      src={asset(img)}
                       alt={title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
@@ -159,24 +237,24 @@ export default function Home() {
             {[
               {
                 n: "1",
-                title: "Pick your meal & slot",
-                body: "Choose your dish, size and protein, then tell us when you want it delivered.",
+                title: "Pick your meals & slot",
+                body: "Add up to 5 dishes to your cart, choose sizes and proteins, then pick your delivery date and time.",
               },
               {
                 n: "2",
                 title: "Pay to confirm",
-                body: "Bank transfer or payment on delivery locks in your slot. Booking within 24 hours adds a rush fee — shown before you confirm, never a surprise.",
+                body: "Pay before we start cooking — bank transfer or mobile money. We'll send account details once your slot is in. Same-day bookings have a tiered rush fee, shown upfront.",
               },
               {
                 n: "3",
                 title: "We cook, you're notified",
-                body: "Your slot goes straight onto our kitchen calendar. We cook to order and get it to you in your chosen window.",
+                body: "Once payment clears, your slot goes onto our kitchen calendar. We'll email and WhatsApp you the moment we start cooking.",
               },
             ].map(({ n, title, body }) => (
               <div key={n} className="flex gap-5">
                 <div
                   className="w-12 h-12 shrink-0 rounded-full text-white font-display font-bold text-xl flex items-center justify-center"
-                  style={{ background: "#C81212" }}
+                  style={{ background: BRAND_RED }}
                 >
                   {n}
                 </div>
@@ -199,8 +277,8 @@ export default function Home() {
           </div>
           <Link
             href="/book"
-            className="shrink-0 rounded-full px-10 py-4 text-lg font-bold text-white shadow-xl hover:opacity-90 transition-opacity"
-            style={{ background: BRAND_GREEN, display: "inline-flex", alignItems: "center" }}
+            className="shrink-0 rounded-full px-10 py-4 text-lg font-bold text-white shadow-xl hover:opacity-90 transition-opacity inline-flex items-center"
+            style={{ background: BRAND_GREEN }}
           >
             Book Your Meal
           </Link>

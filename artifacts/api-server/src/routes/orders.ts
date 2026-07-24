@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 import { eq, desc, gte } from "drizzle-orm";
 import { db, ordersTable, menuItemsTable } from "@workspace/db";
-import { sendBookingNotification } from "../lib/email";
+import { sendBookingNotification, sendCustomerStatusEmail } from "../lib/email";
 import {
   ListOrdersQueryParams,
   CreateOrderBody,
@@ -17,7 +17,22 @@ import {
 
 const router: IRouter = Router();
 
-const RUSH_FEE = 20000; // ₦20,000 rush fee for < 24h bookings
+// ── TIERED RUSH FEE ────────────────────────────────────────────────────────
+// Each distinct meal costs: 1→₦20k, 2→₦15k each, 3→₦13k each, 4→₦12k each, 5→₦10k each
+const RUSH_FEE_RATES: Record<number, number> = {
+  1: 20000,
+  2: 15000,
+  3: 13000,
+  4: 12000,
+  5: 10000,
+};
+
+function calcRushFee(isRush: boolean, distinctMealCount: number): number {
+  if (!isRush) return 0;
+  const count = Math.min(Math.max(distinctMealCount, 1), 5);
+  const rate = RUSH_FEE_RATES[count] ?? 10000;
+  return rate * count;
+}
 
 function isRushOrder(deliveryDate: string | Date): boolean {
   const delivery = typeof deliveryDate === "string" ? new Date(deliveryDate) : deliveryDate;
@@ -26,6 +41,30 @@ function isRushOrder(deliveryDate: string | Date): boolean {
   const diffHours = diffMs / (1000 * 60 * 60);
   return diffHours < 24;
 }
+
+// ── CART ITEM TYPE ────────────────────────────────────────────────────────
+interface CartItemPayload {
+  id?: string;
+  menuItemId: number;
+  menuItemName: string;
+  category: string;
+  selectedSize: string;
+  selectedProtein?: string | null;
+  price: number;
+}
+
+function parseCartItems(raw: unknown): CartItemPayload[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  return raw.filter(
+    (item): item is CartItemPayload =>
+      typeof item === "object" &&
+      item !== null &&
+      typeof (item as CartItemPayload).menuItemId === "number" &&
+      typeof (item as CartItemPayload).price === "number"
+  );
+}
+
+// ── ROUTES ────────────────────────────────────────────────────────────────
 
 router.get("/orders", async (req, res): Promise<void> => {
   const params = ListOrdersQueryParams.safeParse(req.query);
@@ -57,7 +96,11 @@ router.post("/orders", async (req, res): Promise<void> => {
 
   const data = parsed.data;
 
-  // Look up the menu item
+  // Extended optional fields not in the generated schema
+  const cartItems = parseCartItems(req.body.cartItems);
+  const pepperLevel = typeof req.body.pepperLevel === "string" ? req.body.pepperLevel : undefined;
+
+  // Look up the primary menu item (first in cart / single item)
   const [item] = await db
     .select()
     .from(menuItemsTable)
@@ -73,28 +116,41 @@ router.post("/orders", async (req, res): Promise<void> => {
     return;
   }
 
-  // Find the price for the selected size
-  const sizes = item.sizes as Array<{ label: string; price: number }>;
-  const sizeOption = sizes.find((s) => s.label === data.selectedSize);
-  if (!sizeOption) {
-    res.status(400).json({ error: "Invalid size selected" });
-    return;
-  }
+  // ── Determine item price ──────────────────────────────────────────────
+  let itemPrice: number;
 
-  // Find the protein extra cost if selected
-  let proteinCost = 0;
-  if (data.selectedProtein) {
-    const proteins = item.proteins as Array<{ name: string; extraCost: number }>;
-    const proteinOption = proteins.find((p) => p.name === data.selectedProtein);
-    if (!proteinOption) {
-      res.status(400).json({ error: "Invalid protein selected" });
+  if (cartItems && cartItems.length > 0) {
+    // Cart order: trust client-computed prices (all items)
+    itemPrice = cartItems.reduce((sum, ci) => sum + ci.price, 0);
+  } else {
+    // Single-item order: compute from DB
+    const sizes = item.sizes as Array<{ label: string; price: number }>;
+    const sizeOption = sizes.find((s) => s.label === data.selectedSize);
+    if (!sizeOption) {
+      res.status(400).json({ error: "Invalid size selected" });
       return;
     }
-    proteinCost = proteinOption.extraCost;
+
+    let proteinCost = 0;
+    if (data.selectedProtein) {
+      const proteins = item.proteins as Array<{ name: string; extraCost: number }>;
+      const proteinOption = proteins.find((p) => p.name === data.selectedProtein);
+      if (!proteinOption) {
+        res.status(400).json({ error: "Invalid protein selected" });
+        return;
+      }
+      proteinCost = proteinOption.extraCost;
+    }
+
+    itemPrice = sizeOption.price + proteinCost;
   }
 
-  const itemPrice = sizeOption.price + proteinCost;
-  const rushFee = isRushOrder(data.deliveryDate) ? RUSH_FEE : 0;
+  // ── Compute tiered rush fee ───────────────────────────────────────────
+  const rush = isRushOrder(data.deliveryDate);
+  const distinctMealCount = cartItems && cartItems.length > 0
+    ? new Set(cartItems.map((ci) => ci.menuItemId)).size
+    : 1;
+  const rushFee = calcRushFee(rush, distinctMealCount);
   const total = itemPrice + rushFee;
 
   // Zod coerces deliveryDate to a Date object; Drizzle date column expects YYYY-MM-DD string
@@ -121,6 +177,8 @@ router.post("/orders", async (req, res): Promise<void> => {
       total,
       status: "pending",
       paystackRef: data.paystackRef ?? null,
+      pepperLevel: pepperLevel ?? null,
+      cartItems: cartItems ?? null,
       notes: data.notes ?? null,
     })
     .returning();
@@ -232,6 +290,21 @@ router.patch("/orders/:id/status", async (req, res): Promise<void> => {
   }
 
   res.json(UpdateOrderStatusResponse.parse(order));
+
+  // Fire-and-forget customer notification on key status changes
+  if (parsed.data.status === "confirmed" || parsed.data.status === "cooking") {
+    sendCustomerStatusEmail({
+      orderId: order.id,
+      customerName: order.customerName,
+      customerEmail: order.customerEmail,
+      menuItemName: order.menuItemName,
+      selectedSize: order.selectedSize,
+      deliveryDate: String(order.deliveryDate).slice(0, 10),
+      deliverySlot: order.deliverySlot,
+      total: order.total,
+      status: parsed.data.status as "confirmed" | "cooking",
+    }).catch(() => {});
+  }
 });
 
 export default router;

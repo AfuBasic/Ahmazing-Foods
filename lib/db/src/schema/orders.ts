@@ -1,6 +1,6 @@
-import { pgTable, serial, text, integer, timestamp, date } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, integer, timestamp, date, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
-import { z } from "zod/v4";
+import { z } from "zod";
 import { menuItemsTable } from "./menu-items";
 
 export const ordersTable = pgTable("orders", {
@@ -23,6 +23,8 @@ export const ordersTable = pgTable("orders", {
   total: integer("total").notNull(),
   status: text("status").notNull().default("pending"), // pending | confirmed | cooking | delivered | cancelled
   paystackRef: text("paystack_ref"),
+  pepperLevel: text("pepper_level"),
+  cartItems: jsonb("cart_items"),
   notes: text("notes"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

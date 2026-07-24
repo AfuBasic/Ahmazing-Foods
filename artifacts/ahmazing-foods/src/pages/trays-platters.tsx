@@ -33,12 +33,6 @@ const groups: TrayGroup[] = [
         price: "₦154,000",
       },
       {
-        name: "Rice & Grill Platter",
-        size: "Jollof, grilled chicken, plantain · Serves 10–12",
-        contains: "Jollof rice, fried rice, grilled chicken, turkey wings, spring rolls, coleslaw, fried plantain",
-        price: "₦220,000",
-      },
-      {
         name: "Party Starter Platter",
         size: "Mixed rice, proteins & sides · Serves 12–15",
         contains: "Mixed jollof & fried rice, assorted proteins (chicken, beef, fish), grilled corn, coleslaw, small chops, plantain",

@@ -11,6 +11,12 @@ import ProductsPage from './pages/products';
 import CateringPage from './pages/catering';
 import BookPage from './pages/book';
 import BookingConfirmedPage from './pages/booking-confirmed';
+import WeekendSpecialsPage from './pages/weekend-specials';
+import MindfulMealsPage from './pages/mindful-meals';
+import BlogIndexPage from './pages/blog/index';
+import DiabetesFriendlyPage from './pages/blog/diabetes-friendly';
+import SoupLessOilPage from './pages/blog/soup-less-oil';
+import HeartHealthyPage from './pages/blog/heart-healthy';
 import TraysAndPlattersPage from './pages/trays-platters';
 import AdminDashboard from './pages/admin/dashboard';
 import AdminOrdersList from './pages/admin/orders';
@@ -32,17 +38,23 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/soups" component={MenuPage} />
         <Route path="/stews" component={MenuPage} />
-        <Route path="/breakfast" component={MenuPage} />
+        <Route path="/weekend-specials" component={WeekendSpecialsPage} />
+        <Route path="/breakfast" component={() => { window.location.replace('/weekend-specials'); return null; }} />
         <Route path="/products" component={ProductsPage} />
+        <Route path="/mindful-meals" component={MindfulMealsPage} />
+        <Route path="/blog" component={BlogIndexPage} />
+        <Route path="/blog/diabetes-friendly-nigerian-foods" component={DiabetesFriendlyPage} />
+        <Route path="/blog/nigerian-soups-less-oil" component={SoupLessOilPage} />
+        <Route path="/blog/heart-healthy-nigerian-kitchen" component={HeartHealthyPage} />
         <Route path="/trays-platters" component={TraysAndPlattersPage} />
         <Route path="/catering" component={CateringPage} />
         <Route path="/book" component={BookPage} />
         <Route path="/booking-confirmed/:id" component={BookingConfirmedPage} />
-        
+
         <Route path="/admin" component={AdminDashboard} />
         <Route path="/admin/orders" component={AdminOrdersList} />
         <Route path="/admin/orders/:id" component={AdminOrderDetail} />
-        
+
         <Route component={NotFound} />
       </Switch>
     </Layout>
