@@ -38,8 +38,8 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/soups" component={MenuPage} />
         <Route path="/stews" component={MenuPage} />
+        <Route path="/breakfast" component={MenuPage} />
         <Route path="/weekend-specials" component={WeekendSpecialsPage} />
-        <Route path="/breakfast" component={() => { window.location.replace('/weekend-specials'); return null; }} />
         <Route path="/products" component={ProductsPage} />
         <Route path="/mindful-meals" component={MindfulMealsPage} />
         <Route path="/blog" component={BlogIndexPage} />

@@ -10,6 +10,7 @@ const LOGO_SRC = `${import.meta.env.BASE_URL}assets/logo.png`;
 
 // Meal sub-pages listed alphabetically
 const MEAL_LINKS = [
+  { href: "/breakfast",        label: "Breakfast",        desc: "Weekend combo plates, cooked fresh to order" },
   { href: "/soups",            label: "Soups",            desc: "Nigerian soups by the litre or cooler" },
   { href: "/stews",            label: "Stews",            desc: "Classic stews for families and events" },
   { href: "/weekend-specials", label: "Weekend Specials", desc: "Rotating delicacies · vote for next week's" },
@@ -274,6 +275,7 @@ function SiteFooter() {
           <div>
             <h4 className="font-display font-bold text-lg mb-6">Menu</h4>
             <ul className="space-y-3 text-sm text-background/80">
+              <li><Link href="/breakfast"         className="hover:text-primary transition-colors">Breakfast</Link></li>
               <li><Link href="/soups"            className="hover:text-primary transition-colors">Rich Soups</Link></li>
               <li><Link href="/stews"            className="hover:text-primary transition-colors">Hearty Stews</Link></li>
               <li><Link href="/weekend-specials" className="hover:text-primary transition-colors">Weekend Specials</Link></li>

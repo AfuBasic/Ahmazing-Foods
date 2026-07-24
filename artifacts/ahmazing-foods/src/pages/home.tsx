@@ -21,12 +21,12 @@ export default function Home() {
               Made to order · Lagos
             </span>
             <h1 className="text-5xl lg:text-6xl font-bold font-display text-foreground leading-[1.1]">
-              Real soup, cooked in a{" "}
+              Real food cooked in a{" "}
               <em className="not-italic text-primary">real kitchen</em>,
               ready when you need it.
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              No storefront, no shortcuts — every pot is started only once it's booked.
+              No storefront, no shortcuts. Every pot is started only once it's booked.
               Choose your soup, stew or weekend special, pick your delivery slot, and we get cooking.
             </p>
             <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start pt-2">
