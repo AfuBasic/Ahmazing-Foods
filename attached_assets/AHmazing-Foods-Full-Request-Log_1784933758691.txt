@@ -1,0 +1,123 @@
+AHMAZING FOODS — FULL REQUEST LOG & CROSS-REFERENCE AUDIT
+============================================================
+Everything asked for on this project, in one list. Paste this into
+Replit as-is. The final section instructs it to check its own work
+against every line below and report back — don't skip that part.
+
+BRANDING & IDENTITY
+--------------------
+[ ] Real AHmazing Foods logo used site-wide (not a text substitute),
+    background removed, highest resolution available
+[ ] Brand colors pulled from the logo and enforced everywhere: red
+    #C81212, green #0F9E0F — not a substitute palette
+[ ] Red contact bar (phone/email/"Lagos State.") above the header on
+    every page
+[ ] Mobile hamburger menu opens a solid, opaque dropdown (not
+    transparent) with all nav links + "Book a Meal"
+[ ] All dropdown/select inputs render with a solid white background
+    and are reliably tappable on mobile
+
+SITE STRUCTURE
+---------------
+[ ] Home, Soups, Stews, Breakfast, Products, Mindful Meals, Blog,
+    Catering, Book a Meal — all live and linked in nav + footer
+[ ] Trays & Platters page built but currently HIDDEN (no nav/footer/
+    homepage link) until real photography is ready — file still
+    exists, not deleted
+[ ] Homepage features a full-width differentiator banner promoting
+    Mindful Meals as a unique-positioning callout, not just a nav item
+
+BOOKING SYSTEM (Book a Meal)
+------------------------------
+[ ] Cart-based booking — add multiple different meals to one order,
+    not just a single item
+[ ] Rush fee applies only when delivery is requested within 24 hours
+[ ] Rush fee is tiered PER DISTINCT MEAL (not quantity/litres):
+    1 meal=₦20,000, 2=₦15,000 each, 3=₦13,000 each, 4=₦12,000 each,
+    5=₦10,000 each
+[ ] "Meal" = distinct dish ordered — multiple sizes/quantities of
+    the SAME dish still count as one meal
+[ ] Order capped at 5 distinct meals; going over is blocked with a
+    message pointing to Catering or Trays & Platters
+[ ] Required pepper-level slider (Low / Medium / Really Peppery),
+    styled with chili icons, checkout blocked with a visible warning
+    until the customer has actually moved it (default value doesn't
+    count)
+[ ] Paystack + Google Calendar integration points clearly marked as
+    placeholders needing a real backend
+
+MENU — FINAL, PER THE APPROVED EXCEL
+---------------------------------------
+[ ] Soups: 8 kept (Onugbu, Oha, Okro, Edikang Ikong, Egusi, Banga,
+    Efo-Riro, Seafood Okro) — Seafood Okro is 5L/Cooler sizes only,
+    2L/3L removed
+[ ] Extra Protein: 10 kept (Beef, Chicken, Turkey, Croaker, Tilapia,
+    Catfish, Snail, Mixed Seafood, Gizzard, Sausages)
+[ ] Stews: 6 items, Medium/Large only (Small discontinued),
+    Coconut Curry Stew replaced with Peppered Turkey Stew
+[ ] Breakfast: sold as 4 combo plates, not small individual items —
+    minimum ₦22,000 each:
+      - The Classic Nigerian — Akara (10pcs), pap (1L), 2 boiled
+        eggs — ₦22,000
+      - The Hearty Plate — yam (5 slices), plantain (5 slices), egg
+        stew (1L), sausages, choice of Orange or Carrot Juice — ₦22,000
+      - The Sweet Start — oats (1L), fresh fruit bowl, choice of
+        Orange or Carrot Juice — ₦25,000
+      - The Protein Power — moin-moin (2pcs), akara (10pcs), pap
+        (1L), 2 boiled eggs — ₦25,000
+[ ] Products — Pantry & Sauces (5), Snacks (6), Drinks & Wellness
+    (10, including corrected "Orange Juice"/"Carrot Juice" naming)
+[ ] Mindful Meals — 3 breakfast + 3 lunch + 3 dinner + 6 snacks + a
+    6-day sample rotation, visible disclaimer above the menu (not a
+    medical plan)
+[ ] Mindful Picks (3 items each) surfaced directly on Soups, Stews,
+    and Breakfast pages, linking back to Mindful Meals
+
+TRAYS & PLATTERS (built, currently hidden — see above)
+---------------------------------------------------------
+[ ] Platters: 2 options (trimmed down from 3)
+[ ] Trays: 4 tiers restored from the real original site pricing,
+    marked up 15% — Classic ₦34,500, Deluxe ₦51,750, Grand ₦103,500,
+    Ultimate ₦132,250, each with accurate contents listed
+[ ] Singles: 4 items
+[ ] Each card shows a "Contains:" line; each subsection has a
+    short suggestion for what pairs well with it
+
+CONTENT & MARKETING
+---------------------
+[ ] Blog section live: 3 real articles (diabetes-friendly Nigerian
+    foods, cooking soup with less oil, what "heart-healthy" means),
+    each cross-linking back to Mindful Meals/Soups/Stews
+[ ] Every page: unique title tag, meta description, canonical URL,
+    Open Graph tags, exactly one properly-tagged h1
+[ ] sitemap.xml and robots.txt in place
+[ ] JSON-LD Restaurant/LocalBusiness schema on the homepage
+[ ] Understood and communicated: none of the above guarantees a #1
+    Google ranking — it's real, correct on-page SEO, but ranking
+    also depends on backlinks, domain age, and time
+
+DOCUMENTS PRODUCED ALONGSIDE THE SITE
+----------------------------------------
+[ ] AHmazing-Foods-Product-List.xlsx — full menu across every
+    segment, kept in sync with the live site
+[ ] AHmazing-Foods-Beverage-Catalog.pdf — premium product catalog
+    using real bottle photography
+[ ] AHmazing-Foods-Label-Print-Specifications.pdf — technical spec
+    for a label printer/designer (separate from the marketing catalog)
+[ ] AHmazing-Foods-NAFDAC-Registration-Checklist.pdf — organized
+    regulatory prep checklist
+
+============================================================
+CROSS-REFERENCE INSTRUCTION — DO THIS LAST
+============================================================
+Go through every checkbox above, one at a time, against the actual
+live build. For each item, confirm explicitly whether it is present
+and working, not just planned. Where something is missing, partially
+done, or was implemented differently than described, list it clearly
+— do not mark anything as done unless it can actually be demonstrated
+on the live site. Report back a plain list of:
+  1. Confirmed complete
+  2. Missing or incomplete (with what's missing)
+  3. Implemented differently than specified (with the difference)
+Do not summarize this as "everything is done" without going through
+each line individually first.
