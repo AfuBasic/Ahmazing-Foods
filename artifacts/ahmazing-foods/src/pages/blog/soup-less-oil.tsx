@@ -121,9 +121,9 @@ export default function SoupLessOilPage() {
 
         {/* Cross-links */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link href="/mindful-meals" className="rounded-2xl border border-border bg-card p-5 hover:shadow-md transition-shadow block">
+          <Link href="/healthy-meals" className="rounded-2xl border border-border bg-card p-5 hover:shadow-md transition-shadow block">
             <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Also see</p>
-            <p className="font-bold">Mindful Meals</p>
+            <p className="font-bold">Healthy Meals</p>
             <p className="text-sm text-muted-foreground mt-1">Soup picks chosen for their lighter profile</p>
           </Link>
           <Link href="/soups" className="rounded-2xl border border-border bg-card p-5 hover:shadow-md transition-shadow block">

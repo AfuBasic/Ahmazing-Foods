@@ -15,7 +15,7 @@ const bannerImages: Record<string, string> = {
   breakfast: "food-akara-pap.jpg",
 };
 
-const mindfulPicks: Record<string, Array<{ name: string; why: string }>> = {
+const healthyPicks: Record<string, Array<{ name: string; why: string }>> = {
   soups: [
     { name: "Edikang Ikong (Vegetable Soup)", why: "One of Nigeria's most vegetable-dense soups — loaded with ugu and waterleaf. Choose fish protein for the lightest version." },
     { name: "Onugbu Soup (Bitterleaf)",        why: "Bitterleaf has long been associated with detoxifying properties. Pair with a smaller portion of swallow for a well-balanced meal." },
@@ -58,7 +58,7 @@ export default function MenuPage() {
   };
 
   const bannerImg = bannerImages[category];
-  const picks = mindfulPicks[category] ?? [];
+  const picks = healthyPicks[category] ?? [];
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -167,14 +167,14 @@ export default function MenuPage() {
           </div>
         )}
 
-        {/* ── MINDFUL PICKS SECTION ───────────────────────────────────── */}
+        {/* ── HEALTHY PICKS SECTION ───────────────────────────────────── */}
         {picks.length > 0 && (
           <section className="mt-20 pt-16 border-t border-border">
             <div className="flex items-start justify-between gap-6 mb-10 flex-wrap">
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <Leaf className="w-5 h-5" style={{ color: BRAND_GREEN }} />
-                  <span className="text-xs font-bold uppercase tracking-wider" style={{ color: BRAND_GREEN }}>Mindful Picks</span>
+                  <span className="text-xs font-bold uppercase tracking-wider" style={{ color: BRAND_GREEN }}>Healthy Picks</span>
                 </div>
                 <h2 className="text-3xl font-bold font-display mb-2">The healthier choices on this menu</h2>
                 <p className="text-muted-foreground max-w-xl">
@@ -182,11 +182,11 @@ export default function MenuPage() {
                 </p>
               </div>
               <Link
-                href="/mindful-meals"
+                href="/healthy-meals"
                 className="shrink-0 rounded-full px-6 py-2.5 font-bold text-white text-sm hover:opacity-90 transition-opacity"
                 style={{ background: BRAND_GREEN }}
               >
-                Full Mindful Meals Guide →
+                Full Healthy Meals Guide →
               </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">

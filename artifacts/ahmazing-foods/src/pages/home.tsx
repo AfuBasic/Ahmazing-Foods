@@ -119,11 +119,11 @@ export default function Home() {
               No supplements, no meal replacements, no removing everything you love.
             </p>
             <Link
-              href="/mindful-meals"
+              href="/healthy-meals"
               className="inline-flex items-center gap-2 rounded-full px-8 py-3 font-bold text-foreground shadow-lg hover:opacity-90 transition-opacity"
               style={{ background: "#FCF1EF" }}
             >
-              See Mindful Meals <ArrowRight className="w-4 h-4" />
+              See Healthy Meals <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
           <div className="flex-1 flex items-center justify-center">
@@ -188,8 +188,8 @@ export default function Home() {
               },
               {
                 num: "05",
-                title: "Mindful Meals",
-                href: "/mindful-meals",
+                title: "Healthy Meals",
+                href: "/healthy-meals",
                 img: "food-akara-pap.jpg",
                 desc: "Specific picks from our menu chosen to support healthy eating without giving up Nigerian food.",
               },

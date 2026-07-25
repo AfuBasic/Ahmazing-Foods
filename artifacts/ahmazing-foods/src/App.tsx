@@ -12,7 +12,7 @@ import CateringPage from './pages/catering';
 import BookPage from './pages/book';
 import BookingConfirmedPage from './pages/booking-confirmed';
 import WeekendSpecialsPage from './pages/weekend-specials';
-import MindfulMealsPage from './pages/mindful-meals';
+import HealthyMealsPage from './pages/healthy-meals';
 import BlogIndexPage from './pages/blog/index';
 import DiabetesFriendlyPage from './pages/blog/diabetes-friendly';
 import SoupLessOilPage from './pages/blog/soup-less-oil';
@@ -41,7 +41,7 @@ function Router() {
         <Route path="/breakfast" component={MenuPage} />
         <Route path="/weekend-specials" component={WeekendSpecialsPage} />
         <Route path="/products" component={ProductsPage} />
-        <Route path="/mindful-meals" component={MindfulMealsPage} />
+        <Route path="/healthy-meals" component={HealthyMealsPage} />
         <Route path="/blog" component={BlogIndexPage} />
         <Route path="/blog/diabetes-friendly-nigerian-foods" component={DiabetesFriendlyPage} />
         <Route path="/blog/nigerian-soups-less-oil" component={SoupLessOilPage} />

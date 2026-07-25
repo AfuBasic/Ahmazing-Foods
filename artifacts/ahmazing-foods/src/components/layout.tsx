@@ -21,7 +21,7 @@ const MEAL_PATHS = MEAL_LINKS.map((l) => l.href);
 // Top-level nav links (beside Our Meals)
 const TOP_LINKS = [
   { href: "/products",      label: "Products" },
-  { href: "/mindful-meals", label: "Mindful Meals" },
+  { href: "/healthy-meals", label: "Healthy Meals" },
   { href: "/blog",          label: "Blog" },
   { href: "/catering",      label: "Catering" },
 ];
@@ -280,7 +280,7 @@ function SiteFooter() {
               <li><Link href="/stews"            className="hover:text-primary transition-colors">Hearty Stews</Link></li>
               <li><Link href="/weekend-specials" className="hover:text-primary transition-colors">Weekend Specials</Link></li>
               <li><Link href="/products"         className="hover:text-primary transition-colors">Products</Link></li>
-              <li><Link href="/mindful-meals"    className="hover:text-primary transition-colors">Mindful Meals</Link></li>
+              <li><Link href="/healthy-meals"    className="hover:text-primary transition-colors">Healthy Meals</Link></li>
               <li><Link href="/blog"             className="hover:text-primary transition-colors">Blog</Link></li>
               <li><Link href="/catering"         className="hover:text-primary transition-colors">Catering</Link></li>
             </ul>
