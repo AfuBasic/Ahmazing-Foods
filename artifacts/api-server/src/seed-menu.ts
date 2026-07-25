@@ -133,7 +133,7 @@ const items = [
     category: "stews",
     name: "Peppered Turkey Stew",
     description: "Juicy turkey pieces slow-cooked in a bold, well-spiced pepper stew.",
-    sizes: stewSizes(16000, 27000), proteins: [], imageUrl: STEW_IMG,
+    sizes: stewSizes(18000, 26500), proteins: [], imageUrl: STEW_IMG,
   },
   {
     category: "stews",
@@ -177,13 +177,13 @@ const items = [
     category: "drinks",
     name: "Zobo Drink",
     description: "Chilled hibiscus drink made fresh in-house, lightly sweetened.",
-    sizes: [{ label: "500ml bottle", price: 1500 }], proteins: [], imageUrl: DRINK_IMG,
+    sizes: [{ label: "500ml bottle", price: 2000 }], proteins: [], imageUrl: DRINK_IMG,
   },
   {
     category: "drinks",
     name: "Yogurt Drink",
     description: "Creamy probiotic yogurt drink, natural and unsweetened.",
-    sizes: [{ label: "500ml bottle", price: 1800 }], proteins: [], imageUrl: DRINK_IMG,
+    sizes: [{ label: "500ml bottle", price: 2800 }], proteins: [], imageUrl: DRINK_IMG,
   },
   {
     category: "drinks",
@@ -201,13 +201,13 @@ const items = [
     category: "drinks",
     name: "Pineapple Ginger Drink",
     description: "Freshly pressed pineapple with ginger — sweet, zingy, and deeply refreshing.",
-    sizes: [{ label: "500ml bottle", price: 1800 }], proteins: [], imageUrl: DRINK_IMG,
+    sizes: [{ label: "500ml bottle", price: 2500 }], proteins: [], imageUrl: DRINK_IMG,
   },
   {
     category: "drinks",
     name: "Tiger Nut Milk",
     description: "Dairy-free tiger nut milk — creamy, nutty and naturally sweet.",
-    sizes: [{ label: "500ml bottle", price: 2200 }], proteins: [], imageUrl: DRINK_IMG,
+    sizes: [{ label: "500ml bottle", price: 2500 }], proteins: [], imageUrl: DRINK_IMG,
   },
   {
     category: "drinks",
@@ -219,19 +219,19 @@ const items = [
     category: "drinks",
     name: "Lemon Honey Cleanser",
     description: "Warming lemon and raw honey blend — soothing and immunity-building.",
-    sizes: [{ label: "500ml bottle", price: 1800 }], proteins: [], imageUrl: DRINK_IMG,
+    sizes: [{ label: "500ml bottle", price: 3000 }], proteins: [], imageUrl: DRINK_IMG,
   },
   {
     category: "drinks",
-    name: "Carrot Boost",
+    name: "Carrot Juice",
     description: "Fresh carrot juice with ginger and orange — vibrant and vitamin-packed.",
-    sizes: [{ label: "500ml bottle", price: 1800 }], proteins: [], imageUrl: DRINK_IMG,
+    sizes: [{ label: "500ml bottle", price: 3000 }], proteins: [], imageUrl: DRINK_IMG,
   },
   {
     category: "drinks",
-    name: "Orange Drink",
+    name: "Orange Juice",
     description: "Freshly squeezed orange juice, no additives, no preservatives.",
-    sizes: [{ label: "500ml bottle", price: 1800 }], proteins: [], imageUrl: DRINK_IMG,
+    sizes: [{ label: "500ml bottle", price: 3000 }], proteins: [], imageUrl: DRINK_IMG,
   },
 
   // ════════════════════════════════════════════════════════════════════════════
@@ -271,13 +271,13 @@ const items = [
     category: "snacks",
     name: "Corn Sticks",
     description: "Light and airy corn puffs, mildly seasoned — great for all ages.",
-    sizes: [{ label: "200g pack", price: 1500 }], proteins: [], imageUrl: SNACK_IMG,
+    sizes: [{ label: "200g pack", price: 4000 }], proteins: [], imageUrl: SNACK_IMG,
   },
   {
     category: "snacks",
     name: "Chin Chin",
     description: "Classic Nigerian fried dough pastry — lightly sweetened and utterly moreish.",
-    sizes: [{ label: "200g pack", price: 1500 }], proteins: [], imageUrl: SNACK_IMG,
+    sizes: [{ label: "200g pack", price: 2800 }], proteins: [], imageUrl: SNACK_IMG,
   },
   {
     category: "snacks",

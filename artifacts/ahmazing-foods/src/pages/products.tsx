@@ -17,46 +17,56 @@ interface Product {
 
 const groups: { heading: string; sub: string; products: Product[] }[] = [
   {
-    heading: "Drinks & Wellness",
-    sub: "Brewed fresh in small batches. All 500ml.",
+    heading: "Pantry & Sauces",
+    sub: "Bold, ready-to-use bases for your own cooking.",
     products: [
-      { name: "Zobo Drink",              size: "Hibiscus infusion · 500ml",            price: "₦1,500",  img: "zobo.jpg" },
-      { name: "Yogurt Drink",            size: "Probiotic · 500ml",                    price: "₦1,800",  img: "yoghurt.jpg" },
-      { name: "Ginger Immune Booster",   size: "Ginger · Lemon · Honey · 500ml",      price: "₦2,000",  img: "ginger_immune_booster.jpg" },
-      { name: "Turmeric Immune Booster", size: "Turmeric · Ginger · 500ml",           price: "₦2,000",  img: "Turmeric.jpg" },
-      { name: "Pineapple Ginger Drink",  size: "500ml",                               price: "₦1,800",  img: "pineapple_ginger_lemon.jpg" },
-      { name: "Tiger Nut Milk",          size: "500ml",                 price: "₦2,200",  img: "tigernut.jpg" },
-      { name: "Kale Cleanser",           size: "Kale · Cucumber · Apple · 500ml",     price: "₦2,200",  img: "kale.jpg" },
-      { name: "Lemon Honey Cleanser",    size: "Lemon · Honey · Cayenne · 500ml",     price: "₦1,800",  img: "lemon__honey.jpg" },
-      { name: "Carrot Boost",            size: "100% carrot juice · 500ml",           price: "₦1,800",  img: "carrot.jpg" },
-      { name: "Orange Drink",            size: "100% natural · 500ml",               price: "₦1,800",  img: "orange.jpg" },
+      { name: "Smoky Jollof Base",           size: "Glass jar · 250g",         price: "₦4,500", img: "smoky-jollof-base.jpg" },
+      { name: "Hibiscus Ginger Concentrate", size: "Glass bottle · 250ml",     price: "₦3,000", img: "hibiscus-ginger-concentrate.jpg" },
+      { name: "Premium Pepper Mix",          size: "Stand-up pouch · 150g",    price: "₦3,500", img: "premium-pepper-mix.jpg" },
+      { name: "Suya Marinade",               size: "Spout pouch · 200g",       price: "₦3,000", img: "suya-marinade.jpg" },
+      { name: "Coconut Curry Base",          size: "Resealable pouch · 200g",  price: "₦4,000", img: "coconut-curry-base.jpg" },
     ],
   },
   {
     heading: "Snacks",
-    sub: "Real snacks, no preservatives.",
+    sub: "High-protein, no-preservative snacking.",
     products: [
-      { name: "Roasted Peanuts",               size: "Lightly salted · 200g",     price: "₦1,800",  img: "roasted_peanut.jpg" },
-      { name: "Coated Peanuts",                size: "Spicy BBQ · 200g",          price: "₦2,000",  img: "peanut_spicy.jpg" },
-      { name: "Yogurt Mix — Seed & Nut Blend", size: "200g",                      price: "₦2,800",  img: "parfait__toppings.jpg" },
-      { name: "Kwili Kwili",                   size: "Spicy & crunchy · 200g",    price: "₦2,000",  img: "kwilikwili.jpg" },
-      { name: "Cashew Nuts",                   size: "Roasted & delicious · 200g",price: "₦2,800",  img: "cashew_nuts.jpg" },
-      { name: "Corn Sticks",                   size: "Crispy & delicious · 200g", price: "₦1,500",  img: "corn_sticks.jpg" },
-      { name: "Chin Chin",                     size: "Crunchy & delicious · 200g",price: "₦1,500",  img: "chinchin.jpg" },
-      { name: "Plantain Chips — Ripe & Spicy", size: "150g",                      price: "₦1,800",  img: "plantain_ripe.jpg" },
-      { name: "Plantain Chips — Toasted & Crunchy", size: "150g",                price: "₦1,800",  img: "plantain__chips.jpg" },
+      { name: "Roasted Peanuts",               size: "Lightly salted · 200g",     price: "₦1,800", img: "roasted_peanut.jpg" },
+      { name: "Plantain Chips",                size: "Toasted & crunchy · 150g",  price: "₦2,200", img: "plantain__chips.jpg" },
+      { name: "Coated Peanuts",                size: "Spicy BBQ · 200g",          price: "₦2,000", img: "peanut_spicy.jpg" },
+      { name: "Yogurt Mix — Seed & Nut Blend", size: "200g",                      price: "₦2,800", img: "parfait__toppings.jpg" },
+      { name: "Chin Chin",                     size: "200g",                      price: "₦2,800", img: "chinchin.jpg" },
+      { name: "Corn Sticks",                   size: "200g",                      price: "₦4,000", img: "corn_sticks.jpg" },
+      { name: "Kwili Kwili",                   size: "Spicy & crunchy · 200g",    price: "₦2,000", img: "kwilikwili.jpg" },
+      { name: "Cashew Nuts",                   size: "Roasted · 200g",            price: "₦2,800", img: "cashew_nuts.jpg" },
+    ],
+  },
+  {
+    heading: "Drinks & Wellness",
+    sub: "Cold-pressed and brewed in small batches. All 500ml.",
+    products: [
+      { name: "Zobo Drink",              size: "Hibiscus infusion · 500ml",        price: "₦2,000", img: "zobo.jpg" },
+      { name: "Yogurt Drink",            size: "Probiotic · 500ml",                price: "₦2,800", img: "yoghurt.jpg" },
+      { name: "Ginger Immune Booster",   size: "Ginger · Lemon · Honey · 500ml",  price: "₦2,000", img: "ginger_immune_booster.jpg" },
+      { name: "Turmeric Immune Booster", size: "Turmeric · Ginger · 500ml",       price: "₦2,000", img: "Turmeric.jpg" },
+      { name: "Pineapple Ginger Drink",  size: "500ml",                            price: "₦2,500", img: "pineapple_ginger_lemon.jpg" },
+      { name: "Tiger Nut Milk",          size: "Plant-based · 500ml",              price: "₦2,500", img: "tigernut.jpg" },
+      { name: "Kale Cleanser",           size: "Kale · Cucumber · Apple · 500ml", price: "₦2,200", img: "kale.jpg" },
+      { name: "Lemon Honey Cleanser",    size: "Lemon · Honey · Cayenne · 500ml", price: "₦3,000", img: "lemon__honey.jpg" },
+      { name: "Orange Juice",            size: "100% natural · 500ml",            price: "₦3,000", img: "orange.jpg" },
+      { name: "Carrot Juice",            size: "100% carrot juice · 500ml",       price: "₦3,000", img: "carrot.jpg" },
     ],
   },
   {
     heading: "Seeds & Spices",
     sub: "Freshly sourced, packed with flavour.",
     products: [
-      { name: "Cameroon Pepper",  size: "",  price: "",  img: "" },
-      { name: "Chili Pepper",     size: "",  price: "",  img: "" },
-      { name: "Suya Mix",         size: "",  price: "",  img: "" },
-      { name: "Cinnamon Powder",  size: "",  price: "",  img: "" },
-      { name: "Chia Seeds",       size: "",  price: "",  img: "" },
-      { name: "Melon Seeds",      size: "",  price: "",  img: "" },
+      { name: "Cameroon Pepper",  size: "50g pack",  price: "₦1,500", img: "premium-pepper-mix.jpg" },
+      { name: "Chili Pepper",     size: "50g pack",  price: "₦1,000", img: "premium-pepper-mix.jpg" },
+      { name: "Suya Mix",         size: "50g pack",  price: "₦1,500", img: "suya-marinade.jpg" },
+      { name: "Cinnamon Powder",  size: "30g pack",  price: "₦1,200", img: "Turmeric.jpg" },
+      { name: "Chia Seeds",       size: "100g pack", price: "₦2,500", img: "parfait__toppings.jpg" },
+      { name: "Melon Seeds (Egusi)", size: "100g pack", price: "₦2,000", img: "premium-pepper-mix.jpg" },
     ],
   },
 ];
@@ -75,8 +85,8 @@ export default function ProductsPage() {
             Take a piece of<br />AHmazing home
           </h1>
           <p className="text-xl text-background/75 max-w-2xl leading-relaxed">
-            Sauces, snacks and bottled drinks — made with real ingredients, no MSG, no preservatives.
-            Tap <strong className="text-background">Order</strong> on any item to send a WhatsApp message directly to our kitchen.
+            Sauces, snacks, bottled drinks and spices — made with real ingredients, no MSG, no preservatives.
+            Tap <strong className="text-background">Order</strong> on any item to send a WhatsApp message straight to our kitchen.
           </p>
         </div>
       </div>
@@ -98,14 +108,20 @@ export default function ProductsPage() {
                 >
                   {/* Image */}
                   <div className="aspect-square bg-muted overflow-hidden">
-                    <img
-                      src={asset(`products/${p.img}`)}
-                      alt={p.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).style.display = "none";
-                      }}
-                    />
+                    {p.img ? (
+                      <img
+                        src={asset(`products/${p.img}`)}
+                        alt={p.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).style.display = "none";
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground/40 text-xs text-center px-4">
+                        Photo coming soon
+                      </div>
+                    )}
                   </div>
 
                   {/* Body */}
