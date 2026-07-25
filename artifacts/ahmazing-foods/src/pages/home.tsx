@@ -174,17 +174,17 @@ export default function Home() {
               },
               {
                 num: "03",
-                title: "Weekend Specials",
-                href: "/weekend-specials",
-                img: "food-akara-pap.jpg",
-                desc: "Nkwobi, Isi Ewu, Abacha and more — plus the weekly vote for what we cook on Saturday.",
+                title: "Breakfast",
+                href: "/breakfast",
+                img: "food-breakfast.jpg",
+                desc: "Generous combo plates — akara, pap, yam, egg stew and more. One pack, one sitting.",
               },
               {
                 num: "04",
                 title: "Products",
                 href: "/products",
-                img: "food-egusi-hands.jpg",
-                desc: "Drinks, snacks and seeds to stock your pantry — no MSG, no preservatives.",
+                img: "food-ingredients.jpg",
+                desc: "Drinks, snacks and pantry staples — no MSG, no preservatives.",
               },
               {
                 num: "05",
@@ -197,7 +197,7 @@ export default function Home() {
                 num: "06",
                 title: "Catering",
                 href: "/catering",
-                img: "food-jollof-fish.jpg",
+                img: "food-catering.jpg",
                 desc: "Weddings, birthdays, corporate events — tell us your guest count and we'll build a menu.",
               },
             ].map(({ num, title, href, img, desc }) => (

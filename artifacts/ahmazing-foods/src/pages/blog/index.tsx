@@ -81,18 +81,18 @@ export default function BlogIndexPage() {
           ))}
         </div>
 
-        {/* Cross-link to Mindful Meals */}
+        {/* Cross-link to Healthy Meals */}
         <div className="mt-16 rounded-2xl bg-muted border border-border p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <h3 className="text-2xl font-bold font-display mb-2">Looking for meal suggestions?</h3>
-            <p className="text-muted-foreground">Our Mindful Meals page picks specific dishes from our menu that work harder for your health.</p>
+            <p className="text-muted-foreground">Our Healthy Meals page picks specific dishes from our menu that work harder for your health.</p>
           </div>
           <Link
-            href="/mindful-meals"
+            href="/healthy-meals"
             className="shrink-0 rounded-full px-8 py-3 font-bold text-white shadow-lg hover:opacity-90 transition-opacity"
             style={{ background: BRAND_GREEN }}
           >
-            See Mindful Meals
+            See Healthy Meals
           </Link>
         </div>
       </div>
