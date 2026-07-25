@@ -183,6 +183,21 @@ export const GetOrderParams = zod.object({
   "id": zod.coerce.number()
 })
 
+export const CartItemSchema = zod.object({
+  "id": zod.string().optional(),
+  "menuItemId": zod.number(),
+  "menuItemName": zod.string(),
+  "category": zod.string(),
+  "selectedSize": zod.string(),
+  "itemQty": zod.number().default(1),
+  "selectedProteins": zod.array(zod.object({
+    "name": zod.string(),
+    "qty": zod.number(),
+    "extraCost": zod.number()
+  })).default([]),
+  "price": zod.number()
+})
+
 export const GetOrderResponse = zod.object({
   "id": zod.number(),
   "menuItemId": zod.number(),
@@ -202,7 +217,8 @@ export const GetOrderResponse = zod.object({
   "status": zod.enum(['pending', 'confirmed', 'cooking', 'delivered', 'cancelled']),
   "paystackRef": zod.string().nullish(),
   "notes": zod.string().nullish(),
-  "createdAt": zod.coerce.date()
+  "createdAt": zod.coerce.date(),
+  "cartItems": zod.array(CartItemSchema).nullish()
 })
 
 

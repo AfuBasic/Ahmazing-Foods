@@ -6,6 +6,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle2, Copy, ChefHat, Calendar, Clock, AlertCircle, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+// Format protein description for a cart item
+function proteinDesc(proteins: { name: string; qty: number }[]): string {
+  if (!proteins || proteins.length === 0) return "";
+  return proteins.map((p) => (p.qty > 1 ? `${p.name} ×${p.qty}` : p.name)).join(", ");
+}
+
 export default function BookingConfirmedPage() {
   const { id } = useParams();
   const orderId = id ? parseInt(id) : 0;
@@ -94,13 +100,51 @@ export default function BookingConfirmedPage() {
             </div>
 
             <div className="space-y-6">
-              
-              <div>
-                <h3 className="text-xl font-bold font-display">{order.menuItemName}</h3>
-                <p className="text-muted-foreground">
-                  {order.selectedSize} 
-                  {order.selectedProtein ? ` • With ${order.selectedProtein}` : ''}
+
+              {/* Order items list */}
+              <div className="space-y-1">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                  {order.cartItems && order.cartItems.length > 1 ? `Your Order (${order.cartItems.length} items)` : "Your Order"}
                 </p>
+
+                {order.cartItems && order.cartItems.length > 0 ? (
+                  <div className="divide-y divide-border rounded-xl border border-border overflow-hidden">
+                    {order.cartItems.map((item, i) => {
+                      const prots = proteinDesc(item.selectedProteins ?? []);
+                      return (
+                        <div key={i} className="flex justify-between items-start gap-3 px-4 py-3 bg-muted/30">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-sm leading-snug">
+                              {item.menuItemName}
+                              {(item.itemQty ?? 1) > 1 && (
+                                <span className="ml-1 text-muted-foreground font-normal">×{item.itemQty}</span>
+                              )}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                              {item.selectedSize}
+                              {prots ? ` · ${prots}` : ""}
+                            </p>
+                          </div>
+                          <span className="text-sm font-semibold tabular-nums shrink-0">{formatNaira(item.price)}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  /* Fallback for legacy single-item orders */
+                  <div className="rounded-xl border border-border overflow-hidden">
+                    <div className="flex justify-between items-start gap-3 px-4 py-3 bg-muted/30">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm">{order.menuItemName}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {order.selectedSize}
+                          {order.selectedProtein ? ` · With ${order.selectedProtein}` : ""}
+                        </p>
+                      </div>
+                      <span className="text-sm font-semibold tabular-nums shrink-0">{formatNaira(order.itemPrice)}</span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4 py-6 border-y border-border">
