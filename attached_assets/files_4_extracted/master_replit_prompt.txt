@@ -1,0 +1,263 @@
+AHMAZING FOODS — FULL SITE BUILD SPEC
+======================================
+Build a simple, static multi-page website (plain HTML/CSS/JS, no
+framework needed) for AHmazing Foods, a home-cooked meal and catering
+business in Lagos, Nigeria. Everything below reflects the actual,
+already-approved site — this is a rebuild/reference spec, not a
+first draft.
+
+BRAND
+-----
+- Logo: use the supplied logo file (red "AH" + green "mazing foods"
+  wordmark), transparent background.
+- Colors: Red #C81212 (primary/accent), Green #0F9E0F (primary CTA
+  buttons), Charcoal #221F1F (text), white/cream backgrounds
+  (#FFFFFF and #FCF1EF), Gold #D9A441 (small accents only).
+- Fonts: a warm serif for headings (e.g. Lora), a clean sans for
+  body text (e.g. Poppins), a monospace for prices/data labels.
+- Top of every page: a full-width red contact bar — phone
+  +234 (810)-550-6052, email ahmazingcuisine@gmail.com, "Lagos
+  State." — above the main white header (logo left, nav center,
+  green "Book a Meal" button right). Mobile: hamburger menu opens
+  an opaque dropdown panel (not transparent), listing all nav links
+  plus "Book a Meal" in green.
+
+SITE STRUCTURE (9 pages)
+-------------------------
+Home | Soups | Stews | Breakfast | Products | Trays & Platters |
+Mindful Meals | Catering | Book a Meal
+
+Every page shares the same header, contact bar, and footer (nav
+links repeated + "AHmazing Foods · Lagos, Nigeria").
+
+1. HOME
+   - Hero: headline + CTA buttons ("Book Your Meal", "See What's
+     Available") + a real food photo + an "order ticket" style
+     summary card (soup name, price, total, "Booked ahead · No
+     rush fee" stamp).
+   - Photo gallery strip (3 real food images).
+   - Full-width dark banner: "What makes us different" → promotes
+     Mindful Meals as a health-conscious differentiator, links to
+     that page.
+   - 6 service cards in a grid: Soups, Stews, Breakfast, Products,
+     Trays & Platters, Catering — each with a thumbnail, one-line
+     description, and a link.
+
+2. SOUPS — 8 soups × 5 sizes (2L/3L/5L/Cooler-Small/Cooler-Medium),
+   except Seafood Okro which is 5L/Cooler-Small/Cooler-Medium only
+   (no 2L/3L). Plus a 10-item Extra Protein add-on list. (Full data:
+   AHmazing-Foods-Product-List.xlsx, "Soups" and "Extra Protein"
+   tabs.)
+
+3. STEWS — 6 stews × 2 sizes (Medium/Large only — Small size has
+   been discontinued). (See "Stews" tab.)
+
+4. BREAKFAST — 8 items, single price each. (See "Breakfast" tab.)
+
+5. PRODUCTS — 3 segments: Pantry & Sauces (5 items), Snacks (6
+   items), Drinks & Wellness (10 items). Each item: photo, name,
+   size, price, WhatsApp "Order" button pre-filled with the item
+   name. (Full data: see "Products" tab — 21 items total. Note:
+   "Orange Juice" and "Carrot Juice" variant descriptions were
+   corrected from a copy-paste error in the source data — see the
+   Overview tab.)
+
+6. TRAYS & PLATTERS — 3 subsections, max 4 items each:
+
+   PLATTERS (serves 8–15, kept to 2 options so it's not overwhelming):
+   - Breakfast Platter — ₦154,000
+   - Party Starter Platter — ₦247,500
+
+   TRAYS (restored from original site pricing, +15% markup):
+   - Classic Tray — ₦34,500 — fruit salad, coleslaw, peppered fried
+     fish (2pcs), jollof rice, chocolates, fruit juice, water (1)
+   - Deluxe Tray — ₦51,750 — fruit salad, coleslaw, jollof rice,
+     small chops, 2 peppered chicken thighs, Pringles & chocolates,
+     biscuits, fruit juice, water (1)
+   - Grand Tray — ₦103,500 — coleslaw, fruit salad, 10" cake, jollof
+     rice, fried rice, fried plantain, half peppered chicken, red
+     wine, water (2)
+   - Ultimate Tray — ₦132,250 — coleslaw, fruit salad, 10" cake,
+     jollof rice, fried rice, spaghetti, small chops, chocolate/
+     chips/biscuits, half peppered chicken, pancakes, fruit juice,
+     red wine, water (2)
+
+   SINGLES: Jollof Lunch Pack ₦9,350–9,900, Pasta Bowl ₦11,000,
+   Mini Pancakes ₦4,950, Small Chops Box ₦6,000.
+
+   Each card shows a "Contains:" line listing components. Each
+   subsection ends with a short "to round it out" suggestion for
+   what pairs well. All cards use a clean dashed-pattern "Photo
+   coming soon" placeholder until real photography is supplied —
+   do not substitute stock or competitor images.
+
+7. MINDFUL MEALS — no longer just a browse-and-order menu. It's a
+   SUBSCRIPTION meal-plan service: a full day (breakfast + lunch +
+   dinner + 1 snack, rotated from the 15-item menu) delivered on a
+   schedule. MUST include a visible disclaimer above the plans: not
+   a medical treatment plan, doesn't replace a doctor/dietitian,
+   consult a healthcare provider before starting.
+
+   SUBSCRIPTION PLANS (price is per day, discount grows with length):
+     - Single Day (no subscription) — ₦21,000/day
+     - Weekly (7 days) — ₦19,000/day — ₦133,000 total — ~9% saved
+     - Two-Week (14 days) — ₦17,500/day — ₦245,000 total — ~17%
+       saved — marked "Most Popular"
+     - Monthly (28 days) — ₦16,000/day — ₦448,000 total — ~24% saved
+   No separate "daily" tier exists on purpose — ordering one day
+   with no commitment is just the Single Day price above; a
+   subscription's value is the discount for planning ahead, so the
+   shortest real subscription is Weekly. State this reasoning
+   directly on the page (there's an "advice box" for it).
+
+   DELIVERY LOGISTICS — a full week of pre-cooked food in one fridge
+   for 7 days is too long for freshness, so every plan (Weekly,
+   Two-Week, Monthly) delivers in TWO drops per week: Days 1–3 at
+   the start, Days 4–7 mid-week. Meals arrive in fridge-safe,
+   labelled containers (meal + day); customer refrigerates on
+   arrival and reheats before eating. Two-Week and Monthly repeat
+   this same two-drop pattern each week.
+
+   The 15-item menu (3 breakfast + 3 lunch + 3 dinner + 6 snacks)
+   remains individually orderable a la carte for anyone who doesn't
+   want a subscription — full data in AHmazing-Foods-Product-
+   List.xlsx, "Mindful Meals" tab (now includes the subscription
+   pricing table too). Snacks overlap with existing Products
+   (Roasted Peanuts, Zobo, Tiger Nut Milk, Peanut Butter),
+   repositioned as unsweetened/unsalted. Keep the 6-day sample
+   rotation table showing how the menu avoids repeating.
+
+8. CATERING — event quote request form: name, phone, email, event
+   type (wedding/birthday/corporate/wake/house party/other), guest
+   count, date, time, service type (delivery/pickup/full setup with
+   staff), venue address, menu request (free text), budget range,
+   notes. No fixed price — submitting builds a formatted WhatsApp
+   message with every field and opens it.
+
+9. BOOK A MEAL — now a CART, not a single-item form:
+   - Customer configures a dish (category → dish → size → qty →
+     protein) and clicks "Add to Order" to add it as a cart line.
+     They can add more dishes before checking out. Each cart line
+     is removable.
+   - "Meals" for pricing purposes = number of DISTINCT DISHES in
+     the cart, not total quantity/litres. Ordering 2L + 5L of the
+     same soup is still one meal. Ordering Egusi (any amount) AND
+     a different soup is two meals — they're two separate pots
+     cooking at once, so they're priced separately.
+   - Order cap: maximum 5 distinct meals per booking. Trying to add
+     a 6th distinct dish is blocked with a message pointing to
+     Catering or Trays & Platters for bigger orders. Adding more of
+     an already-added dish is never blocked by this cap.
+   - RUSH FEE: if the requested delivery date/time is within 24
+     hours of booking, a rush fee applies — charged PER DISTINCT
+     MEAL, at a rate that drops as more distinct meals are in the
+     same order:
+       1 meal  → ₦20,000/meal
+       2 meals → ₦15,000/meal
+       3 meals → ₦13,000/meal
+       4 meals → ₦12,000/meal
+       5 meals → ₦10,000/meal
+     Total rush fee = per-meal rate × number of distinct meals.
+     Outside the 24-hour window, no rush fee applies at all.
+   - Live order summary shows: cart lines with remove buttons,
+     subtotal, rush fee line (rate × meal count, only when
+     applicable), and grand total — updates instantly as items are
+     added/removed or the delivery time changes.
+   - PEPPER LEVEL — a required interactive slider (range input,
+     3 positions: Low / Medium / Really Peppery), styled with chili
+     icons that fill in and grow as the level increases. Applies to
+     the whole order, not per item. Track whether the customer has
+     actually touched it (a default value alone doesn't count as a
+     real selection) — checkout is blocked with a visible warning
+     message and the slider highlighted until they've deliberately
+     moved it at least once.
+   - Paystack and Google Calendar integration are placeholders (need
+     a backend — not wired live).
+
+BREAKFAST IS SOLD AS COMBOS, NOT SMALL INDIVIDUAL DISHES
+----------------------------------------------------------
+Small a-la-carte breakfast items read as snacks, not meals. Sell
+generously-portioned combo plates instead — sized so one pack can't
+be finished in one sitting. Minimum price ₦22,000 per combo (this is
+a deliberate floor, not a mistake):
+   - The Classic Nigerian — Akara (10pcs), pap (1L bowl), 2 boiled
+     eggs — ₦22,000
+   - The Hearty Plate — Yam (5 slices), plantain (5 slices), egg
+     stew (1L container), sausages wrapped separately, choice of
+     Orange Drink or Carrot Boost juice — ₦22,000
+   - The Sweet Start — Oats (1L bowl), a bowl of fresh fruit, choice
+     of Orange Drink or Carrot Boost juice — ₦25,000
+   - The Protein Power — Moin-moin (2pcs), akara (10pcs), pap (1L
+     bowl), 2 boiled eggs — ₦25,000
+One combo = one distinct meal for the Book a Meal rush-fee logic.
+
+MINDFUL PICKS — WOVEN INTO SOUPS, STEWS &amp; BREAKFAST
+----------------------------------------------------------
+Not siloed on the Mindful Meals page alone — each of these three
+pages gets a "Mindful Picks" callout (3 items, table format, "why
+it's a good pick" column), linking to Mindful Meals for the full
+disclaimer:
+   - SOUPS: Edikang Ikong (Vegetable Soup), Okro Soup, Oha Soup —
+     framed as naturally lighter, ask for reduced oil/salt.
+   - STEWS: all 3 existing stews (Classic Tomato, Ayamase, Coconut
+     Curry) — framed as available in a lighter, reduced-oil version
+     on request.
+   - BREAKFAST: reuse the 3 existing Mindful Meals breakfast items
+     (Boiled Unripe Plantain &amp; Egg Sauce, Unsweetened Oat Pap &amp;
+     Roasted Groundnuts, Whole Wheat Bread/Baked Akara/Cucumber) as
+     a second card grid below the 4 combo plates.
+Homepage differentiator banner copy should mention this integration
+explicitly — Mindful isn't just a separate page, it's part of the
+whole menu.
+
+GLOBAL RULES
+------------
+- TRAYS & PLATTERS IS CURRENTLY HIDDEN — the page exists but has no
+  nav link, footer link, or homepage card. Do not surface it
+  anywhere until real photography is ready; unhide by re-adding the
+  three link points once photos land.
+
+10. BLOG — new section, "blog.html" listing page + individual post
+    pages, linked in nav/footer/homepage between Mindful Meals and
+    Catering. Three posts live now:
+    - "5 Nigerian Foods That Are Naturally Diabetes-Friendly"
+    - "How to Cook Nigerian Soups With Less Oil (Without Losing
+      Flavour)"
+    - "What Makes a Meal 'Heart-Healthy'? A Nigerian Kitchen Guide"
+    Each post: one h1, a meta description, canonical URL, Open
+    Graph tags, cross-links back to Mindful Meals/Soups/Stews, and
+    the same "not medical advice, consult your doctor" framing used
+    on Mindful Meals. This is where new wellness content should be
+    added going forward — it's the main lever for organic search
+    growth over time.
+
+SEO REQUIREMENTS (apply to every page)
+----------------------------------------
+- Exactly one <h1> per page, containing the page's primary keyword
+  naturally (e.g. "Nigerian Soup Delivery in Lagos").
+- Unique <title> tag per page (under ~60 characters where possible,
+  include "Lagos" and the relevant dish/service).
+- Unique <meta name="description"> per page (under ~160 characters).
+- <link rel="canonical"> pointing to the page's own URL.
+- Open Graph tags (og:title, og:description, og:type) on every page.
+- JSON-LD Restaurant/LocalBusiness schema on the homepage (name,
+  cuisine, phone, email, address locality "Lagos", region "Lagos
+  State", country "NG").
+- alt text on every image describing what it actually shows.
+- A sitemap.xml listing every live (non-hidden) page, and a
+  robots.txt pointing to it.
+- IMPORTANT — set honest expectations: none of the above guarantees
+  a #1 Google ranking. On-page SEO is necessary but not sufficient;
+  ranking also depends on backlinks, domain age, content freshness,
+  and competition, and typically takes months to show results even
+  when done well. Don't oversell this to the client as an instant
+  fix.
+- Every price in Naira (₦), formatted with commas.
+- Every product card's "Order" button opens WhatsApp
+  (wa.me/2348105506052) with the item name pre-filled in the
+  message text.
+- No image should ever be a stock photo or a competitor's photo —
+  use real AHmazing photography where supplied, clearly-marked
+  placeholders everywhere else.
+- Mobile-responsive throughout; nav collapses to a hamburger with
+  an opaque dropdown below 860px width.
