@@ -96,7 +96,7 @@ export default function Home() {
               <img src={asset("food-akara-pap.jpg")} alt="Akara served with pap" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="rounded-2xl overflow-hidden aspect-square">
-              <img src={asset("food-jollof-fish.jpg")} alt="Jollof rice plated with grilled fish" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <img src={asset("food-hero-soup.jpg")} alt="A rich pot of Nigerian soup ready to serve" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
           </div>
         </div>
@@ -163,13 +163,13 @@ export default function Home() {
                 title: "Soups",
                 href: "/soups",
                 img: "food-egusi-hands.jpg",
-                desc: "Onugbu, Egusi, Banga, Oha, Efo-Riro and more — by the litre or by the cooler.",
+                desc: "Freshly cooked Nigerian soups — sized by the litre or by the full cooler.",
               },
               {
                 num: "02",
                 title: "Stews",
                 href: "/stews",
-                img: "food-jollof-fish.jpg",
+                img: "food-egusi-top.jpg",
                 desc: "Classic Nigerian stews cooked fresh in small batches for families or events.",
               },
               {
