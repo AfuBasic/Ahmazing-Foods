@@ -8,16 +8,16 @@ import { db, menuItemsTable, ordersTable } from "@workspace/db";
 
 // ── PROTEINS (soups only) ────────────────────────────────────────────────────
 const soupProteins = [
-  { name: "Beef",          extraCost: 3000  },
-  { name: "Chicken",       extraCost: 3000  },
-  { name: "Turkey",        extraCost: 4000  },
-  { name: "Croaker",       extraCost: 4000  },
-  { name: "Tilapia",       extraCost: 3000  },
-  { name: "Catfish",       extraCost: 4000  },
-  { name: "Snail",         extraCost: 15000 },
-  { name: "Mixed Seafood", extraCost: 10000 },
-  { name: "Gizzard",       extraCost: 4000  },
-  { name: "Sausages",      extraCost: 3000  },
+  { name: "Beef",          extraCost: 4000  },
+  { name: "Chicken",       extraCost: 4700  },
+  { name: "Turkey",        extraCost: 5700  },
+  { name: "Croaker",       extraCost: 5700  },
+  { name: "Tilapia",       extraCost: 4700  },
+  { name: "Catfish",       extraCost: 5700  },
+  { name: "Snail",         extraCost: 6700  },
+  { name: "Mixed Seafood", extraCost: 11700 },
+  { name: "Gizzard",       extraCost: 5700  },
+  { name: "Sausages",      extraCost: 4700  },
 ];
 
 // ── SIZE HELPERS ─────────────────────────────────────────────────────────────

@@ -168,6 +168,14 @@ export default function BookPage() {
   const pepperRef  = useRef<HTMLDivElement>(null);
   const step1Ref   = useRef<HTMLDivElement>(null);
 
+  // ── DEEP-LINK: pre-fill cart from URL params ──────────────────────────────
+  const deepLinkDone   = useRef(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const deepLinkParams = useMemo(() => {
+    const p = new URLSearchParams(window.location.search);
+    return { cat: p.get("cat") ?? "", item: p.get("item") ?? "", size: p.get("size") ?? "" };
+  }, []);
+
   // ── FORM ───────────────────────────────────────────────────────────────────
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
@@ -253,6 +261,39 @@ export default function BookPage() {
     prevProteinCount.current = n;
   }, [proteins]);
 
+  // ── DEEP-LINK: auto-add item from URL params when menu loads ──────────────
+  useEffect(() => {
+    if (deepLinkDone.current) return;
+    if (!menuItems?.length) return;
+    if (!deepLinkParams.cat || !deepLinkParams.item) return;
+    const found = menuItems.find(
+      (m) =>
+        m.category === deepLinkParams.cat &&
+        m.name.toLowerCase() === deepLinkParams.item.toLowerCase()
+    );
+    if (!found) return;
+    const sizeObj = deepLinkParams.size
+      ? (found.sizes.find((s) => s.label === deepLinkParams.size) ?? found.sizes[0])
+      : found.sizes[0];
+    if (!sizeObj) return;
+    deepLinkDone.current = true;
+    setCart((prev) => {
+      if (prev.some((i) => i.menuItemId === found.id && i.selectedSize === sizeObj.label)) return prev;
+      return [{
+        id:               `dl-${found.id}-${Date.now()}`,
+        menuItemId:       found.id,
+        menuItemName:     found.name,
+        category:         found.category,
+        selectedSize:     sizeObj.label,
+        itemQty:          1,
+        selectedProteins: [],
+        price:            sizeObj.price,
+      }];
+    });
+    setJustAdded(found.name);
+    setTimeout(() => setJustAdded(null), 6000);
+  }, [menuItems, deepLinkParams]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // ── HANDLERS ──────────────────────────────────────────────────────────────
   function selectDish(val: string) { setConfigItemId(parseInt(val)); }
 
@@ -311,8 +352,14 @@ export default function BookPage() {
     const notesStr   = [
       `CART (${cart.length} item${cart.length === 1 ? "" : "s"}):\n${cartSummary}`,
       `Pepper: ${PEPPER_LABELS[pepperLevel]}`,
-      values.notes ? `Notes: ${values.notes}` : "",
-    ].filter(Boolean).join("\n\n");
+      `Delivery: ${values.deliveryDate} · ${values.deliverySlot}`,
+      rushFee > 0
+        ? `Subtotal: ${formatNaira(cartTotal)} + Rush fee: ${formatNaira(rushFee)} = Total: ${formatNaira(grandTotal)}`
+        : `Total: ${formatNaira(grandTotal)}`,
+      `Customer: ${values.customerName} | ${values.customerPhone}${values.customerEmail ? ` | ${values.customerEmail}` : ""}`,
+      `Delivery address: ${values.deliveryAddress}`,
+      values.notes ? `Customer notes: ${values.notes}` : "",
+    ].filter(Boolean).join("\n\n") + "\n\n---\nPAYMENT DETAILS\nAccount Name: Ahmazing Cuisine\nBank: FCMB\nAccount Number: 1009414545";
 
     createOrder.mutate(
       {

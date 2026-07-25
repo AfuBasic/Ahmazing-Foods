@@ -291,7 +291,9 @@ export default function HealthyMealsPage() {
                   </div>
                 </div>
                 <a
-                  href={`https://wa.me/2348105506052?text=${encodeURIComponent(`Hi, I'd like to subscribe to the Healthy Meals ${plan.name} plan (${plan.total} total).`)}`}
+                  href={`https://wa.me/2348105506052?text=${encodeURIComponent(
+                    `Hi, I'd like to subscribe to the Healthy Meals ${plan.name} plan.\n\nTotal: ${plan.total}\n\nPayment details:\nAccount Name: Ahmazing Cuisine\nBank: FCMB\nAccount Number: 1009414545`
+                  )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-auto block text-center rounded-full py-2.5 font-bold text-sm transition-opacity hover:opacity-90"

@@ -48,13 +48,13 @@ export default function MenuPage() {
   const titles = {
     soups: "Rich Soups",
     stews: "Hearty Stews",
-    breakfast: "Weekend Specials"
+    breakfast: "Breakfast Combos",
   };
 
   const descriptions = {
     soups: "Every soup comes garnished with dried fish, stockfish and cowhide. Add extra protein below to customise further.",
     stews: "Classic Nigerian stews cooked fresh in small batches, sized for a family meal or a full event.",
-    breakfast: "Always-available weekend combo plates, cooked fresh to order."
+    breakfast: "Generously-portioned combo plates — sized so one pack is a proper sit-down meal. Cooked fresh to order.",
   };
 
   const bannerImg = bannerImages[category];
@@ -126,12 +126,23 @@ export default function MenuPage() {
 
                   {item.sizes.length > 0 && (
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Sizes & Prices</p>
-                      <div className="space-y-1.5">
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                        {item.sizes.length === 1 ? "Price" : "Sizes & Prices"}
+                      </p>
+                      <div className="space-y-2">
                         {item.sizes.map((size) => (
-                          <div key={size.label} className="flex justify-between text-sm">
-                            <span className="text-foreground">{size.label}</span>
-                            <span className="font-bold">{formatNaira(size.price)}</span>
+                          <div key={size.label} className="flex items-center justify-between gap-2 text-sm">
+                            {item.sizes.length > 1 && (
+                              <span className="text-foreground min-w-0 flex-1 truncate">{size.label}</span>
+                            )}
+                            <span className="font-bold shrink-0">{formatNaira(size.price)}</span>
+                            <Link
+                              href={`/book?cat=${encodeURIComponent(category)}&item=${encodeURIComponent(item.name)}&size=${encodeURIComponent(size.label)}`}
+                              className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full text-white hover:opacity-90 transition-opacity"
+                              style={{ background: "#0F9E0F" }}
+                            >
+                              Book →
+                            </Link>
                           </div>
                         ))}
                       </div>
@@ -151,16 +162,6 @@ export default function MenuPage() {
                       </div>
                     </div>
                   )}
-
-                  <div className="mt-auto pt-4">
-                    <Button
-                      asChild
-                      className="w-full text-white font-bold"
-                      style={{ background: "#0F9E0F" }}
-                    >
-                      <Link href={`/book?item=${item.id}`}>Book This →</Link>
-                    </Button>
-                  </div>
                 </div>
               </div>
             ))}

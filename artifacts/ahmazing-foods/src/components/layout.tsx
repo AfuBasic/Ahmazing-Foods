@@ -306,8 +306,15 @@ function SiteFooter() {
             </ul>
           </div>
         </div>
-        <div className="mt-12 pt-8 border-t border-white/10 text-center text-sm text-background/50">
-          © {new Date().getFullYear()} AHmazing Foods. Built with craft.
+        <div className="mt-12 pt-8 border-t border-white/10 text-sm text-background/50 space-y-3 text-center">
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <span className="inline-flex items-center gap-2 border border-white/20 rounded-full px-4 py-1.5 text-xs font-mono text-background/70">
+              <span className="font-sans font-medium text-background/60">Pay to:</span>
+              Ahmazing Cuisine · FCMB ·
+              <strong className="text-background/90 tracking-widest">1009414545</strong>
+            </span>
+          </div>
+          <p>© {new Date().getFullYear()} AHmazing Foods · Lagos, Nigeria</p>
         </div>
       </div>
     </footer>
