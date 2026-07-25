@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Leaf, AlertCircle } from "lucide-react";
+import { Leaf, AlertCircle, CalendarDays, Truck, Star } from "lucide-react";
 
 const BASE = import.meta.env.BASE_URL;
 const asset = (p: string) => `${BASE}assets/${p}`;
@@ -116,6 +116,131 @@ export default function MindfulMealsPage() {
             </p>
           </div>
         </div>
+
+        {/* ── SUBSCRIPTION PLANS ────────────────────────────────────────── */}
+        <section id="plans">
+          <div className="mb-10">
+            <div className="flex items-center gap-2 mb-3">
+              <CalendarDays className="w-5 h-5" style={{ color: BRAND_GREEN }} />
+              <span className="text-xs font-bold uppercase tracking-wider" style={{ color: BRAND_GREEN }}>Subscribe</span>
+            </div>
+            <h2 className="text-3xl font-bold font-display mb-3">Choose how far ahead you want to plan</h2>
+            <p className="text-muted-foreground max-w-2xl">
+              Every plan includes a full day's meals — breakfast, lunch, dinner and a snack — rotated for variety.
+              Prices are per day; the longer you commit, the lower the daily rate.
+            </p>
+          </div>
+
+          {/* Advice box */}
+          <div className="rounded-2xl border border-border bg-muted/50 p-5 mb-8 flex gap-4">
+            <Star className="w-5 h-5 shrink-0 mt-0.5 text-amber-500" />
+            <div className="text-sm text-muted-foreground leading-relaxed">
+              <strong className="text-foreground">Why no single-day subscription?</strong> The value of a subscription is the discount
+              you earn for planning ahead — that's only meaningful when you commit to a week or more. A single day ordered
+              with no commitment is simply priced at ₦21,000. If you want a taste before subscribing, just book a meal
+              normally — no commitment required.
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            {[
+              {
+                name: "Weekly",
+                days: 7,
+                perDay: "₦19,000",
+                total: "₦133,000",
+                saving: "~9% saved",
+                popular: false,
+                color: "border-border",
+              },
+              {
+                name: "Two-Week",
+                days: 14,
+                perDay: "₦17,500",
+                total: "₦245,000",
+                saving: "~17% saved",
+                popular: true,
+                color: "border-primary",
+              },
+              {
+                name: "Monthly",
+                days: 28,
+                perDay: "₦16,000",
+                total: "₦448,000",
+                saving: "~24% saved",
+                popular: false,
+                color: "border-border",
+              },
+            ].map((plan) => (
+              <div
+                key={plan.name}
+                className={`relative rounded-2xl border-2 p-6 flex flex-col gap-4 ${plan.popular ? "border-primary shadow-lg" : "border-border"}`}
+              >
+                {plan.popular && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold px-4 py-1 rounded-full">
+                    Most Popular
+                  </span>
+                )}
+                <div>
+                  <h3 className="text-xl font-bold font-display">{plan.name}</h3>
+                  <p className="text-sm text-muted-foreground">{plan.days} days</p>
+                </div>
+                <div>
+                  <span className="text-3xl font-bold">{plan.perDay}</span>
+                  <span className="text-muted-foreground text-sm"> / day</span>
+                </div>
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Total</span>
+                    <span className="font-bold">{plan.total}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Saving</span>
+                    <span className="font-bold" style={{ color: BRAND_GREEN }}>{plan.saving}</span>
+                  </div>
+                </div>
+                <a
+                  href={`https://wa.me/2348105506052?text=${encodeURIComponent(`Hi, I'd like to subscribe to the Mindful Meals ${plan.name} plan (${plan.total} total).`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-auto block text-center rounded-full py-2.5 font-bold text-sm transition-opacity hover:opacity-90"
+                  style={plan.popular
+                    ? { background: BRAND_GREEN, color: "#fff" }
+                    : { background: "transparent", border: `2px solid #ddd`, color: "inherit" }}
+                >
+                  Subscribe via WhatsApp
+                </a>
+              </div>
+            ))}
+          </div>
+
+          {/* Delivery logistics */}
+          <div className="rounded-2xl border border-border bg-card p-6 flex flex-col md:flex-row gap-6 items-start">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: "#0F9E0F22" }}>
+              <Truck className="w-5 h-5" style={{ color: BRAND_GREEN }} />
+            </div>
+            <div>
+              <h4 className="font-bold font-display text-lg mb-2">How delivery works</h4>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                A full week of food in one delivery isn't realistic for freshness — so every plan delivers in
+                <strong className="text-foreground"> two drops per week</strong>:
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                <div className="rounded-xl bg-muted p-4">
+                  <p className="font-bold mb-1">Drop 1 — Start of week</p>
+                  <p className="text-muted-foreground">Days 1–3 meals delivered together, packed in labelled, fridge-safe containers.</p>
+                </div>
+                <div className="rounded-xl bg-muted p-4">
+                  <p className="font-bold mb-1">Drop 2 — Mid-week</p>
+                  <p className="text-muted-foreground">Days 4–7 meals delivered. Refrigerate on arrival, reheat before eating.</p>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground mt-3">
+                Two-Week and Monthly plans repeat this same two-drop pattern each week throughout the subscription.
+              </p>
+            </div>
+          </div>
+        </section>
 
         {/* Breakfast Picks */}
         <section>

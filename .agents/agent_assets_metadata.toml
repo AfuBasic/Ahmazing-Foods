@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "Zco7uRxmvdNPHP8M1Ug2R"
+uri = "file://attached_assets/AHmazing-Foods-Product-Spec.pdf"
+type = "pdf"
+title = "AHmazing Foods — Product & Platform Specification"
