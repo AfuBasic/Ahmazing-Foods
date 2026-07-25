@@ -642,20 +642,98 @@ export default function BookPage() {
                 <p className="text-sm text-muted-foreground mb-6">
                   This applies to all the food in your cart. Drinks, snacks and platters are not affected.
                 </p>
-                <div className="space-y-4">
-                  <div className="flex justify-between text-sm font-medium text-muted-foreground">
-                    {PEPPER_LABELS.map((label, i) => (
-                      <span key={i} className={i === pepperLevel ? PEPPER_COLORS[i] + " font-bold" : ""}>{label}</span>
-                    ))}
-                  </div>
-                  <input type="range" min={0} max={2} step={1} value={pepperLevel}
-                    onChange={(e) => { setPepperLevel(parseInt(e.target.value)); setPepperTouched(true); }}
-                    className="w-full h-3 rounded-full appearance-none cursor-pointer"
-                    style={{ accentColor: pepperLevel === 0 ? "#059669" : pepperLevel === 1 ? "#d97706" : "#dc2626" }}
-                  />
-                  <div className={`text-center font-bold text-lg ${PEPPER_COLORS[pepperLevel]}`}>
-                    {PEPPER_LABELS[pepperLevel]}
-                  </div>
+
+                {/* 3-segment pepper picker */}
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    {
+                      level: 0,
+                      label: "Low",
+                      sub: "Mild & gentle",
+                      chilies: 1,
+                      activeClass: "border-emerald-500 bg-emerald-50",
+                      activeLabelClass: "text-emerald-700",
+                      dotClass: "bg-emerald-500",
+                    },
+                    {
+                      level: 1,
+                      label: "Medium",
+                      sub: "Some heat",
+                      chilies: 2,
+                      activeClass: "border-amber-500 bg-amber-50",
+                      activeLabelClass: "text-amber-700",
+                      dotClass: "bg-amber-500",
+                    },
+                    {
+                      level: 2,
+                      label: "Really Peppery",
+                      sub: "Full fire",
+                      chilies: 3,
+                      activeClass: "border-red-500 bg-red-50",
+                      activeLabelClass: "text-red-700",
+                      dotClass: "bg-red-500",
+                    },
+                  ].map(({ level, label, sub, chilies, activeClass, activeLabelClass, dotClass }) => {
+                    const isSelected = pepperLevel === level;
+                    return (
+                      <button
+                        key={level}
+                        type="button"
+                        onClick={() => { setPepperLevel(level); setPepperTouched(true); }}
+                        className={[
+                          "relative flex flex-col items-center gap-2 rounded-2xl border-2 px-3 py-4 transition-all duration-150 cursor-pointer select-none",
+                          isSelected
+                            ? activeClass + " shadow-md scale-[1.03]"
+                            : "border-border bg-muted/30 hover:bg-muted/60 hover:border-border/80",
+                        ].join(" ")}
+                      >
+                        {/* Selected indicator dot */}
+                        {isSelected && (
+                          <span className={`absolute top-2.5 right-2.5 w-2.5 h-2.5 rounded-full ${dotClass}`} />
+                        )}
+
+                        {/* Chili icons — filled up to this level */}
+                        <span className="text-xl leading-none tracking-tight" aria-hidden>
+                          {"🌶️".repeat(chilies)}
+                        </span>
+
+                        {/* Label */}
+                        <span className={`font-bold text-sm text-center leading-tight ${isSelected ? activeLabelClass : "text-foreground"}`}>
+                          {label}
+                        </span>
+                        <span className="text-xs text-muted-foreground text-center leading-tight">{sub}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Connector line showing which position is active */}
+                <div className="mt-5 flex items-center gap-0">
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className="flex-1 flex items-center">
+                      <div className={[
+                        "w-4 h-4 rounded-full border-2 flex-shrink-0 transition-colors duration-150",
+                        pepperTouched && pepperLevel >= i
+                          ? i === 0 ? "bg-emerald-500 border-emerald-500"
+                          : i === 1 ? "bg-amber-500 border-amber-500"
+                          : "bg-red-500 border-red-500"
+                          : "bg-background border-border",
+                      ].join(" ")} />
+                      {i < 2 && (
+                        <div className={[
+                          "flex-1 h-1 transition-colors duration-150",
+                          pepperTouched && pepperLevel > i
+                            ? i === 0 ? "bg-amber-400" : "bg-red-400"
+                            : "bg-border",
+                        ].join(" ")} />
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-between mt-1 text-[10px] font-medium text-muted-foreground px-0.5">
+                  <span>Mild</span>
+                  <span>Medium</span>
+                  <span>Hot</span>
                 </div>
               </div>
             </div>
