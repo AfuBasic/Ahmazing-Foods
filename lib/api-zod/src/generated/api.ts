@@ -21,12 +21,12 @@ export const HealthCheckResponse = zod.object({
  * @summary List menu items
  */
 export const ListMenuItemsQueryParams = zod.object({
-  "category": zod.enum(['soups', 'stews', 'breakfast']).optional()
+  "category": zod.enum(['soups', 'stews', 'breakfast', 'drinks', 'snacks', 'seeds', 'platters']).optional()
 })
 
 export const ListMenuItemsResponseItem = zod.object({
   "id": zod.number(),
-  "category": zod.enum(['soups', 'stews', 'breakfast']),
+  "category": zod.enum(['soups', 'stews', 'breakfast', 'drinks', 'snacks', 'seeds', 'platters']),
   "name": zod.string(),
   "description": zod.string(),
   "sizes": zod.array(zod.object({
@@ -52,7 +52,7 @@ export const GetMenuItemParams = zod.object({
 
 export const GetMenuItemResponse = zod.object({
   "id": zod.number(),
-  "category": zod.enum(['soups', 'stews', 'breakfast']),
+  "category": zod.enum(['soups', 'stews', 'breakfast', 'drinks', 'snacks', 'seeds', 'platters']),
   "name": zod.string(),
   "description": zod.string(),
   "sizes": zod.array(zod.object({
@@ -79,7 +79,7 @@ export const ListOrdersResponseItem = zod.object({
   "id": zod.number(),
   "menuItemId": zod.number(),
   "menuItemName": zod.string(),
-  "category": zod.enum(['soups', 'stews', 'breakfast']),
+  "category": zod.enum(['soups', 'stews', 'breakfast', 'drinks', 'snacks', 'seeds', 'platters']),
   "selectedSize": zod.string(),
   "selectedProtein": zod.string().nullable(),
   "customerName": zod.string(),
@@ -120,7 +120,7 @@ export const CreateOrderResponse = zod.object({
   "id": zod.number(),
   "menuItemId": zod.number(),
   "menuItemName": zod.string(),
-  "category": zod.enum(['soups', 'stews', 'breakfast']),
+  "category": zod.enum(['soups', 'stews', 'breakfast', 'drinks', 'snacks', 'seeds', 'platters']),
   "selectedSize": zod.string(),
   "selectedProtein": zod.string().nullable(),
   "customerName": zod.string(),
@@ -156,7 +156,7 @@ export const GetOrderSummaryResponse = zod.object({
   "id": zod.number(),
   "menuItemId": zod.number(),
   "menuItemName": zod.string(),
-  "category": zod.enum(['soups', 'stews', 'breakfast']),
+  "category": zod.enum(['soups', 'stews', 'breakfast', 'drinks', 'snacks', 'seeds', 'platters']),
   "selectedSize": zod.string(),
   "selectedProtein": zod.string().nullable(),
   "customerName": zod.string(),
@@ -187,7 +187,7 @@ export const GetOrderResponse = zod.object({
   "id": zod.number(),
   "menuItemId": zod.number(),
   "menuItemName": zod.string(),
-  "category": zod.enum(['soups', 'stews', 'breakfast']),
+  "category": zod.enum(['soups', 'stews', 'breakfast', 'drinks', 'snacks', 'seeds', 'platters']),
   "selectedSize": zod.string(),
   "selectedProtein": zod.string().nullable(),
   "customerName": zod.string(),
@@ -221,7 +221,7 @@ export const UpdateOrderStatusResponse = zod.object({
   "id": zod.number(),
   "menuItemId": zod.number(),
   "menuItemName": zod.string(),
-  "category": zod.enum(['soups', 'stews', 'breakfast']),
+  "category": zod.enum(['soups', 'stews', 'breakfast', 'drinks', 'snacks', 'seeds', 'platters']),
   "selectedSize": zod.string(),
   "selectedProtein": zod.string().nullable(),
   "customerName": zod.string(),

@@ -23,11 +23,28 @@ import {
 import { useToast } from "@/hooks/use-toast";
 
 // ── CONSTANTS ────────────────────────────────────────────────────────────────
-const MAX_DISTINCT_MEALS = 5;
-const MAX_PROTEIN_QTY    = 10;
+const MAX_FOOD_MEALS  = 5;          // soups / stews / breakfast limit
+const MAX_PROTEIN_QTY = 10;
+const MAX_ITEM_QTY    = 20;
+
 const DELIVERY_SLOTS = ["8–10am", "10am–12pm", "12–2pm", "2–4pm", "4–6pm"];
 const PEPPER_LABELS  = ["Low 🌶️", "Medium 🌶️🌶️", "Really Peppery 🌶️🌶️🌶️"] as const;
 const PEPPER_COLORS  = ["text-emerald-600", "text-amber-600", "text-red-600"] as const;
+
+const FOOD_CATS = new Set(["soups", "stews", "breakfast"]);
+const isFoodCat = (cat: string) => FOOD_CATS.has(cat);
+
+// Category display order and labels in the dropdown
+const CAT_ORDER  = ["soups", "stews", "breakfast", "drinks", "snacks", "seeds", "platters"] as const;
+const CAT_LABELS: Record<string, string> = {
+  soups:     "Soups",
+  stews:     "Stews",
+  breakfast: "Breakfast",
+  drinks:    "Drinks & Wellness",
+  snacks:    "Snacks",
+  seeds:     "Seeds & Spices",
+  platters:  "Platters & Trays",
+};
 
 const RUSH_FEE_RATES: Record<number, number> = {
   1: 20000, 2: 15000, 3: 13000, 4: 12000, 5: 10000,
@@ -39,15 +56,17 @@ function calcRushFee(isRush: boolean, n: number) {
 }
 
 // ── TYPES ────────────────────────────────────────────────────────────────────
+interface SelProtein { name: string; qty: number; extraCost: number; }
+
 interface CartItem {
   id: string;
   menuItemId: number;
   menuItemName: string;
   category: string;
   selectedSize: string;
-  selectedProtein: string | null;
-  proteinQty: number;
-  price: number;
+  itemQty: number;                  // how many of this item
+  selectedProteins: SelProtein[];   // multiple proteins each with qty
+  price: number;                    // itemQty × (basePrice + sum(protein.extraCost × protein.qty))
 }
 
 // ── FORM SCHEMA ───────────────────────────────────────────────────────────────
@@ -62,37 +81,88 @@ const customerSchema = z.object({
 });
 
 // ── SMOOTH SCROLL ─────────────────────────────────────────────────────────────
-function scrollTo(el: HTMLElement | null, delay = 120) {
+function scrollTo(el: HTMLElement | null, delay = 140) {
   if (!el) return;
   const t = setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "nearest" }), delay);
   return () => clearTimeout(t);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ── QUANTITY CONTROL ──────────────────────────────────────────────────────────
+function QtyControl({
+  value, min = 1, max = MAX_ITEM_QTY,
+  onChange, size = "md",
+}: {
+  value: number; min?: number; max?: number;
+  onChange: (n: number) => void; size?: "sm" | "md";
+}) {
+  const btn  = size === "sm" ? "w-7 h-7 text-xs"  : "w-8 h-8";
+  const num  = size === "sm" ? "w-8 text-sm"        : "w-10 text-base";
+  return (
+    <div className="flex items-center gap-1">
+      <button type="button" onClick={() => onChange(Math.max(min, value - 1))} disabled={value <= min}
+        className={`${btn} rounded-full border-2 border-border flex items-center justify-center hover:border-primary transition-colors disabled:opacity-30`}>
+        <Minus className="w-3 h-3" />
+      </button>
+      <span className={`${num} text-center font-bold tabular-nums`}>{value}</span>
+      <button type="button" onClick={() => onChange(Math.min(max, value + 1))} disabled={value >= max}
+        className={`${btn} rounded-full border-2 border-border flex items-center justify-center hover:border-primary transition-colors disabled:opacity-30`}>
+        <Plus className="w-3 h-3" />
+      </button>
+    </div>
+  );
+}
+
+// ── SUB-STEP LABEL ─────────────────────────────────────────────────────────────
+function SubStepLabel({ letter, done, children }: {
+  letter: string; done: boolean; children: React.ReactNode;
+}) {
+  return (
+    <label className="text-sm font-semibold flex items-center gap-2">
+      <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 transition-colors duration-300 ${
+        done ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground border border-border"
+      }`}>
+        {done ? <Check className="w-2.5 h-2.5" /> : letter}
+      </span>
+      {children}
+    </label>
+  );
+}
+
+// ── CART LINE DESCRIPTION ─────────────────────────────────────────────────────
+function cartLineDesc(item: CartItem): string {
+  const qty   = item.itemQty > 1 ? ` ×${item.itemQty}` : "";
+  const prots = item.selectedProteins
+    .map((p) => `${p.name}${p.qty > 1 ? ` ×${p.qty}` : ""}`)
+    .join(", ");
+  return `${item.selectedSize}${qty}${prots ? ` + ${prots}` : ""}`;
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
 export default function BookPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
-  // ── DATA ───────────────────────────────────────────────────────────────────
   const { data: menuItems, isLoading: loadingMenu } = useListMenuItems(
     {}, { query: { queryKey: ["menuItems"] } }
   );
   const createOrder = useCreateOrder();
 
-  // ── CART ───────────────────────────────────────────────────────────────────
-  const [cart, setCart]               = useState<CartItem[]>([]);
-  const [pepperLevel, setPepperLevel] = useState<number>(1);
+  // ── CART ────────────────────────────────────────────────────────────────────
+  const [cart, setCart]                   = useState<CartItem[]>([]);
+  const [pepperLevel, setPepperLevel]     = useState<number>(1);
   const [pepperTouched, setPepperTouched] = useState(false);
-  const [justAdded, setJustAdded]     = useState<string | null>(null);
+  const [justAdded, setJustAdded]         = useState<string | null>(null);
 
   // ── CONFIGURATOR STATE ────────────────────────────────────────────────────
-  const [configItemId,    setConfigItemId]    = useState<number>(0);
-  const [configSize,      setConfigSize]      = useState<string>("");
-  const [configProtein,   setConfigProtein]   = useState<string>("");
-  const [configProteinQty, setConfigProteinQty] = useState<number>(1);
+  const [configItemId,  setConfigItemId]  = useState<number>(0);
+  const [configSize,    setConfigSize]    = useState<string>("");
+  const [itemQty,       setItemQty]       = useState<number>(1);
+  // proteins: Record<proteinName, qty>
+  const [proteins, setProteins] = useState<Record<string, number>>({});
 
   // ── SCROLL REFS ────────────────────────────────────────────────────────────
   const sizeRef    = useRef<HTMLDivElement>(null);
+  const qtyRef     = useRef<HTMLDivElement>(null);
   const proteinRef = useRef<HTMLDivElement>(null);
   const addBtnRef  = useRef<HTMLDivElement>(null);
   const pepperRef  = useRef<HTMLDivElement>(null);
@@ -113,91 +183,122 @@ export default function BookPage() {
     () => menuItems?.find((m) => m.id === configItemId),
     [menuItems, configItemId]
   );
-  const distinctMealIds = useMemo(() => new Set(cart.map((i) => i.menuItemId)), [cart]);
+  const hasProteins      = !!(configItem && configItem.proteins.length > 0);
+  const isFood           = !!(configItem && isFoodCat(configItem.category));
+  const distinctFoodIds  = useMemo(
+    () => new Set(cart.filter((i) => isFoodCat(i.category)).map((i) => i.menuItemId)),
+    [cart]
+  );
   const isRushDay = useMemo(
     () => !!deliveryDate && deliveryDate === format(new Date(), "yyyy-MM-dd"),
     [deliveryDate]
   );
-  const rushFee   = useMemo(() => calcRushFee(isRushDay, distinctMealIds.size), [isRushDay, distinctMealIds.size]);
-  const cartTotal = useMemo(() => cart.reduce((s, i) => s + i.price, 0), [cart]);
+  const rushFee    = useMemo(() => calcRushFee(isRushDay, distinctFoodIds.size), [isRushDay, distinctFoodIds.size]);
+  const cartTotal  = useMemo(() => cart.reduce((s, i) => s + i.price, 0), [cart]);
   const grandTotal = cartTotal + rushFee;
 
-  // Live price for the item currently being configured
-  const configProteinExtra = useMemo(() => {
-    if (!configItem || !configProtein || configProtein === "none") return 0;
-    return (configItem.proteins.find((p) => p.name === configProtein)?.extraCost ?? 0) * configProteinQty;
-  }, [configItem, configProtein, configProteinQty]);
-
-  const configPrice = useMemo(() => {
+  // Live price for the item being configured
+  const proteinSubtotal = useMemo(
+    () => Object.entries(proteins).reduce((sum, [name, qty]) => {
+      const p = configItem?.proteins.find((p) => p.name === name);
+      return sum + (p?.extraCost ?? 0) * qty;
+    }, 0),
+    [proteins, configItem]
+  );
+  const configUnitPrice = useMemo(() => {
     if (!configItem || !configSize) return 0;
     const base = configItem.sizes.find((s) => s.label === configSize)?.price ?? 0;
-    return base + configProteinExtra;
-  }, [configItem, configSize, configProteinExtra]);
+    return base + proteinSubtotal;
+  }, [configItem, configSize, proteinSubtotal]);
+  const configPrice = configUnitPrice * itemQty;
 
   const canAddToCart = useMemo(() => {
     if (!configItem || !configSize) return false;
-    if (!distinctMealIds.has(configItemId) && distinctMealIds.size >= MAX_DISTINCT_MEALS) return false;
+    if (isFood && !distinctFoodIds.has(configItemId) && distinctFoodIds.size >= MAX_FOOD_MEALS) return false;
     return true;
-  }, [configItem, configSize, configItemId, distinctMealIds]);
+  }, [configItem, configSize, configItemId, isFood, distinctFoodIds]);
 
   const availableDates = useMemo(
     () => Array.from({ length: 14 }).map((_, i) => format(addDays(new Date(), i), "yyyy-MM-dd")),
     []
   );
 
-  // ── RESET qty when protein or dish changes ─────────────────────────────────
-  useEffect(() => { setConfigProteinQty(1); }, [configProtein, configItemId]);
+  // ── RESET configurator when dish changes ─────────────────────────────────
+  useEffect(() => {
+    setConfigSize("");
+    setItemQty(1);
+    setProteins({});
+  }, [configItemId]);
 
-  // ── AUTO-SCROLL ───────────────────────────────────────────────────────────
-  useEffect(() => { if (configItem)   return scrollTo(sizeRef.current);    }, [configItem?.id]);          // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => {                                                                                          // eslint-disable-line react-hooks/exhaustive-deps
+  // ── RESET itemQty when size changes ───────────────────────────────────────
+  useEffect(() => { setItemQty(1); }, [configSize]);
+
+  // ── AUTO-SCROLL: dish selected → size ────────────────────────────────────
+  useEffect(() => {
+    if (configItem) return scrollTo(sizeRef.current);
+  }, [configItem?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── AUTO-SCROLL: size selected → qty/protein/addBtn ──────────────────────
+  useEffect(() => {
     if (!configSize || !configItem) return;
-    return configItem.proteins.length > 0
-      ? scrollTo(proteinRef.current)
-      : scrollTo(addBtnRef.current);
-  }, [configSize]);                                                                                          // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { if (configProtein) return scrollTo(addBtnRef.current); }, [configProtein]);            // eslint-disable-line react-hooks/exhaustive-deps
+    // scroll to protein if food with proteins, otherwise to quantity/add area
+    return hasProteins ? scrollTo(proteinRef.current) : scrollTo(qtyRef.current);
+  }, [configSize]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── AUTO-SCROLL: first protein ticked → add button ───────────────────────
+  const prevProteinCount = useRef(0);
+  useEffect(() => {
+    const n = Object.keys(proteins).length;
+    if (n === 1 && prevProteinCount.current === 0) scrollTo(addBtnRef.current);
+    prevProteinCount.current = n;
+  }, [proteins]);
 
   // ── HANDLERS ──────────────────────────────────────────────────────────────
-  function selectDish(val: string) {
-    setConfigItemId(parseInt(val));
-    setConfigSize("");
-    setConfigProtein("");
+  function selectDish(val: string) { setConfigItemId(parseInt(val)); }
+
+  function toggleProtein(name: string) {
+    setProteins((prev) => {
+      if (prev[name] !== undefined) {
+        const { [name]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [name]: 1 };
+    });
+  }
+
+  function setProteinQty(name: string, qty: number) {
+    setProteins((prev) => ({ ...prev, [name]: Math.max(1, Math.min(MAX_PROTEIN_QTY, qty)) }));
   }
 
   function addToCart() {
     if (!configItem || !configSize) return;
-    const protein = configProtein && configProtein !== "none" ? configProtein : null;
-    setCart((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        menuItemId: configItem.id,
-        menuItemName: configItem.name,
-        category: configItem.category,
-        selectedSize: configSize,
-        selectedProtein: protein,
-        proteinQty: protein ? configProteinQty : 1,
-        price: configPrice,
-      },
-    ]);
+    const selProteins: SelProtein[] = Object.entries(proteins).map(([name, qty]) => {
+      const p = configItem.proteins.find((p) => p.name === name);
+      return { name, qty, extraCost: p?.extraCost ?? 0 };
+    });
     const name = configItem.name;
+    setCart((prev) => [...prev, {
+      id: crypto.randomUUID(),
+      menuItemId:      configItem.id,
+      menuItemName:    name,
+      category:        configItem.category,
+      selectedSize:    configSize,
+      itemQty,
+      selectedProteins: selProteins,
+      price:           configPrice,
+    }]);
     setConfigItemId(0);
-    setConfigSize("");
-    setConfigProtein("");
     setJustAdded(name);
     setTimeout(() => setJustAdded(null), 4000);
-    toast({ title: "Added to cart", description: `${name} — ${configSize}` });
-    scrollTo(step1Ref.current, 220);
+    toast({ title: "Added to cart", description: `${name} — ${configSize}${itemQty > 1 ? ` ×${itemQty}` : ""}` });
+    scrollTo(step1Ref.current, 240);
   }
 
-  function removeFromCart(id: string) {
-    setCart((prev) => prev.filter((i) => i.id !== id));
-  }
+  function removeFromCart(id: string) { setCart((prev) => prev.filter((i) => i.id !== id)); }
 
   function onSubmit(values: z.infer<typeof customerSchema>) {
     if (cart.length === 0) {
-      toast({ variant: "destructive", title: "Cart is empty", description: "Add at least one meal before booking." });
+      toast({ variant: "destructive", title: "Cart is empty", description: "Add at least one item before booking." });
       return;
     }
     if (!pepperTouched) {
@@ -205,16 +306,9 @@ export default function BookPage() {
       scrollTo(pepperRef.current, 0);
       return;
     }
-    const primary = cart[0];
-    const cartSummary = cart
-      .map((ci, i) => {
-        const protein = ci.selectedProtein
-          ? ` + ${ci.selectedProtein}${ci.proteinQty > 1 ? ` ×${ci.proteinQty}` : ""}`
-          : "";
-        return `${i + 1}. ${ci.menuItemName} — ${ci.selectedSize}${protein} (${formatNaira(ci.price)})`;
-      })
-      .join("\n");
-    const notesStr = [
+    const primary    = cart[0];
+    const cartSummary = cart.map((ci, i) => `${i + 1}. ${ci.menuItemName} — ${cartLineDesc(ci)} (${formatNaira(ci.price)})`).join("\n");
+    const notesStr   = [
       `CART (${cart.length} item${cart.length === 1 ? "" : "s"}):\n${cartSummary}`,
       `Pepper: ${PEPPER_LABELS[pepperLevel]}`,
       values.notes ? `Notes: ${values.notes}` : "",
@@ -225,7 +319,7 @@ export default function BookPage() {
         data: {
           menuItemId:      primary.menuItemId,
           selectedSize:    primary.selectedSize,
-          selectedProtein: primary.selectedProtein,
+          selectedProtein: primary.selectedProteins[0]?.name ?? null,
           customerName:    values.customerName,
           customerPhone:   values.customerPhone,
           customerEmail:   values.customerEmail || undefined,
@@ -234,14 +328,14 @@ export default function BookPage() {
           deliverySlot:    values.deliverySlot,
           notes:           notesStr,
           // @ts-expect-error extended fields
-          cartItems:    cart,
+          cartItems:   cart,
           // @ts-expect-error extended fields
-          pepperLevel:  PEPPER_LABELS[pepperLevel],
+          pepperLevel: PEPPER_LABELS[pepperLevel],
         },
       },
       {
         onSuccess: (order) => setLocation(`/booking-confirmed/${order.id}`),
-        onError:   (err) => {
+        onError:   (err)   => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const msg = (err as any)?.data?.error || (err as any)?.message || "Failed to create booking";
           toast({ variant: "destructive", title: "Booking Error", description: msg });
@@ -262,7 +356,7 @@ export default function BookPage() {
         <div className="container mx-auto px-4 md:px-6">
           <h1 className="text-5xl md:text-6xl font-bold font-display mb-4">Book a Slot</h1>
           <p className="text-xl text-background/70 max-w-xl">
-            Build your order one dish at a time. Everything lands in your cart with a live total.
+            Build your full order — meals, drinks, snacks, platters. Everything lands in one cart with a live total.
           </p>
         </div>
       </div>
@@ -270,21 +364,22 @@ export default function BookPage() {
       <div className="container mx-auto px-4 md:px-6 max-w-6xl">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
-          {/* ═══ LEFT: 3-step form ════════════════════════════════════════ */}
+          {/* ═══ LEFT COLUMN ════════════════════════════════════════════════ */}
           <div className="lg:col-span-2 space-y-8">
 
-            {/* ── STEP 1: MEAL BUILDER ─────────────────────────────────── */}
+            {/* ── STEP 1: ITEM BUILDER ─────────────────────────────────── */}
             <div ref={step1Ref} className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
 
-              {/* Card header */}
-              <div className="flex items-center gap-3 px-6 md:px-8 py-5 border-b border-border bg-muted/40">
-                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shrink-0">1</div>
-                <div>
+              <div className="flex items-start gap-3 px-6 md:px-8 py-5 border-b border-border bg-muted/40">
+                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shrink-0 mt-0.5">1</div>
+                <div className="flex-1 min-w-0">
                   <h2 className="text-xl font-bold font-display leading-tight">Build Your Order</h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">Pick a dish, choose size and protein, then add to cart. Repeat for up to {MAX_DISTINCT_MEALS} different meals.</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Pick any item — meals, drinks, snacks, platters. Set size, quantity and proteins, then add to cart. Repeat as needed.
+                  </p>
                 </div>
                 {cart.length > 0 && (
-                  <span className="ml-auto shrink-0 text-xs font-bold text-primary bg-primary/10 rounded-full px-3 py-1">
+                  <span className="shrink-0 text-xs font-bold text-primary bg-primary/10 rounded-full px-3 py-1 self-center">
                     {cart.length} item{cart.length !== 1 ? "s" : ""}
                   </span>
                 )}
@@ -292,65 +387,56 @@ export default function BookPage() {
 
               <div className="p-6 md:p-8 space-y-7">
 
-                {/* "Just added" confirmation banner */}
+                {/* Just-added banner */}
                 {justAdded && (
                   <div className="flex items-center gap-2.5 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm font-medium text-emerald-800 animate-in fade-in slide-in-from-top-2 duration-300">
                     <span className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center shrink-0">
                       <Check className="w-3 h-3 text-white" />
                     </span>
-                    <span><strong>{justAdded}</strong> added to cart. Want to add another? Choose a dish below.</span>
+                    <span><strong>{justAdded}</strong> added. Choose another item below to keep building your order.</span>
                   </div>
                 )}
 
-                {/* Meal slot dots */}
-                {distinctMealIds.size > 0 && (
-                  <div className="flex items-center gap-2 text-sm">
+                {/* Food meal dots (soups/stews/breakfast only) */}
+                {distinctFoodIds.size > 0 && (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <div className="flex gap-1">
-                      {Array.from({ length: MAX_DISTINCT_MEALS }).map((_, i) => (
-                        <div
-                          key={i}
-                          className="w-6 h-6 rounded-full border-2 transition-all duration-300"
+                      {Array.from({ length: MAX_FOOD_MEALS }).map((_, i) => (
+                        <div key={i} className="w-5 h-5 rounded-full border-2 transition-all duration-300"
                           style={{
-                            background:   i < distinctMealIds.size ? "#0F9E0F" : "transparent",
-                            borderColor:  i < distinctMealIds.size ? "#0F9E0F" : "#e5e7eb",
-                          }}
-                        />
+                            background:  i < distinctFoodIds.size ? "#0F9E0F" : "transparent",
+                            borderColor: i < distinctFoodIds.size ? "#0F9E0F" : "#e5e7eb",
+                          }} />
                       ))}
                     </div>
-                    <span className="text-muted-foreground text-xs">
-                      {distinctMealIds.size}/{MAX_DISTINCT_MEALS} distinct meals in cart
-                    </span>
+                    <span>{distinctFoodIds.size}/{MAX_FOOD_MEALS} distinct meals (drinks & snacks are unlimited)</span>
                   </div>
                 )}
 
-                {/* ── A: Dish ────────────────────────────────────────── */}
+                {/* ── A: Select item ─────────────────────────────────── */}
                 <div className="space-y-2.5">
-                  <SubStepLabel letter="A" done={!!configItem}>Select a Dish</SubStepLabel>
+                  <SubStepLabel letter="A" done={!!configItem}>Choose an Item</SubStepLabel>
                   <Select
-                    disabled={loadingMenu || distinctMealIds.size >= MAX_DISTINCT_MEALS}
+                    disabled={loadingMenu}
                     onValueChange={selectDish}
                     value={configItemId ? configItemId.toString() : ""}
                   >
                     <SelectTrigger className="h-12 text-base">
-                      <SelectValue placeholder={
-                        loadingMenu
-                          ? "Loading menu…"
-                          : distinctMealIds.size >= MAX_DISTINCT_MEALS
-                          ? `Max ${MAX_DISTINCT_MEALS} distinct meals reached`
-                          : "Choose a dish"
-                      } />
+                      <SelectValue placeholder={loadingMenu ? "Loading…" : "Choose a dish, drink, snack or platter"} />
                     </SelectTrigger>
-                    <SelectContent className="max-h-72 overflow-y-auto">
-                      {(["soups", "stews", "breakfast"] as const).map((cat) => {
-                        const items = menuItems?.filter((i) => i.available && i.category === cat) ?? [];
-                        if (!items.length) return null;
-                        const label = cat === "breakfast" ? "Breakfast" : cat.charAt(0).toUpperCase() + cat.slice(1);
+                    <SelectContent className="max-h-80 overflow-y-auto">
+                      {CAT_ORDER.map((cat) => {
+                        const catItems = menuItems?.filter((i) => i.available && i.category === cat) ?? [];
+                        if (!catItems.length) return null;
                         return (
                           <div key={cat}>
                             <div className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border/50 sticky top-0 bg-popover z-10">
-                              {label}
+                              {CAT_LABELS[cat]}
+                              {cat === "soups" || cat === "stews" || cat === "breakfast"
+                                ? <span className="ml-1 font-normal normal-case text-muted-foreground/60">(max {MAX_FOOD_MEALS} meals)</span>
+                                : null}
                             </div>
-                            {items.map((item) => (
+                            {catItems.map((item) => (
                               <SelectItem key={item.id} value={item.id.toString()}>
                                 {item.name}
                               </SelectItem>
@@ -369,21 +455,15 @@ export default function BookPage() {
                       Choose Size
                       <span className="ml-2 text-xs font-normal text-muted-foreground">— {configItem.name}</span>
                     </SubStepLabel>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <div className={`grid gap-2 ${configItem.sizes.length > 3 ? "grid-cols-2 sm:grid-cols-3" : "grid-cols-2 sm:grid-cols-3"}`}>
                       {configItem.sizes.map((size) => {
-                        const selected = configSize === size.label;
+                        const sel = configSize === size.label;
                         return (
-                          <button
-                            key={size.label}
-                            type="button"
-                            onClick={() => setConfigSize(size.label)}
+                          <button key={size.label} type="button" onClick={() => setConfigSize(size.label)}
                             className={`relative text-left px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
-                              selected
-                                ? "border-primary bg-primary/5 shadow-sm"
-                                : "border-border hover:border-primary/40 hover:bg-muted/50"
-                            }`}
-                          >
-                            {selected && (
+                              sel ? "border-primary bg-primary/5 shadow-sm" : "border-border hover:border-primary/40 hover:bg-muted/50"
+                            }`}>
+                            {sel && (
                               <span className="absolute top-2 right-2 w-4 h-4 rounded-full bg-primary flex items-center justify-center">
                                 <Check className="w-2.5 h-2.5 text-white" />
                               </span>
@@ -397,43 +477,30 @@ export default function BookPage() {
                   </div>
                 )}
 
-                {/* ── C: Protein + Quantity ──────────────────────────── */}
-                {configItem && configItem.proteins.length > 0 && configSize && (
+                {/* ── C: Proteins — shown before qty for food items ─── */}
+                {configItem && configSize && hasProteins && (
                   <div ref={proteinRef} className="space-y-3 animate-in fade-in slide-in-from-bottom-3 duration-300">
-                    <SubStepLabel letter="C" done={configProtein !== ""}>
-                      Add Protein
-                      <span className="ml-2 text-xs font-normal text-muted-foreground">— optional, choose quantity</span>
+                    <SubStepLabel letter="C" done={Object.keys(proteins).length > 0}>
+                      Add Proteins
+                      <span className="ml-2 text-xs font-normal text-muted-foreground">— tick all you want, then set quantities</span>
                     </SubStepLabel>
 
                     {/* Protein grid */}
                     <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
-                      {/* No protein */}
-                      <button
-                        type="button"
-                        onClick={() => setConfigProtein("none")}
+                      <button type="button" onClick={() => setProteins({})}
                         className={`text-center px-2 py-2.5 rounded-xl border-2 transition-all duration-200 ${
-                          configProtein === "none" || configProtein === ""
-                            ? "border-border bg-muted"
-                            : "border-border hover:border-primary/40 hover:bg-muted/50"
-                        }`}
-                      >
-                        <div className="text-[11px] font-medium text-muted-foreground">None</div>
+                          Object.keys(proteins).length === 0 ? "border-border bg-muted" : "border-border hover:border-primary/30 hover:bg-muted/50"
+                        }`}>
+                        <div className="text-[11px] font-medium text-muted-foreground">No protein</div>
                         <div className="text-xs font-bold mt-0.5">—</div>
                       </button>
-
                       {configItem.proteins.map((p) => {
-                        const selected = configProtein === p.name;
+                        const selected = proteins[p.name] !== undefined;
                         return (
-                          <button
-                            key={p.name}
-                            type="button"
-                            onClick={() => setConfigProtein(p.name)}
+                          <button key={p.name} type="button" onClick={() => toggleProtein(p.name)}
                             className={`relative text-center px-2 py-2.5 rounded-xl border-2 transition-all duration-200 ${
-                              selected
-                                ? "border-primary bg-primary/5 shadow-sm"
-                                : "border-border hover:border-primary/40 hover:bg-muted/50"
-                            }`}
-                          >
+                              selected ? "border-primary bg-primary/5 shadow-sm" : "border-border hover:border-primary/40 hover:bg-muted/50"
+                            }`}>
                             {selected && (
                               <span className="absolute top-1 right-1 w-3 h-3 rounded-full bg-primary flex items-center justify-center">
                                 <Check className="w-2 h-2 text-white" />
@@ -446,89 +513,92 @@ export default function BookPage() {
                       })}
                     </div>
 
-                    {/* Quantity control — only when a real protein is picked */}
-                    {configProtein && configProtein !== "none" && (
-                      <div className="flex items-center gap-3 mt-1 px-4 py-3 bg-muted/60 border border-border rounded-xl animate-in fade-in slide-in-from-bottom-2 duration-200">
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-semibold truncate">{configProtein}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {formatNaira(configItem.proteins.find((p) => p.name === configProtein)?.extraCost ?? 0)} per portion
-                          </div>
-                        </div>
-
-                        {/* -/qty/+ */}
-                        <div className="flex items-center gap-1">
-                          <button
-                            type="button"
-                            onClick={() => setConfigProteinQty((q) => Math.max(1, q - 1))}
-                            disabled={configProteinQty <= 1}
-                            className="w-8 h-8 rounded-full border-2 border-border flex items-center justify-center hover:border-primary transition-colors disabled:opacity-30"
-                          >
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className="w-10 text-center font-bold text-lg tabular-nums">
-                            {configProteinQty}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => setConfigProteinQty((q) => Math.min(MAX_PROTEIN_QTY, q + 1))}
-                            disabled={configProteinQty >= MAX_PROTEIN_QTY}
-                            className="w-8 h-8 rounded-full border-2 border-border flex items-center justify-center hover:border-primary transition-colors disabled:opacity-30"
-                          >
-                            <Plus className="w-3 h-3" />
-                          </button>
-                        </div>
-
-                        <div className="text-sm font-bold text-primary w-24 text-right tabular-nums">
-                          +{formatNaira(configProteinExtra)}
-                        </div>
+                    {/* Per-protein quantity rows */}
+                    {Object.keys(proteins).length > 0 && (
+                      <div className="space-y-2 animate-in fade-in duration-200">
+                        {Object.entries(proteins).map(([name, qty]) => {
+                          const p = configItem.proteins.find((p) => p.name === name);
+                          return (
+                            <div key={name} className="flex items-center gap-3 px-4 py-2.5 bg-muted/60 border border-border rounded-xl">
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-semibold truncate">{name}</div>
+                                <div className="text-xs text-muted-foreground">{formatNaira(p?.extraCost ?? 0)} per piece</div>
+                              </div>
+                              <QtyControl value={qty} max={MAX_PROTEIN_QTY} onChange={(n) => setProteinQty(name, n)} size="sm" />
+                              <div className="text-sm font-bold text-primary w-20 text-right tabular-nums shrink-0">
+                                +{formatNaira((p?.extraCost ?? 0) * qty)}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
                 )}
 
-                {/* ── Live subtotal + Add to Cart ───────────────────── */}
+                {/* ── D: Item quantity + live price + Add to Cart ──────── */}
                 {configItem && configSize && (
-                  <div
-                    ref={addBtnRef}
-                    className="animate-in fade-in duration-200"
-                  >
-                    {/* Live price breakdown */}
-                    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-3 px-1">
-                      <span className="text-xs text-muted-foreground">
-                        {configItem.name} — {configSize}
-                      </span>
-                      {configProtein && configProtein !== "none" && (
-                        <span className="text-xs text-muted-foreground">
-                          + {configProtein} ×{configProteinQty}
-                        </span>
-                      )}
-                      <span className="ml-auto text-lg font-bold tabular-nums" style={{ color: "#0F9E0F" }}>
+                  <div ref={qtyRef} className="animate-in fade-in duration-200">
+
+                    {/* Quantity of this item */}
+                    <div ref={!hasProteins ? addBtnRef : undefined}
+                      className="flex items-center gap-4 px-4 py-3 bg-muted/40 border border-border rounded-xl mb-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold">
+                          {isFood ? "Quantity" : `How many ${configItem.name.toLowerCase().includes("drink") ? "bottles" : "packs"}?`}
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-0.5">
+                          {formatNaira(configUnitPrice)} each
+                        </div>
+                      </div>
+                      <QtyControl value={itemQty} max={MAX_ITEM_QTY} onChange={setItemQty} />
+                      <div className="text-base font-bold text-right tabular-nums shrink-0 w-24" style={{ color: "#0F9E0F" }}>
                         {formatNaira(configPrice)}
-                      </span>
+                      </div>
                     </div>
 
-                    <Button
-                      type="button"
-                      onClick={addToCart}
-                      disabled={!canAddToCart}
-                      className="w-full h-12 text-base font-bold gap-2 rounded-xl"
-                      style={{ background: "#0F9E0F" }}
-                    >
-                      <PlusCircle className="w-5 h-5" />
-                      Add to Cart
-                      {cart.length > 0 && ` (${cart.length + 1} items total)`}
-                    </Button>
+                    {/* Price breakdown line */}
+                    {(itemQty > 1 || Object.keys(proteins).length > 0) && (
+                      <div className="flex flex-wrap gap-x-2 gap-y-1 text-xs text-muted-foreground mb-3 px-1">
+                        <span>{configItem.name}</span>
+                        <span>·</span>
+                        <span>{configSize}</span>
+                        {Object.entries(proteins).map(([n, q]) => (
+                          <span key={n}>· {n}{q > 1 ? ` ×${q}` : ""}</span>
+                        ))}
+                        {itemQty > 1 && <span>· <strong>×{itemQty} items</strong></span>}
+                        <span className="ml-auto font-bold text-foreground">{formatNaira(configPrice)}</span>
+                      </div>
+                    )}
+
+                    <div ref={hasProteins ? addBtnRef : undefined}>
+                      <Button
+                        type="button"
+                        onClick={addToCart}
+                        disabled={!canAddToCart}
+                        className="w-full h-12 text-base font-bold gap-2 rounded-xl"
+                        style={{ background: "#0F9E0F" }}
+                      >
+                        <PlusCircle className="w-5 h-5" />
+                        Add to Cart
+                        {cart.length > 0 && ` (${cart.length + 1} items total)`}
+                      </Button>
+                      {isFood && !distinctFoodIds.has(configItemId) && distinctFoodIds.size >= MAX_FOOD_MEALS && (
+                        <p className="text-xs text-amber-600 text-center mt-2">
+                          Maximum {MAX_FOOD_MEALS} distinct meals reached. Remove one to add a different meal.
+                        </p>
+                      )}
+                    </div>
                   </div>
                 )}
 
-                {/* ── Cart preview inside Step 1 ───────────────────── */}
+                {/* ── Cart preview ─────────────────────────────────────── */}
                 {cart.length > 0 && (
                   <div className="rounded-xl border border-border overflow-hidden animate-in fade-in duration-300">
                     <div className="flex items-center gap-2 px-4 py-3 bg-muted/50 border-b border-border">
                       <ShoppingCart className="w-4 h-4 text-muted-foreground" />
                       <span className="font-bold text-sm">Cart</span>
-                      <span className="ml-auto font-bold text-sm" style={{ color: "#0F9E0F" }}>
+                      <span className="ml-auto font-bold text-sm tabular-nums" style={{ color: "#0F9E0F" }}>
                         {formatNaira(cartTotal)}
                       </span>
                     </div>
@@ -537,19 +607,11 @@ export default function BookPage() {
                         <div key={item.id} className="flex items-center gap-3 px-4 py-3">
                           <div className="flex-1 min-w-0">
                             <div className="font-medium text-sm truncate">{item.menuItemName}</div>
-                            <div className="text-xs text-muted-foreground">
-                              {item.selectedSize}
-                              {item.selectedProtein
-                                ? ` + ${item.selectedProtein}${item.proteinQty > 1 ? ` ×${item.proteinQty}` : ""}`
-                                : ""}
-                            </div>
+                            <div className="text-xs text-muted-foreground">{cartLineDesc(item)}</div>
                           </div>
                           <div className="font-bold text-sm tabular-nums shrink-0">{formatNaira(item.price)}</div>
-                          <button
-                            type="button"
-                            onClick={() => removeFromCart(item.id)}
-                            className="p-1.5 text-muted-foreground hover:text-destructive transition-colors rounded-lg hover:bg-destructive/10 shrink-0"
-                          >
+                          <button type="button" onClick={() => removeFromCart(item.id)}
+                            className="p-1.5 text-muted-foreground hover:text-destructive transition-colors rounded-lg hover:bg-destructive/10 shrink-0">
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
@@ -561,7 +623,7 @@ export default function BookPage() {
               </div>
             </div>
 
-            {/* ── STEP 2: PEPPER ───────────────────────────────────────── */}
+            {/* ── STEP 2: PEPPER ─────────────────────────────────────────── */}
             <div ref={pepperRef} className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
               <div className="flex items-center gap-3 px-6 md:px-8 py-5 border-b border-border bg-muted/40">
                 <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shrink-0">2</div>
@@ -578,7 +640,7 @@ export default function BookPage() {
               </div>
               <div className="p-6 md:p-8">
                 <p className="text-sm text-muted-foreground mb-6">
-                  This applies to everything in your cart. Move the slider to set your preference — required before confirming.
+                  This applies to all the food in your cart. Drinks, snacks and platters are not affected.
                 </p>
                 <div className="space-y-4">
                   <div className="flex justify-between text-sm font-medium text-muted-foreground">
@@ -586,10 +648,7 @@ export default function BookPage() {
                       <span key={i} className={i === pepperLevel ? PEPPER_COLORS[i] + " font-bold" : ""}>{label}</span>
                     ))}
                   </div>
-                  <input
-                    type="range"
-                    min={0} max={2} step={1}
-                    value={pepperLevel}
+                  <input type="range" min={0} max={2} step={1} value={pepperLevel}
                     onChange={(e) => { setPepperLevel(parseInt(e.target.value)); setPepperTouched(true); }}
                     className="w-full h-3 rounded-full appearance-none cursor-pointer"
                     style={{ accentColor: pepperLevel === 0 ? "#059669" : pepperLevel === 1 ? "#d97706" : "#dc2626" }}
@@ -601,7 +660,7 @@ export default function BookPage() {
               </div>
             </div>
 
-            {/* ── STEP 3: DELIVERY ─────────────────────────────────────── */}
+            {/* ── STEP 3: DELIVERY ───────────────────────────────────────── */}
             <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
               <div className="flex items-center gap-3 px-6 md:px-8 py-5 border-b border-border bg-muted/40">
                 <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shrink-0">3</div>
@@ -694,23 +753,21 @@ export default function BookPage() {
               </div>
             </div>
 
-          </div>{/* end left column */}
+          </div>
 
-          {/* ═══ RIGHT: STICKY ORDER SUMMARY ═══════════════════════════════ */}
+          {/* ═══ RIGHT: ORDER SUMMARY ════════════════════════════════════ */}
           <div className="lg:sticky lg:top-24 space-y-4">
 
             <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
               <div className="px-6 py-5 border-b border-border bg-muted/40 flex items-center justify-between">
                 <h2 className="font-bold font-display text-lg">Order Summary</h2>
-                {cart.length > 0 && (
-                  <span className="text-xs text-muted-foreground">{cart.length} item{cart.length !== 1 ? "s" : ""}</span>
-                )}
+                {cart.length > 0 && <span className="text-xs text-muted-foreground">{cart.length} line{cart.length !== 1 ? "s" : ""}</span>}
               </div>
 
               {cart.length === 0 ? (
                 <div className="px-6 py-8 text-center text-muted-foreground text-sm">
                   <ShoppingCart className="w-8 h-8 mx-auto mb-3 opacity-30" />
-                  <p>Your cart is empty.<br />Add a dish above to get started.</p>
+                  <p>Your cart is empty.<br />Choose any item above to start.</p>
                 </div>
               ) : (
                 <div className="px-6 py-5 space-y-4">
@@ -719,12 +776,7 @@ export default function BookPage() {
                       <div key={item.id} className="flex justify-between items-start gap-2 text-sm">
                         <div className="flex-1 min-w-0">
                           <div className="font-medium leading-tight truncate">{item.menuItemName}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {item.selectedSize}
-                            {item.selectedProtein
-                              ? ` + ${item.selectedProtein}${item.proteinQty > 1 ? ` ×${item.proteinQty}` : ""}`
-                              : ""}
-                          </div>
+                          <div className="text-xs text-muted-foreground">{cartLineDesc(item)}</div>
                         </div>
                         <span className="font-bold shrink-0 tabular-nums">{formatNaira(item.price)}</span>
                       </div>
@@ -734,11 +786,11 @@ export default function BookPage() {
                   {rushFee > 0 && (
                     <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-sm">
                       <div className="flex justify-between items-center font-bold text-amber-800 mb-1">
-                        <span>Rush fee (same-day)</span>
+                        <span>Rush fee (same-day meals)</span>
                         <span>{formatNaira(rushFee)}</span>
                       </div>
                       <p className="text-xs text-amber-700">
-                        {distinctMealIds.size} dish{distinctMealIds.size !== 1 ? "es" : ""} × {formatNaira(RUSH_FEE_RATES[Math.min(distinctMealIds.size, 5)] ?? 10000)} each
+                        {distinctFoodIds.size} meal{distinctFoodIds.size !== 1 ? "s" : ""} × {formatNaira(RUSH_FEE_RATES[Math.min(distinctFoodIds.size, 5)] ?? 10000)} each
                       </p>
                     </div>
                   )}
@@ -757,46 +809,37 @@ export default function BookPage() {
               )}
             </div>
 
-            {/* Confirm button */}
-            <Button
-              type="submit"
-              form="booking-form"
-              disabled={!canSubmit}
+            <Button type="submit" form="booking-form" disabled={!canSubmit}
               className="w-full h-14 text-lg font-bold gap-2 rounded-xl"
-              style={{ background: canSubmit ? "#0F9E0F" : undefined }}
-            >
-              {isSubmitting ? (
-                <><Loader2 className="w-5 h-5 animate-spin" /> Booking…</>
-              ) : (
-                <>Confirm Booking <ChevronRight className="w-5 h-5" /></>
-              )}
+              style={{ background: canSubmit ? "#0F9E0F" : undefined }}>
+              {isSubmitting
+                ? <><Loader2 className="w-5 h-5 animate-spin" /> Booking…</>
+                : <>Confirm Booking <ChevronRight className="w-5 h-5" /></>
+              }
             </Button>
 
-            {/* Checklist hints */}
             {!canSubmit && !isSubmitting && (
               <div className="space-y-1.5">
                 {cart.length === 0 && (
                   <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                    <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" /> Add at least one meal
+                    <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" /> Add at least one item
                   </p>
                 )}
                 {!pepperTouched && (
                   <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                    <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" /> Set your pepper level (Step 2)
+                    <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" /> Set pepper level (Step 2)
                   </p>
                 )}
               </div>
             )}
 
-            {/* Payment note */}
             <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
               <p className="text-sm font-bold text-amber-900 dark:text-amber-500 mb-1">Payment required before cooking</p>
               <p className="text-xs text-amber-700 dark:text-amber-600 leading-relaxed">
-                After you confirm your slot, we'll send our bank details via WhatsApp and email. We only start cooking once payment is received.
+                After confirming, we'll send bank details via WhatsApp and email. Cooking starts once payment is received.
               </p>
             </div>
 
-            {/* Coming soon */}
             <div className="bg-card rounded-2xl border border-dashed border-border p-4 space-y-2">
               <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Coming soon</p>
               <div className="text-sm text-muted-foreground/50 flex items-center gap-2">💳 Pay with Paystack</div>
@@ -807,23 +850,5 @@ export default function BookPage() {
         </div>
       </div>
     </div>
-  );
-}
-
-// ── SUB-STEP LABEL ────────────────────────────────────────────────────────────
-function SubStepLabel({ letter, done, children }: {
-  letter: string;
-  done: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="text-sm font-semibold flex items-center gap-2">
-      <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 transition-colors duration-300 ${
-        done ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground border border-border"
-      }`}>
-        {done ? <Check className="w-2.5 h-2.5" /> : letter}
-      </span>
-      {children}
-    </label>
   );
 }
