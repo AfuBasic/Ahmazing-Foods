@@ -1,6 +1,8 @@
 import { Link } from "wouter";
 import { BookOpen, ArrowRight } from "lucide-react";
 
+const BASE = import.meta.env.BASE_URL;
+const asset = (p: string) => `${BASE}assets/${p}`;
 const BRAND_GREEN = "#0F9E0F";
 
 const articles = [
@@ -10,7 +12,8 @@ const articles = [
     excerpt:
       "Managing blood sugar does not mean giving up Nigerian food. Several dishes in our everyday repertoire already work in your favour — here are five worth knowing about.",
     readTime: "5 min read",
-    tag: "Nutrition",
+    tag: "Wellness Guide",
+    img: asset("food-egusi-hands.jpg"),
   },
   {
     slug: "nigerian-soups-less-oil",
@@ -18,7 +21,8 @@ const articles = [
     excerpt:
       "Palm oil is at the heart of Nigerian cooking. But flavour and oil are not the same thing. Here is how to reduce the oil without reducing the taste.",
     readTime: "4 min read",
-    tag: "Cooking",
+    tag: "Cooking Technique",
+    img: asset("food-hero-soup.jpg"),
   },
   {
     slug: "heart-healthy-nigerian-kitchen",
@@ -26,7 +30,8 @@ const articles = [
     excerpt:
       "Heart-healthy gets used a lot in wellness circles — usually about salads and grilled chicken. Nigerian cooking has more to offer here than most people realise.",
     readTime: "5 min read",
-    tag: "Wellness",
+    tag: "Wellness Guide",
+    img: asset("food-egusi-top.jpg"),
   },
 ];
 
@@ -54,9 +59,12 @@ export default function BlogIndexPage() {
           {articles.map((a) => (
             <Link key={a.slug} href={`/blog/${a.slug}`} className="group block">
               <article className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-shadow h-full flex flex-col">
-                {/* Placeholder image area */}
-                <div className="aspect-video bg-muted flex items-center justify-center text-muted-foreground/30">
-                  <BookOpen className="w-12 h-12" />
+                <div className="aspect-video bg-muted overflow-hidden">
+                  <img
+                    src={a.img}
+                    alt={a.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
                 </div>
                 <div className="p-6 flex flex-col flex-1">
                   <div className="flex items-center gap-3 mb-4">

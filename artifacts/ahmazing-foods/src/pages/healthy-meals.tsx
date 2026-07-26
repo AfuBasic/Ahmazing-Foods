@@ -89,7 +89,7 @@ const rotation = [
 const menuPool: {
   group: string;
   sub: string;
-  items: { name: string; desc: string; price: string; waText: string }[];
+  items: { name: string; desc: string; price: string; waText: string; img: string }[];
 }[] = [
   {
     group: "Breakfast",
@@ -100,18 +100,21 @@ const menuPool: {
         desc: "Unripe plantain (lower GI than ripe) with a light pepper-and-onion egg sauce.",
         price: "₦4,500",
         waText: "Hi, I'd like to order Boiled Unripe Plantain and Egg Sauce",
+        img: "food-breakfast.jpg",
       },
       {
         name: "Unsweetened Oat Pap with Roasted Groundnuts",
         desc: "Traditional pap made with oats, no added sugar, topped with roasted peanuts.",
         price: "₦3,500",
         waText: "Hi, I'd like to order Oat Pap with Roasted Groundnuts",
+        img: "food-akara-pap.jpg",
       },
       {
         name: "Whole Wheat Bread, Baked Akara & Cucumber",
         desc: "Whole wheat bread, lightly-oiled baked akara, fresh cucumber slices.",
         price: "₦4,000",
         waText: "Hi, I'd like to order Whole Wheat Bread with Baked Akara",
+        img: "food-akara-pap.jpg",
       },
     ],
   },
@@ -124,18 +127,21 @@ const menuPool: {
         desc: "Unripe plantain, spinach or ugu, light palm oil, grilled (not fried) fish.",
         price: "₦7,500",
         waText: "Hi, I'd like to order Unripe Plantain Porridge with Grilled Fish",
+        img: "food-jollof-fish.jpg",
       },
       {
         name: "Brown Rice Jollof with Grilled Chicken & Vegetables",
         desc: "Unpolished brown rice, grilled chicken, side of steamed vegetables.",
         price: "₦8,000",
         waText: "Hi, I'd like to order Brown Rice Jollof with Grilled Chicken",
+        img: "food-jollof-fish.jpg",
       },
       {
         name: "Beans & Vegetable Sauce",
         desc: "Beans porridge with ugu or spinach, moderate palm oil, side of unripe plantain.",
         price: "₦6,500",
         waText: "Hi, I'd like to order Beans and Vegetable Sauce",
+        img: "food-ingredients.jpg",
       },
     ],
   },
@@ -148,18 +154,21 @@ const menuPool: {
         desc: "Ugu/efo riro style soup, lean fish or chicken, controlled swallow portion.",
         price: "₦7,500",
         waText: "Hi, I'd like to order Vegetable Soup with Small Swallow",
+        img: "food-egusi-top.jpg",
       },
       {
         name: "Grilled Fish with Ofada Rice & Vegetables",
         desc: "Grilled fish, modest portion of unpolished ofada rice, mixed steamed vegetables.",
         price: "₦8,500",
         waText: "Hi, I'd like to order Grilled Fish with Ofada Rice",
+        img: "food-jollof-fish.jpg",
       },
       {
         name: "Okra Soup with Lean Protein",
         desc: "Fibre-rich okra soup, lean protein, small portion of swallow.",
         price: "₦7,500",
         waText: "Hi, I'd like to order Okra Soup with Lean Protein",
+        img: "food-hero-soup.jpg",
       },
     ],
   },
@@ -172,36 +181,42 @@ const menuPool: {
         desc: "Lightly roasted with no added salt.",
         price: "₦1,800",
         waText: "Hi, I'd like to order Unsalted Roasted Peanuts",
+        img: "products/roasted_peanut.jpg",
       },
       {
         name: "Garden Egg & Groundnut Paste",
         desc: "Fresh garden egg with a natural groundnut paste dip.",
         price: "₦2,000",
         waText: "Hi, I'd like to order Garden Egg and Groundnut Paste",
+        img: "products/peanut-butter.jpg",
       },
       {
         name: "Cucumber & Carrot Sticks with Peanut Butter",
         desc: "Fresh-cut cucumber and carrot sticks with natural peanut butter.",
         price: "₦2,500",
         waText: "Hi, I'd like to order Cucumber and Carrot Sticks with Peanut Butter",
+        img: "products/carrot.jpg",
       },
       {
         name: "Unsweetened Zobo",
         desc: "Hibiscus drink, no added sugar.",
         price: "₦1,500",
         waText: "Hi, I'd like to order Unsweetened Zobo",
+        img: "products/zobo.jpg",
       },
       {
         name: "Tiger Nut Milk (Unsweetened)",
         desc: "Dairy-free, naturally sweet, no added sugar.",
         price: "₦2,200",
         waText: "Hi, I'd like to order Unsweetened Tiger Nut Milk",
+        img: "products/tigernut.jpg",
       },
       {
         name: "Baked Plantain Chips (Unripe)",
         desc: "Unripe plantain baked, not fried, with minimal oil.",
         price: "₦1,800",
         waText: "Hi, I'd like to order Baked Unripe Plantain Chips",
+        img: "products/plantain__chips.jpg",
       },
     ],
   },
@@ -559,12 +574,21 @@ export default function HealthyMealsPage() {
                     key={item.name}
                     className="bg-card rounded-2xl border border-border p-5 flex flex-col gap-3"
                   >
-                    {/* placeholder — no photos for healthy meals items */}
-                    <div
-                      className="rounded-xl flex items-center justify-center text-muted-foreground/20 text-4xl mb-1"
-                      style={{ height: 80, background: "#f5f5f5", border: "1px dashed #ddd" }}
-                    >
-                      🥗
+                    <div className="rounded-xl overflow-hidden mb-1" style={{ height: 80 }}>
+                      {item.img ? (
+                        <img
+                          src={asset(item.img)}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div
+                          className="w-full h-full flex items-center justify-center text-muted-foreground/20 text-4xl"
+                          style={{ background: "#f5f5f5", border: "1px dashed #ddd" }}
+                        >
+                          🥗
+                        </div>
+                      )}
                     </div>
                     <h4 className="font-bold font-display leading-tight">{item.name}</h4>
                     <p className="text-xs text-muted-foreground leading-relaxed flex-1">{item.desc}</p>
