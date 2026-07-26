@@ -53,7 +53,7 @@ export default function MenuPage() {
 
   const descriptions = {
     soups: "Every soup comes garnished with dried fish, stockfish and cowhide. Add extra protein below to customise further.",
-    stews: "Classic Nigerian stews cooked fresh in small batches, sized for a family meal or a full event. Medium or Large only.",
+    stews: "Classic Nigerian stews cooked fresh in small batches. 3 Litres (Medium), 5 Litres (Large), or Extra Large for bigger gatherings.",
     breakfast: "Generously-portioned combo plates — sized so one pack is a proper sit-down meal. Cooked fresh to order.",
   };
 

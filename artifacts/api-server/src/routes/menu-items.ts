@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { eq } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 import { db, menuItemsTable } from "@workspace/db";
 import {
   ListMenuItemsQueryParams,
@@ -22,7 +22,8 @@ router.get("/menu-items", async (req, res): Promise<void> => {
         .select()
         .from(menuItemsTable)
         .where(eq(menuItemsTable.category, params.data.category))
-    : await db.select().from(menuItemsTable);
+        .orderBy(asc(menuItemsTable.name))
+    : await db.select().from(menuItemsTable).orderBy(asc(menuItemsTable.name));
 
   res.json(ListMenuItemsResponse.parse(items));
 });

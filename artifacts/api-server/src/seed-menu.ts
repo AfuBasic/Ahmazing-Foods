@@ -35,8 +35,9 @@ const seafoodOkroSizes = [
   { label: "Cooler — Medium", price: 0 },
 ];
 const stewSizes = (m: number, l: number) => [
-  { label: "Medium (serves 4–6)",  price: m },
-  { label: "Large (serves 8–10)",  price: l },
+  { label: "3 Litres — Medium (serves 4–6)",   price: m     },
+  { label: "5 Litres — Large (serves 8–10)",   price: l     },
+  { label: "Extra Large (serves 12–20)",        price: 85000 },
 ];
 const single = (price: number) => [{ label: "Standard", price }];
 
