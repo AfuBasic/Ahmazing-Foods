@@ -22,6 +22,36 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+// ── STATIC PRODUCTS (not in DB — used for deep-link auto-add) ───────────────
+const STATIC_PRODUCTS: Record<string, number> = {
+  // Seeds & Spices (renamed from Pantry & Sauces)
+  "Smoky Jollof Base": 4500,
+  "Hibiscus Ginger Concentrate": 3000,
+  "Premium Pepper Mix": 3500,
+  "Suya Marinade": 3000,
+  "Coconut Curry Base": 4000,
+  // Snacks
+  "Roasted Peanuts": 1800,
+  "Plantain Chips": 2200,
+  "Coated Peanuts": 2000,
+  "Yogurt Mix — Seed & Nut Blend": 2800,
+  "Chin Chin": 2800,
+  "Corn Sticks": 4000,
+  "Kwili Kwili": 2000,
+  "Cashew Nuts": 2800,
+  // Drinks & Wellness
+  "Zobo Drink": 2000,
+  "Yogurt Drink": 2800,
+  "Ginger Immune Booster": 2000,
+  "Turmeric Immune Booster": 2000,
+  "Pineapple Ginger Drink": 2500,
+  "Tiger Nut Milk": 2500,
+  "Kale Cleanser": 2200,
+  "Lemon Honey Cleanser": 3000,
+  "Orange Juice": 3000,
+  "Carrot Juice": 3000,
+};
+
 // ── CONSTANTS ────────────────────────────────────────────────────────────────
 const MAX_FOOD_MEALS  = 5;          // soups / stews / breakfast limit
 const MAX_PROTEIN_QTY = 10;
@@ -264,8 +294,32 @@ export default function BookPage() {
   // ── DEEP-LINK: auto-add item from URL params when menu loads ──────────────
   useEffect(() => {
     if (deepLinkDone.current) return;
-    if (!menuItems?.length) return;
     if (!deepLinkParams.cat || !deepLinkParams.item) return;
+
+    // Products are static (not in DB) — handle without waiting for API
+    if (deepLinkParams.cat === "products") {
+      const price = STATIC_PRODUCTS[deepLinkParams.item];
+      if (!price) return;
+      deepLinkDone.current = true;
+      setCart((prev) => {
+        if (prev.some((i) => i.category === "products" && i.menuItemName === deepLinkParams.item)) return prev;
+        return [{
+          id:               `dl-prod-${Date.now()}`,
+          menuItemId:       0,
+          menuItemName:     deepLinkParams.item,
+          category:         "products",
+          selectedSize:     "Standard",
+          itemQty:          1,
+          selectedProteins: [],
+          price,
+        }];
+      });
+      setJustAdded(deepLinkParams.item);
+      setTimeout(() => setJustAdded(null), 6000);
+      return;
+    }
+
+    if (!menuItems?.length) return;
     const found = menuItems.find(
       (m) =>
         m.category === deepLinkParams.cat &&

@@ -1,3 +1,4 @@
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "wouter";
 import { Leaf, AlertCircle, CalendarDays, Truck, Star, ShoppingBag } from "lucide-react";
 
@@ -206,7 +207,64 @@ const menuPool: {
   },
 ];
 
+// ── PLAN CONFIG ───────────────────────────────────────────────────────────────
+const PLANS = {
+  single:  { label: "Single Day", rate: 20000, minDays: 1, maxDays: 1  },
+  weekly:  { label: "Weekly",     rate: 15000, minDays: 4, maxDays: 7  },
+  twoweek: { label: "Two-Week",   rate: 14000, minDays: 7, maxDays: 14 },
+  monthly: { label: "Monthly",    rate: 13500, minDays: 14, maxDays: 28 },
+} as const;
+
+type PlanKey = keyof typeof PLANS;
+
 export default function HealthyMealsPage() {
+  // ── PLAN BUILDER STATE ─────────────────────────────────────────────────────
+  const [mealsPerDay, setMealsPerDay] = useState<1 | 2 | 3>(1);
+  const [planKey, setPlanKey]         = useState<PlanKey>("single");
+  const [daysCount, setDaysCount]     = useState(1);
+  const [firstDate, setFirstDate]     = useState("");
+  const [firstTime, setFirstTime]     = useState("");
+
+  const selectedPlan = PLANS[planKey];
+
+  // Clamp days to new plan's range when plan changes
+  useEffect(() => {
+    setDaysCount(PLANS[planKey].minDays);
+  }, [planKey]);
+
+  const planTotal      = selectedPlan.rate * mealsPerDay * daysCount;
+  const firstDropValue = selectedPlan.rate * mealsPerDay * Math.min(3, daysCount);
+
+  const rushInfo = useMemo(() => {
+    if (!firstDate || !firstTime) return { isRush: false, blocked: false };
+    const deliveryDt = new Date(`${firstDate}T${firstTime}`);
+    const now        = new Date();
+    const hoursOut   = (deliveryDt.getTime() - now.getTime()) / 3600000;
+    if (hoursOut < 12) return { isRush: false, blocked: true };
+    if (hoursOut < 24) return { isRush: true,  blocked: false };
+    return { isRush: false, blocked: false };
+  }, [firstDate, firstTime]);
+
+  const rushFee   = rushInfo.isRush ? Math.min(20000, Math.round(firstDropValue * 0.5)) : 0;
+  const grandTotal = planTotal + rushFee;
+  const todayStr   = new Date().toISOString().split("T")[0];
+
+  const waHref = useMemo(() => {
+    const lines: string[] = [
+      `Hi, I'd like to order the Healthy Meals ${selectedPlan.label} plan.`,
+      ``,
+      `Meals per day: ${mealsPerDay}`,
+      `Plan duration: ${daysCount} day${daysCount > 1 ? "s" : ""}`,
+      `Rate: ₦${selectedPlan.rate.toLocaleString()}/meal`,
+      `Plan subtotal: ₦${planTotal.toLocaleString()}`,
+    ];
+    if (firstDate) lines.push(`First delivery: ${firstDate}${firstTime ? " at " + firstTime : ""}`);
+    if (rushFee > 0) lines.push(`Rush fee (first drop only): ₦${rushFee.toLocaleString()}`);
+    lines.push(`Grand total: ₦${grandTotal.toLocaleString()}`);
+    lines.push("", "Payment details:", "Account Name: Ahmazing Cuisine", "Bank: FCMB", "Account Number: 1009414545");
+    return `https://wa.me/2348105506052?text=${encodeURIComponent(lines.join("\n"))}`;
+  }, [selectedPlan, mealsPerDay, daysCount, planTotal, firstDate, firstTime, rushFee, grandTotal]);
+
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
@@ -248,80 +306,203 @@ export default function HealthyMealsPage() {
           <div className="mb-10">
             <div className="flex items-center gap-2 mb-3">
               <CalendarDays className="w-5 h-5" style={{ color: BRAND_GREEN }} />
-              <span className="text-xs font-bold uppercase tracking-wider" style={{ color: BRAND_GREEN }}>Subscribe</span>
+              <span className="text-xs font-bold uppercase tracking-wider" style={{ color: BRAND_GREEN }}>Build Your Plan</span>
             </div>
-            <h2 className="text-3xl font-bold font-display mb-3">Choose how far ahead you want to plan</h2>
+            <h2 className="text-3xl font-bold font-display mb-3">Pick your meals, pick your length</h2>
             <p className="text-muted-foreground max-w-2xl">
-              Every plan includes a full day's meals — breakfast, lunch, dinner and a snack — rotated for variety.
-              Prices are per day; the longer you commit, the lower the daily rate.
+              Every meal includes its own snack. Choose how many meals a day you want, then how long —
+              the rate per meal drops the longer you commit.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            {[
-              { name: "Weekly",   days: 7,  perDay: "₦19,000", total: "₦133,000", saving: "~9% saved",  popular: false },
-              { name: "Two-Week", days: 14, perDay: "₦17,500", total: "₦245,000", saving: "~17% saved", popular: true  },
-              { name: "Monthly",  days: 28, perDay: "₦16,000", total: "₦448,000", saving: "~24% saved", popular: false },
-            ].map((plan) => (
-              <div
-                key={plan.name}
-                className={`relative rounded-2xl border-2 p-6 flex flex-col gap-4 ${plan.popular ? "border-primary shadow-lg" : "border-border"}`}
-              >
-                {plan.popular && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold px-4 py-1 rounded-full">
-                    Most Popular
-                  </span>
-                )}
-                <div>
-                  <h3 className="text-xl font-bold font-display">{plan.name}</h3>
-                  <p className="text-sm text-muted-foreground">{plan.days} days</p>
-                </div>
-                <div>
-                  <span className="text-3xl font-bold">{plan.perDay}</span>
-                  <span className="text-muted-foreground text-sm"> / day</span>
-                </div>
-                <div className="space-y-1 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Total</span>
-                    <span className="font-bold">{plan.total}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Saving</span>
-                    <span className="font-bold" style={{ color: BRAND_GREEN }}>{plan.saving}</span>
-                  </div>
-                </div>
-                <a
-                  href={`https://wa.me/2348105506052?text=${encodeURIComponent(
-                    `Hi, I'd like to subscribe to the Healthy Meals ${plan.name} plan.\n\nTotal: ${plan.total}\n\nPayment details:\nAccount Name: Ahmazing Cuisine\nBank: FCMB\nAccount Number: 1009414545`
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-auto block text-center rounded-full py-2.5 font-bold text-sm transition-opacity hover:opacity-90"
-                  style={plan.popular
-                    ? { background: BRAND_GREEN, color: "#fff" }
-                    : { background: "transparent", border: "2px solid #ddd", color: "inherit" }}
-                >
-                  Subscribe via WhatsApp
-                </a>
-              </div>
-            ))}
-          </div>
+          {/* ── INTERACTIVE PLAN BUILDER ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
 
-          {/* Single day note */}
-          <p className="text-sm text-muted-foreground mb-6">
-            Not ready to subscribe? A single day, no commitment, is{" "}
-            <strong className="text-foreground">₦21,000</strong> — or order any individual item from the menu below.
-          </p>
+            {/* Controls */}
+            <div className="space-y-6">
+
+              {/* Meals per day */}
+              <div>
+                <label className="block text-sm font-bold mb-2">Meals per day</label>
+                <div className="flex gap-2">
+                  {([1, 2, 3] as const).map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setMealsPerDay(n)}
+                      className={`flex-1 py-2.5 rounded-xl font-bold text-sm border-2 transition-all ${
+                        mealsPerDay === n
+                          ? "border-primary bg-primary text-white"
+                          : "border-border hover:border-primary/50 bg-card"
+                      }`}
+                    >
+                      {n} meal{n > 1 ? "s" : ""}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1.5">Each meal comes with a snack included.</p>
+              </div>
+
+              {/* Plan length */}
+              <div>
+                <label className="block text-sm font-bold mb-2">Plan length</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {(Object.entries(PLANS) as [PlanKey, typeof PLANS[PlanKey]][]).map(([key, plan]) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setPlanKey(key)}
+                      className={`py-3 px-4 rounded-xl text-left border-2 transition-all ${
+                        planKey === key
+                          ? "border-primary bg-primary/5 shadow-sm"
+                          : "border-border hover:border-primary/40 bg-card"
+                      }`}
+                    >
+                      <div className="font-bold text-sm">{plan.label}</div>
+                      <div className="text-xs font-bold mt-0.5" style={{ color: BRAND_GREEN }}>
+                        ₦{plan.rate.toLocaleString()}/meal
+                      </div>
+                      {plan.minDays < plan.maxDays && (
+                        <div className="text-[11px] text-muted-foreground mt-0.5">
+                          {plan.minDays}–{plan.maxDays} days
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Days count */}
+              <div>
+                <label className="block text-sm font-bold mb-2">
+                  Number of days{" "}
+                  {selectedPlan.minDays < selectedPlan.maxDays ? (
+                    <span className="font-normal text-muted-foreground">
+                      ({selectedPlan.minDays}–{selectedPlan.maxDays})
+                    </span>
+                  ) : (
+                    <span className="font-normal text-muted-foreground">(fixed at 1)</span>
+                  )}
+                </label>
+                <input
+                  type="number"
+                  value={daysCount}
+                  min={selectedPlan.minDays}
+                  max={selectedPlan.maxDays}
+                  disabled={planKey === "single"}
+                  onChange={(e) => {
+                    const v = Math.min(
+                      selectedPlan.maxDays,
+                      Math.max(selectedPlan.minDays, parseInt(e.target.value) || selectedPlan.minDays)
+                    );
+                    setDaysCount(v);
+                  }}
+                  className="w-full h-11 rounded-xl border-2 border-border px-4 font-bold text-base focus:border-primary focus:outline-none disabled:opacity-50 disabled:bg-muted"
+                />
+                <p className="text-xs text-muted-foreground mt-1.5">
+                  Rate per meal is the same for any number of days within a plan — only the total changes.
+                </p>
+              </div>
+
+              {/* First delivery */}
+              <div>
+                <label className="block text-sm font-bold mb-2">
+                  First delivery date & time <span className="font-normal text-muted-foreground">(optional)</span>
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    type="date"
+                    value={firstDate}
+                    min={todayStr}
+                    onChange={(e) => setFirstDate(e.target.value)}
+                    className="h-11 rounded-xl border-2 border-border px-3 focus:border-primary focus:outline-none text-sm w-full"
+                  />
+                  <input
+                    type="time"
+                    value={firstTime}
+                    min="09:00"
+                    max="21:00"
+                    onChange={(e) => setFirstTime(e.target.value)}
+                    className="h-11 rounded-xl border-2 border-border px-3 focus:border-primary focus:outline-none text-sm w-full"
+                  />
+                </div>
+                {rushInfo.blocked && (
+                  <p className="text-xs font-bold text-red-600 mt-1.5">
+                    ⚠ Less than 12 hours' notice — please choose a later time or date.
+                  </p>
+                )}
+                {rushInfo.isRush && (
+                  <p className="text-xs font-bold mt-1.5" style={{ color: "#D9A441" }}>
+                    Rush fee applies to first drop (12–24 hrs notice): ₦{rushFee.toLocaleString()}
+                    {rushFee < 20000 ? " (capped at 50% of first-drop value)" : " flat"}.
+                    Rest of plan unaffected.
+                  </p>
+                )}
+                {!rushInfo.blocked && !rushInfo.isRush && firstDate && firstTime && (
+                  <p className="text-xs text-emerald-700 font-medium mt-1.5">✓ No rush fee — more than 24 hours' notice.</p>
+                )}
+              </div>
+            </div>
+
+            {/* Summary ticket + CTA */}
+            <div className="space-y-4">
+              <div className="rounded-2xl border-2 border-border bg-card p-6 shadow-sm">
+                <div className="flex items-center justify-between mb-4 pb-3 border-b border-dashed border-border text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  <span>Your Plan</span>
+                  <span>{selectedPlan.label}</span>
+                </div>
+                <div className="space-y-2.5 text-sm mb-5">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Rate per meal</span>
+                    <span className="font-bold">₦{selectedPlan.rate.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-muted-foreground text-xs">
+                    <span>
+                      {mealsPerDay} meal{mealsPerDay > 1 ? "s" : ""}/day × {daysCount} day{daysCount > 1 ? "s" : ""}
+                    </span>
+                    <span className="font-medium text-foreground">₦{planTotal.toLocaleString()}</span>
+                  </div>
+                  {rushFee > 0 && (
+                    <div className="flex justify-between text-amber-700">
+                      <span>Rush fee (first drop only)</span>
+                      <span className="font-bold">₦{rushFee.toLocaleString()}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex justify-between items-center pt-4 border-t border-dashed border-border">
+                  <span className="font-bold">Total</span>
+                  <span className="font-bold text-2xl" style={{ color: BRAND_GREEN }}>
+                    ₦{grandTotal.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+
+              <a
+                href={waHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center justify-center w-full py-3.5 rounded-2xl font-bold text-base text-white transition-opacity hover:opacity-90 ${rushInfo.blocked ? "opacity-40 pointer-events-none" : ""}`}
+                style={{ background: BRAND_GREEN }}
+              >
+                Order This Plan via WhatsApp
+              </a>
+              <p className="text-xs text-muted-foreground text-center">
+                Sends your plan details and bank transfer info straight to WhatsApp to confirm your order.
+              </p>
+            </div>
+          </div>
 
           {/* Advice box */}
           <div className="rounded-2xl border border-border bg-muted/50 p-5 mb-10 flex gap-4">
             <Star className="w-5 h-5 shrink-0 mt-0.5 text-amber-500" />
             <div className="text-sm text-muted-foreground leading-relaxed">
-              <strong className="text-foreground">Why there's no "daily" subscription.</strong>{" "}
-              A subscription's value is the discount you get for planning ahead. Ordering one day at a time
-              already works with no sign-up — that's the ₦21,000 single-day option above. We start real
-              subscriptions at a week, because that's the shortest commitment where pre-planning your cooking
-              and delivery actually saves you anything.
+              <strong className="text-foreground">Why the rate drops with commitment — and why there's a minimum.</strong>{" "}
+              A single day is a no-commitment, one-off order. Weekly, Two-Week, and Monthly rates are lower because
+              we're planning and cooking in bulk — the longer you commit, the more that saves us, and we pass it back.
+              Each plan has a minimum (Weekly: 4 days, Two-Week: 7 days, Monthly: 14 days) so the discount stays tied
+              to genuine bulk planning, not just a lower price on a small order.
+              Rush fee — if your first delivery is within 24 hours — applies to the first drop only.
+              The rest of your plan runs at the normal rate.
             </div>
           </div>
 
@@ -338,16 +519,17 @@ export default function HealthyMealsPage() {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                 <div className="rounded-xl bg-muted p-4">
-                  <p className="font-bold mb-1">Drop 1 — Start of week</p>
-                  <p className="text-muted-foreground">Days 1–3 meals delivered together, packed in labelled, fridge-safe containers.</p>
+                  <p className="font-bold mb-1">Drop 1 — Days 1 to 3</p>
+                  <p className="text-muted-foreground">Delivered at the start of your plan, portioned and labelled by meal and day, ready to refrigerate.</p>
                 </div>
                 <div className="rounded-xl bg-muted p-4">
-                  <p className="font-bold mb-1">Drop 2 — Mid-week</p>
-                  <p className="text-muted-foreground">Days 4–7 meals. Refrigerate on arrival, reheat before eating.</p>
+                  <p className="font-bold mb-1">Drop 2 — Days 4 to 7</p>
+                  <p className="text-muted-foreground">Delivered mid-week so nothing sits in your fridge longer than a few days before you eat it.</p>
                 </div>
               </div>
               <p className="text-xs text-muted-foreground mt-3">
                 Two-Week and Monthly plans repeat this same two-drop pattern each week throughout the subscription.
+                Meals arrive in fridge-safe, labelled containers — refrigerate on arrival, reheat before eating.
               </p>
             </div>
           </div>

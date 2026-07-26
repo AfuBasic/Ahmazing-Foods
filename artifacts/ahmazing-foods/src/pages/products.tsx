@@ -1,12 +1,8 @@
 import { Link } from "wouter";
-import { MessageCircle, ShoppingBag } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 
 const BASE = import.meta.env.BASE_URL;
 const asset = (p: string) => `${BASE}assets/${p}`;
-
-const WA = "https://wa.me/2348105506052";
-const waLink = (item: string) =>
-  `${WA}?text=${encodeURIComponent(`Hi, I'd like to order ${item}`)}`;
 
 interface Product {
   name: string;
@@ -17,7 +13,7 @@ interface Product {
 
 const groups: { heading: string; sub: string; products: Product[] }[] = [
   {
-    heading: "Pantry & Sauces",
+    heading: "Seeds & Spices",
     sub: "Bold, ready-to-use bases for your own cooking.",
     products: [
       { name: "Smoky Jollof Base",           size: "Glass jar · 250g",         price: "₦4,500", img: "smoky-jollof-base.jpg" },
@@ -57,18 +53,6 @@ const groups: { heading: string; sub: string; products: Product[] }[] = [
       { name: "Carrot Juice",            size: "100% carrot juice · 500ml",       price: "₦3,000", img: "carrot.jpg" },
     ],
   },
-  {
-    heading: "Seeds & Spices",
-    sub: "Freshly sourced, packed with flavour.",
-    products: [
-      { name: "Cameroon Pepper",  size: "50g pack",  price: "₦1,500", img: "premium-pepper-mix.jpg" },
-      { name: "Chili Pepper",     size: "50g pack",  price: "₦1,000", img: "premium-pepper-mix.jpg" },
-      { name: "Suya Mix",         size: "50g pack",  price: "₦1,500", img: "suya-marinade.jpg" },
-      { name: "Cinnamon Powder",  size: "30g pack",  price: "₦1,200", img: "Turmeric.jpg" },
-      { name: "Chia Seeds",       size: "100g pack", price: "₦2,500", img: "parfait__toppings.jpg" },
-      { name: "Melon Seeds (Egusi)", size: "100g pack", price: "₦2,000", img: "premium-pepper-mix.jpg" },
-    ],
-  },
 ];
 
 export default function ProductsPage() {
@@ -86,7 +70,7 @@ export default function ProductsPage() {
           </h1>
           <p className="text-xl text-background/75 max-w-2xl leading-relaxed">
             Sauces, snacks, bottled drinks and spices — made with real ingredients, no MSG, no preservatives.
-            Tap <strong className="text-background">Order</strong> on any item to send a WhatsApp message straight to our kitchen.
+            Tap <strong className="text-background">Order →</strong> on any item to go straight to the booking cart.
           </p>
         </div>
       </div>
@@ -130,16 +114,13 @@ export default function ProductsPage() {
                     <p className="text-xs text-muted-foreground mb-3 flex-1">{p.size}</p>
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-primary text-base">{p.price}</span>
-                      <a
-                        href={waLink(p.name)}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <Link
+                        href={`/book?cat=products&item=${encodeURIComponent(p.name)}&size=Standard`}
                         className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full text-white transition-opacity hover:opacity-90"
-                        style={{ background: "#25D366" }}
+                        style={{ background: "#0F9E0F" }}
                       >
-                        <MessageCircle className="w-3.5 h-3.5" />
-                        Order
-                      </a>
+                        Order →
+                      </Link>
                     </div>
                   </div>
                 </div>

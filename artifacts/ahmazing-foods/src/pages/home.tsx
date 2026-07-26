@@ -68,12 +68,12 @@ export default function Home() {
                 </div>
                 <div className="flex justify-between text-muted-foreground">
                   <span>+ Chicken</span>
-                  <span>₦3,000</span>
+                  <span>₦4,700</span>
                 </div>
               </div>
               <div className="flex justify-between mt-3 pt-2 border-t border-dashed border-border font-bold">
                 <span>Total</span>
-                <span className="text-primary">₦21,000</span>
+                <span className="text-primary">₦22,700</span>
               </div>
               <div className="mt-3 text-center">
                 <span className="inline-block bg-primary/10 text-primary text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
