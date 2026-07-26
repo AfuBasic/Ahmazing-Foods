@@ -76,12 +76,12 @@ const snackPicks = [
 ];
 
 const rotation = [
-  { day: "Monday",    breakfast: "Oatmeal × Fresh Fruit",   lunch: "Edikang Ikong",       dinner: "Oha Soup",             snack: "Tiger Nut Milk" },
-  { day: "Tuesday",   breakfast: "Moin-moin × Pap",         lunch: "Onugbu Soup",          dinner: "Ewedu × small Amala",  snack: "Zobo (no sugar)" },
-  { day: "Wednesday", breakfast: "Boiled Yam × Egg Stew",   lunch: "Egusi Soup",           dinner: "Banga Soup",           snack: "Roasted Peanuts" },
-  { day: "Thursday",  breakfast: "Oatmeal × Fresh Fruit",   lunch: "Edikang Ikong",        dinner: "Oha Soup",             snack: "Fresh Pawpaw" },
-  { day: "Friday",    breakfast: "Moin-moin × Pap",         lunch: "Efo-Riro",             dinner: "Onugbu Soup",          snack: "Kale Cleanser" },
-  { day: "Saturday",  breakfast: "Boiled Yam × Egg Stew",   lunch: "Okro Soup",            dinner: "Ewedu × small Amala",  snack: "Cashew Nuts" },
+  { day: "Day 1", breakfast: "Plantain & Egg Sauce",      lunch: "Plantain Porridge & Fish", dinner: "Vegetable Soup",           snack: "Roasted Peanuts" },
+  { day: "Day 2", breakfast: "Oat Pap & Groundnuts",      lunch: "Brown Rice Jollof",        dinner: "Grilled Fish & Ofada Rice", snack: "Garden Egg & Groundnut Paste" },
+  { day: "Day 3", breakfast: "Wheat Bread & Baked Akara", lunch: "Beans & Vegetable Sauce",  dinner: "Okra Soup",                snack: "Cucumber, Carrot & Peanut Butter" },
+  { day: "Day 4", breakfast: "Plantain & Egg Sauce",      lunch: "Brown Rice Jollof",        dinner: "Okra Soup",                snack: "Unsweetened Zobo" },
+  { day: "Day 5", breakfast: "Oat Pap & Groundnuts",      lunch: "Beans & Vegetable Sauce",  dinner: "Vegetable Soup",           snack: "Tiger Nut Milk" },
+  { day: "Day 6", breakfast: "Wheat Bread & Baked Akara", lunch: "Plantain Porridge & Fish", dinner: "Grilled Fish & Ofada Rice", snack: "Baked Plantain Chips" },
 ];
 
 // ── Full 15-item à la carte menu ─────────────────────────────────────────────

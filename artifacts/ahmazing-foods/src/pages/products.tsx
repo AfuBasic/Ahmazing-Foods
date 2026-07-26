@@ -28,7 +28,8 @@ const groups: { heading: string; sub: string; products: Product[] }[] = [
     sub: "High-protein, no-preservative snacking.",
     products: [
       { name: "Roasted Peanuts",               size: "Lightly salted · 200g",     price: "₦1,800", img: "roasted_peanut.jpg" },
-      { name: "Plantain Chips",                size: "Toasted & crunchy · 150g",  price: "₦2,200", img: "plantain__chips.jpg" },
+      { name: "Plantain Chips — Toasted & Crunchy", size: "150g",                      price: "₦2,200", img: "plantain__chips.jpg" },
+      { name: "Plantain Chips — Ripe & Spicy",    size: "150g",                      price: "₦2,200", img: "plantain_ripe.jpg" },
       { name: "Coated Peanuts",                size: "Spicy BBQ · 200g",          price: "₦2,000", img: "peanut_spicy.jpg" },
       { name: "Yogurt Mix — Seed & Nut Blend", size: "200g",                      price: "₦2,800", img: "parfait__toppings.jpg" },
       { name: "Chin Chin",                     size: "200g",                      price: "₦2,800", img: "chinchin.jpg" },

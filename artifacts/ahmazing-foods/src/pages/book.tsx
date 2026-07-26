@@ -32,7 +32,8 @@ const STATIC_PRODUCTS: Record<string, number> = {
   "Coconut Curry Base": 4000,
   // Snacks
   "Roasted Peanuts": 1800,
-  "Plantain Chips": 2200,
+  "Plantain Chips — Toasted & Crunchy": 2200,
+  "Plantain Chips — Ripe & Spicy": 2200,
   "Coated Peanuts": 2000,
   "Yogurt Mix — Seed & Nut Blend": 2800,
   "Chin Chin": 2800,
