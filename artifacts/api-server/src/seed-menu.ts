@@ -21,17 +21,18 @@ const soupProteins = [
 ];
 
 // ── SIZE HELPERS ─────────────────────────────────────────────────────────────
+// price: 0 = "Contact Us" sentinel — rendered as a quote-request link in the UI
 const standardSoupSizes = [
-  { label: "2 Litres",        price: 15000 },
-  { label: "3 Litres",        price: 18000 },
-  { label: "5 Litres",        price: 23000 },
-  { label: "Cooler — Small",  price: 50000 },
-  { label: "Cooler — Medium", price: 65000 },
+  { label: "2 Litres",        price: 37000 },
+  { label: "3 Litres",        price: 41000 },
+  { label: "5 Litres",        price: 49000 },
+  { label: "Cooler — Small",  price: 0 },
+  { label: "Cooler — Medium", price: 0 },
 ];
 const seafoodOkroSizes = [
-  { label: "5 Litres",        price: 35000  },
-  { label: "Cooler — Small",  price: 85000  },
-  { label: "Cooler — Medium", price: 120000 },
+  { label: "5 Litres",        price: 64000 },
+  { label: "Cooler — Small",  price: 0 },
+  { label: "Cooler — Medium", price: 0 },
 ];
 const stewSizes = (m: number, l: number) => [
   { label: "Medium (serves 4–6)",  price: m },
@@ -85,7 +86,7 @@ const items = [
   },
   {
     category: "soups",
-    name: "Banga Soup (Delta Style)",
+    name: "Banga Soup (Ofe Akwu)",
     description: "Aromatic palm nut soup cooked the Delta way with native spices.",
     sizes: standardSoupSizes, proteins: soupProteins, imageUrl: SOUP_IMG,
   },
@@ -103,43 +104,37 @@ const items = [
   },
 
   // ════════════════════════════════════════════════════════════════════════════
-  // STEWS (6 — Medium / Large only)
+  // STEWS (5 — Medium / Large only; Ata Din-Din removed)
   // ════════════════════════════════════════════════════════════════════════════
   {
     category: "stews",
     name: "Classic Tomato Stew",
     description: "A rich, slow-cooked tomato base stew — the backbone of Nigerian cooking.",
-    sizes: stewSizes(14000, 24000), proteins: [], imageUrl: STEW_IMG,
+    sizes: stewSizes(47000, 54000), proteins: [], imageUrl: STEW_IMG,
   },
   {
     category: "stews",
     name: "Ayamase (Ofada Stew)",
     description: "Spicy green pepper stew with assorted offals — pairs perfectly with ofada rice.",
-    sizes: stewSizes(17000, 28000), proteins: [], imageUrl: STEW_IMG,
+    sizes: stewSizes(49000, 59000), proteins: [], imageUrl: STEW_IMG,
   },
   {
     category: "stews",
     name: "Peppered Beef Stew",
     description: "Tender chunks of beef in a bold pepper stew with caramelised onions.",
-    sizes: stewSizes(15000, 25000), proteins: [], imageUrl: STEW_IMG,
+    sizes: stewSizes(47000, 54000), proteins: [], imageUrl: STEW_IMG,
   },
   {
     category: "stews",
     name: "Peppered Chicken Stew",
     description: "Succulent chicken pieces simmered in a spiced tomato and pepper stew.",
-    sizes: stewSizes(15000, 25000), proteins: [], imageUrl: STEW_IMG,
+    sizes: stewSizes(47000, 54000), proteins: [], imageUrl: STEW_IMG,
   },
   {
     category: "stews",
     name: "Peppered Turkey Stew",
     description: "Juicy turkey pieces slow-cooked in a bold, well-spiced pepper stew.",
-    sizes: stewSizes(18000, 26500), proteins: [], imageUrl: STEW_IMG,
-  },
-  {
-    category: "stews",
-    name: "Ata Din-Din (Fried Pepper Stew)",
-    description: "Deep-fried pepper stew — bold, smoky, and intensely flavoured.",
-    sizes: stewSizes(14500, 24500), proteins: [], imageUrl: STEW_IMG,
+    sizes: stewSizes(49000, 59000), proteins: [], imageUrl: STEW_IMG,
   },
 
   // ════════════════════════════════════════════════════════════════════════════
@@ -235,7 +230,7 @@ const items = [
   },
 
   // ════════════════════════════════════════════════════════════════════════════
-  // SNACKS (9)
+  // SNACKS (8 — Kwili Kwili removed per spec)
   // ════════════════════════════════════════════════════════════════════════════
   {
     category: "snacks",
@@ -254,12 +249,6 @@ const items = [
     name: "Yogurt Mix (Seed & Nut Blend)",
     description: "A nutritious blend of seeds and nuts, perfect stirred into yogurt or oats.",
     sizes: [{ label: "200g pack", price: 2800 }], proteins: [], imageUrl: SNACK_IMG,
-  },
-  {
-    category: "snacks",
-    name: "Kwili Kwili",
-    description: "Crispy fried groundnut cake, a beloved West African street snack.",
-    sizes: [{ label: "200g pack", price: 2000 }], proteins: [], imageUrl: SNACK_IMG,
   },
   {
     category: "snacks",
@@ -283,53 +272,53 @@ const items = [
     category: "snacks",
     name: "Plantain Chips — Ripe & Spicy",
     description: "Thinly sliced ripe plantain chips with a chili kick.",
-    sizes: [{ label: "150g pack", price: 1800 }], proteins: [], imageUrl: SNACK_IMG,
+    sizes: [{ label: "150g pack", price: 2200 }], proteins: [], imageUrl: SNACK_IMG,
   },
   {
     category: "snacks",
     name: "Plantain Chips — Toasted & Crunchy",
     description: "Unripe plantain chips, toasted to a satisfying crunch. Clean and savoury.",
-    sizes: [{ label: "150g pack", price: 1800 }], proteins: [], imageUrl: SNACK_IMG,
+    sizes: [{ label: "150g pack", price: 2200 }], proteins: [], imageUrl: SNACK_IMG,
   },
 
   // ════════════════════════════════════════════════════════════════════════════
-  // SEEDS & SPICES (6)
+  // SEEDS & SPICES (6 — raw spices, no sauce/marinade items)
   // ════════════════════════════════════════════════════════════════════════════
-  {
-    category: "seeds",
-    name: "Cameroon Pepper",
-    description: "Whole dried Cameroon pepper — intensely aromatic and deeply peppery.",
-    sizes: [{ label: "50g pack", price: 1500 }], proteins: [], imageUrl: SEED_IMG,
-  },
   {
     category: "seeds",
     name: "Chili Pepper",
     description: "Dried red chili pepper, freshly ground in-house. Clean heat, no fillers.",
-    sizes: [{ label: "50g pack", price: 1000 }], proteins: [], imageUrl: SEED_IMG,
+    sizes: [{ label: "Ground · 100g", price: 2000 }], proteins: [], imageUrl: SEED_IMG,
   },
   {
     category: "seeds",
-    name: "Suya Mix",
-    description: "Our signature suya spice blend — the real thing, no shortcuts.",
-    sizes: [{ label: "50g pack", price: 1500 }], proteins: [], imageUrl: SEED_IMG,
+    name: "Cameroon Pepper",
+    description: "Whole dried Cameroon pepper — intensely aromatic and deeply peppery.",
+    sizes: [{ label: "Ground · 100g", price: 2500 }], proteins: [], imageUrl: SEED_IMG,
+  },
+  {
+    category: "seeds",
+    name: "Soya Mix",
+    description: "A blended soya-based seasoning mix — rich, savoury, no additives.",
+    sizes: [{ label: "200g", price: 2500 }], proteins: [], imageUrl: SEED_IMG,
   },
   {
     category: "seeds",
     name: "Cinnamon Powder",
     description: "Pure cinnamon powder, no added sugar or fillers.",
-    sizes: [{ label: "30g pack", price: 1200 }], proteins: [], imageUrl: SEED_IMG,
+    sizes: [{ label: "100g", price: 2000 }], proteins: [], imageUrl: SEED_IMG,
   },
   {
     category: "seeds",
     name: "Chia Seeds",
     description: "Organic chia seeds — great for smoothies, oats and baking.",
-    sizes: [{ label: "100g pack", price: 2500 }], proteins: [], imageUrl: SEED_IMG,
+    sizes: [{ label: "150g", price: 3500 }], proteins: [], imageUrl: SEED_IMG,
   },
   {
     category: "seeds",
-    name: "Melon Seeds (Egusi)",
-    description: "Freshly dried egusi seeds — pre-ground or whole, as you prefer.",
-    sizes: [{ label: "100g pack", price: 2000 }], proteins: [], imageUrl: SEED_IMG,
+    name: "Melon Seed",
+    description: "Whole dried egusi/melon seeds — a pantry staple for soups and stews.",
+    sizes: [{ label: "200g", price: 3000 }], proteins: [], imageUrl: SEED_IMG,
   },
 
   // ════════════════════════════════════════════════════════════════════════════

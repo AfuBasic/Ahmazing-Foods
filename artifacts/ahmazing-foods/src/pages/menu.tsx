@@ -3,7 +3,7 @@ import { useListMenuItems, ListMenuItemsCategory } from "@workspace/api-client-r
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNaira } from "@/lib/format";
-import { ArrowLeft, Leaf } from "lucide-react";
+import { ArrowLeft, Leaf, MessageCircle } from "lucide-react";
 
 const BASE = import.meta.env.BASE_URL;
 const asset = (p: string) => `${BASE}assets/${p}`;
@@ -22,9 +22,9 @@ const healthyPicks: Record<string, Array<{ name: string; why: string }>> = {
     { name: "Oha Soup",                         why: "Traditional, leafy, and relatively light on oil. A smart everyday choice — particularly good with smaller swallow portions." },
   ],
   stews: [
-    { name: "Classic Tomato Stew",    why: "Tomato-based with most of the flavour from fresh peppers. Ask for a lighter-oil version — it's still full of flavour and one of the best everyday options." },
-    { name: "Ayamase (Ofada Stew)",   why: "Rich in green tatashe peppers, which are high in vitamin C and antioxidants. Available in a lighter, reduced-oil version on request." },
-    { name: "Coconut Curry Stew",     why: "Coconut-based fat rather than palm oil makes this naturally one of the lighter stew options. No extra-oil version needed." },
+    { name: "Classic Tomato Stew",      why: "Tomato-based with most of the flavour from fresh peppers. Ask for a lighter-oil version — it's still full of flavour and one of the best everyday options." },
+    { name: "Ayamase (Ofada Stew)",     why: "Rich in green tatashe peppers, which are high in vitamin C and antioxidants. Available in a lighter, reduced-oil version on request." },
+    { name: "Peppered Chicken Stew",    why: "Leaner protein than red meat — ask us to prepare with less oil for a lighter, high-protein option that still carries the full pepper flavour." },
   ],
   breakfast: [
     { name: "Boiled Unripe Plantain & Egg Sauce",         why: "Unripe plantain has a lower glycemic index than ripe — better for blood sugar management. Egg sauce adds protein without extra carbs." },
@@ -53,7 +53,7 @@ export default function MenuPage() {
 
   const descriptions = {
     soups: "Every soup comes garnished with dried fish, stockfish and cowhide. Add extra protein below to customise further.",
-    stews: "Classic Nigerian stews cooked fresh in small batches, sized for a family meal or a full event.",
+    stews: "Classic Nigerian stews cooked fresh in small batches, sized for a family meal or a full event. Medium or Large only.",
     breakfast: "Generously-portioned combo plates — sized so one pack is a proper sit-down meal. Cooked fresh to order.",
   };
 
@@ -84,6 +84,26 @@ export default function MenuPage() {
       )}
 
       <div className="container mx-auto px-4 md:px-6">
+
+        {/* ── COOLER QUOTE NOTE (soups only) ───────────────────────────── */}
+        {category === "soups" && (
+          <div className="mb-8 flex items-start gap-3 rounded-2xl border border-green-200 bg-green-50 px-5 py-4">
+            <MessageCircle className="w-5 h-5 mt-0.5 shrink-0 text-green-700" />
+            <p className="text-sm text-green-900 leading-relaxed">
+              <strong>Planning a cooler for an event?</strong> Message us on{" "}
+              <a
+                href="https://wa.me/2348105506052?text=Hi%2C%20I%27d%20like%20a%20quote%20for%20a%20cooler%20size%20soup%20order"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold underline"
+              >
+                WhatsApp
+              </a>{" "}
+              with your guest count and soup choice — we'll send you an accurate quote rather than a flat listed price.
+            </p>
+          </div>
+        )}
+
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3, 4, 5, 6].map(i => (
@@ -130,21 +150,38 @@ export default function MenuPage() {
                         {item.sizes.length === 1 ? "Price" : "Sizes & Prices"}
                       </p>
                       <div className="space-y-2">
-                        {item.sizes.map((size) => (
-                          <div key={size.label} className="flex items-center justify-between gap-2 text-sm">
-                            {item.sizes.length > 1 && (
-                              <span className="text-foreground min-w-0 flex-1 truncate">{size.label}</span>
-                            )}
-                            <span className="font-bold shrink-0">{formatNaira(size.price)}</span>
-                            <Link
-                              href={`/book?cat=${encodeURIComponent(category)}&item=${encodeURIComponent(item.name)}&size=${encodeURIComponent(size.label)}`}
-                              className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full text-white hover:opacity-90 transition-opacity"
-                              style={{ background: "#0F9E0F" }}
-                            >
-                              Book →
-                            </Link>
-                          </div>
-                        ))}
+                        {item.sizes.map((size) => {
+                          const isContactUs = size.price === 0;
+                          return (
+                            <div key={size.label} className="flex items-center justify-between gap-2 text-sm">
+                              {item.sizes.length > 1 && (
+                                <span className="text-foreground min-w-0 flex-1 truncate">{size.label}</span>
+                              )}
+                              {isContactUs ? (
+                                <a
+                                  href="https://wa.me/2348105506052?text=Hi%2C%20I%27d%20like%20a%20quote%20for%20a%20cooler%20size%20soup%20order"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full text-white hover:opacity-90 transition-opacity flex items-center gap-1"
+                                  style={{ background: "#25D366" }}
+                                >
+                                  <MessageCircle className="w-3 h-3" /> Contact Us
+                                </a>
+                              ) : (
+                                <>
+                                  <span className="font-bold shrink-0">{formatNaira(size.price)}</span>
+                                  <Link
+                                    href={`/book?cat=${encodeURIComponent(category)}&item=${encodeURIComponent(item.name)}&size=${encodeURIComponent(size.label)}`}
+                                    className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full text-white hover:opacity-90 transition-opacity"
+                                    style={{ background: "#0F9E0F" }}
+                                  >
+                                    Book →
+                                  </Link>
+                                </>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
