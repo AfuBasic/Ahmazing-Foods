@@ -58,7 +58,7 @@ const MAX_FOOD_MEALS  = 5;          // soups / stews / breakfast limit
 const MAX_PROTEIN_QTY = 10;
 const MAX_ITEM_QTY    = 20;
 
-const DELIVERY_SLOTS = ["8–10am", "10am–12pm", "12–2pm", "2–4pm", "4–6pm"];
+const DELIVERY_SLOTS = ["10am–12pm", "12–2pm", "2–4pm", "4–6pm"];
 const PEPPER_LABELS  = ["Low 🌶️", "Medium 🌶️🌶️", "Really Peppery 🌶️🌶️🌶️"] as const;
 const PEPPER_COLORS  = ["text-emerald-600", "text-amber-600", "text-red-600"] as const;
 
@@ -228,11 +228,17 @@ export default function BookPage() {
     () => new Set(cart.filter((i) => isFoodCat(i.category)).map((i) => i.menuItemId)),
     [cart]
   );
+  // Rush fee = same-day delivery only. Next-day (tomorrow+) is never a rush,
+  // regardless of how many hours away it is.
+  const todayStr = format(new Date(), "yyyy-MM-dd");
   const isRushDay = useMemo(
-    () => !!deliveryDate && deliveryDate === format(new Date(), "yyyy-MM-dd"),
-    [deliveryDate]
+    () => !!deliveryDate && deliveryDate === todayStr,
+    [deliveryDate, todayStr]
   );
   const rushFee    = useMemo(() => calcRushFee(isRushDay, distinctFoodIds.size), [isRushDay, distinctFoodIds.size]);
+
+  // Sunday = no orders (rest day). Deliveries can still happen on Sunday.
+  const isSundayToday = new Date().getDay() === 0;
   const cartTotal  = useMemo(() => cart.reduce((s, i) => s + i.price, 0), [cart]);
   const grandTotal = cartTotal + rushFee;
 
@@ -447,7 +453,7 @@ export default function BookPage() {
   }
 
   const isSubmitting = createOrder.isPending;
-  const canSubmit    = cart.length > 0 && pepperTouched && !isSubmitting;
+  const canSubmit    = cart.length > 0 && pepperTouched && !isSubmitting && !isSundayToday;
 
   // ── RENDER ────────────────────────────────────────────────────────────────
   return (
@@ -464,6 +470,24 @@ export default function BookPage() {
       </div>
 
       <div className="container mx-auto px-4 md:px-6 max-w-6xl">
+
+        {/* ── SUNDAY CLOSED BANNER ────────────────────────────────────────── */}
+        {isSundayToday && (
+          <div className="mb-8 rounded-2xl border-2 border-red-200 bg-red-50 px-6 py-5 flex items-start gap-4">
+            <AlertCircle className="w-6 h-6 text-red-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="font-bold text-red-800 text-lg mb-1">We're closed for orders today — it's Sunday!</p>
+              <p className="text-sm text-red-700 leading-relaxed">
+                Sundays are our rest day. You're welcome to browse the menu, but bookings open again from Monday. 
+                If you need a delivery today, it means your order was placed yesterday — contact us on{" "}
+                <a href="https://wa.me/2348105506052" target="_blank" rel="noopener noreferrer" className="font-bold underline">
+                  WhatsApp
+                </a>.
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
           {/* ═══ LEFT COLUMN ════════════════════════════════════════════════ */}
@@ -889,11 +913,11 @@ export default function BookPage() {
                             </FormControl>
                             <SelectContent className="max-h-64 overflow-y-auto">
                               {availableDates.map((d) => {
-                                const isToday = d === format(new Date(), "yyyy-MM-dd");
+                                const isToday = d === todayStr;
                                 return (
                                   <SelectItem key={d} value={d}>
                                     {format(new Date(d + "T12:00:00"), "EEE, MMM d")}
-                                    {isToday ? " — Today (rush fee applies)" : ""}
+                                    {isToday ? " — Today (same-day rush fee)" : ""}
                                   </SelectItem>
                                 );
                               })}
@@ -966,11 +990,12 @@ export default function BookPage() {
                   {rushFee > 0 && (
                     <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-sm">
                       <div className="flex justify-between items-center font-bold text-amber-800 mb-1">
-                        <span>Rush fee (same-day meals)</span>
+                        <span>Same-day rush fee</span>
                         <span>{formatNaira(rushFee)}</span>
                       </div>
                       <p className="text-xs text-amber-700">
-                        {distinctFoodIds.size} meal{distinctFoodIds.size !== 1 ? "s" : ""} × {formatNaira(RUSH_FEE_RATES[Math.min(distinctFoodIds.size, 5)] ?? 10000)} each
+                        {distinctFoodIds.size} meal{distinctFoodIds.size !== 1 ? "s" : ""} × {formatNaira(RUSH_FEE_RATES[Math.min(distinctFoodIds.size, 5)] ?? 10000)} each.
+                        Booking for tomorrow? Switch the date to remove this fee.
                       </p>
                     </div>
                   )}
@@ -1000,12 +1025,17 @@ export default function BookPage() {
 
             {!canSubmit && !isSubmitting && (
               <div className="space-y-1.5">
-                {cart.length === 0 && (
+                {isSundayToday && (
+                  <p className="text-xs text-red-600 flex items-center gap-1.5 font-medium">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" /> Orders are closed on Sundays
+                  </p>
+                )}
+                {!isSundayToday && cart.length === 0 && (
                   <p className="text-xs text-muted-foreground flex items-center gap-1.5">
                     <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" /> Add at least one item
                   </p>
                 )}
-                {!pepperTouched && (
+                {!isSundayToday && !pepperTouched && (
                   <p className="text-xs text-muted-foreground flex items-center gap-1.5">
                     <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" /> Set pepper level (Step 2)
                   </p>
