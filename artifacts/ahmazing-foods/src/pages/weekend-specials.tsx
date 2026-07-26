@@ -2,12 +2,16 @@ import { useState, useEffect, useCallback } from "react";
 import { Link } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useListMenuItems } from "@workspace/api-client-react";
-import { Flame, Trophy, Clock, ChefHat, Phone, Loader2, CheckCircle2, AlertCircle, CalendarDays } from "lucide-react";
+import {
+  Flame, Trophy, Clock, ChefHat, Phone, Loader2,
+  CheckCircle2, AlertCircle, CalendarDays, Share2, Copy, Check,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatNaira } from "@/lib/format";
 
-// ── Types ───────────────────────────────────────────────────────────────
+// ── Types ────────────────────────────────────────────────────────────────────
+
 interface SpecialOption {
   name: string;
   description: string;
@@ -23,7 +27,16 @@ interface VotesData {
   totalVotes: number;
 }
 
-// ── Helpers ──────────────────────────────────────────────────────────────
+// ── Fish-choice configuration ────────────────────────────────────────────────
+// These three dishes require a Tilapia / Croaker choice before voting or sharing.
+const FISH_DISH_PATTERNS = ["Ukwa", "Abacha", "Roasted Plantain"];
+
+function needsFish(name: string): boolean {
+  return FISH_DISH_PATTERNS.some((p) => name.includes(p));
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
 function toWaNumber(phone: string): string {
   const d = phone.replace(/\D/g, "");
   if (d.startsWith("0")) return "234" + d.slice(1);
@@ -45,13 +58,29 @@ function maxVotes(options: SpecialOption[]): number {
   return Math.max(...options.map((o) => o.votes), 1);
 }
 
-// ── Component ────────────────────────────────────────────────────────────
+function slugify(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function shareUrl(name: string): string {
+  const base = typeof window !== "undefined" ? `${window.location.origin}${window.location.pathname}` : "/weekend-specials";
+  return `${base}#${slugify(name)}`;
+}
+
+// ── Component ────────────────────────────────────────────────────────────────
+
 export default function WeekendSpecials() {
   const queryClient = useQueryClient();
   const [phone, setPhone] = useState("");
   const [selectedSpecial, setSelectedSpecial] = useState<string | null>(null);
   const [votedThisWeek, setVotedThisWeek] = useState<string | null>(null);
   const [countdown, setCountdown] = useState("");
+
+  // Fish choices per dish (for the 3 that need it)
+  const [fishChoices, setFishChoices] = useState<Record<string, "Tilapia" | "Croaker" | "">>({});
+
+  // Copy-link feedback per card
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Fetch vote data
   const { data: votes, isLoading: votesLoading } = useQuery<VotesData>({
@@ -106,17 +135,36 @@ export default function WeekendSpecials() {
     },
   });
 
+  const getFish = (name: string): "Tilapia" | "Croaker" | "" => fishChoices[name] ?? "";
+
   const handleVote = useCallback(() => {
     if (!selectedSpecial || !phone.trim()) return;
+    if (needsFish(selectedSpecial) && !getFish(selectedSpecial)) return;
     castVote.mutate({ specialName: selectedSpecial, voterPhone: phone.trim() });
-  }, [selectedSpecial, phone, castVote]);
+  }, [selectedSpecial, phone, castVote, fishChoices]);
+
+  async function handleCopyLink(name: string) {
+    try {
+      await navigator.clipboard.writeText(shareUrl(name));
+      setCopiedId(name);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function buildShareText(name: string): string {
+    const fish = getFish(name);
+    const dishDisplay = fish ? `${name} (${fish})` : name;
+    return `I'm voting for ${dishDisplay} as this weekend's AHmazing Foods special! Join me and vote for your favourite.`;
+  }
 
   const isWeekend = votes ? !votes.isVotingOpen && votes.winner !== null : false;
-  const isPreVoting = votes ? !votes.isVotingOpen && votes.winner === null : false; // early weekend before results
+  const isPreVoting = votes ? !votes.isVotingOpen && votes.winner === null : false;
 
   return (
     <div className="min-h-screen bg-background">
-      {/* ── Hero ──────────────────────────────────────────────────────── */}
+      {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <section className="bg-[#2b1a0e] text-white py-20 px-6 rounded-b-[2.5rem]">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white/50 mb-6">
@@ -128,12 +176,13 @@ export default function WeekendSpecials() {
             <span className="text-[#C81212]">cook every day.</span>
           </h1>
           <p className="text-white/70 text-lg max-w-xl leading-relaxed">
-            Nkwobi. Isi Ewu. Abacha. Ukwa. Pepper Soup. Every week our customers vote for which one we make. The winner gets cooked on Saturday — and sold out by Sunday.
+            Ukwa. Isi Ewu. Abacha. Nkwobi. Pepper Soup. Roasted Plantain. Every week our customers vote for which one we make.
+            The winner gets cooked on Saturday — and sold out by Sunday.
           </p>
         </div>
       </section>
 
-      {/* ── How it works ────────────────────────────────────────────────── */}
+      {/* ── How it works ────────────────────────────────────────────────────── */}
       <section className="max-w-4xl mx-auto px-6 py-14">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
@@ -152,9 +201,9 @@ export default function WeekendSpecials() {
         </div>
       </section>
 
-      {/* ── Voting section ──────────────────────────────────────────────── */}
+      {/* ── Voting section ────────────────────────────────────────────────── */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
-        {/* Header row */}
+        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>
             <h2 className="text-3xl font-display font-black">
@@ -166,11 +215,8 @@ export default function WeekendSpecials() {
                 {countdown}
               </p>
             )}
-            {isPreVoting && (
-              <p className="text-muted-foreground text-sm mt-1">Voting opens Monday morning.</p>
-            )}
+            {isPreVoting && <p className="text-muted-foreground text-sm mt-1">Voting opens Monday morning.</p>}
           </div>
-
           {votes?.totalVotes !== undefined && (
             <span className="text-sm text-muted-foreground">
               {votes.totalVotes} {votes.totalVotes === 1 ? "vote" : "votes"} cast this week
@@ -208,7 +254,7 @@ export default function WeekendSpecials() {
               </div>
             )}
 
-            {/* Phone input (only when voting open and not yet voted) */}
+            {/* Phone input */}
             {votes.isVotingOpen && !votedThisWeek && (
               <div className="bg-muted/40 rounded-2xl p-5 mb-6 flex flex-col sm:flex-row gap-3 items-start sm:items-end">
                 <div className="flex-1">
@@ -222,23 +268,34 @@ export default function WeekendSpecials() {
                     className="max-w-xs"
                   />
                 </div>
+
                 {selectedSpecial && phone.replace(/\D/g, "").length >= 7 && (
-                  <Button
-                    onClick={handleVote}
-                    disabled={castVote.isPending}
-                    className="bg-primary text-white hover:bg-primary/90 h-10 px-6"
-                  >
-                    {castVote.isPending ? (
-                      <><Loader2 className="w-4 h-4 animate-spin mr-2" />Voting…</>
+                  (() => {
+                    const fishNeeded = needsFish(selectedSpecial) && !getFish(selectedSpecial);
+                    return fishNeeded ? (
+                      <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5 flex items-center gap-2 self-end">
+                        <AlertCircle className="w-4 h-4 shrink-0" />
+                        Please choose a fish for {selectedSpecial} before voting.
+                      </div>
                     ) : (
-                      `Vote for ${selectedSpecial}`
-                    )}
-                  </Button>
+                      <Button
+                        onClick={handleVote}
+                        disabled={castVote.isPending}
+                        className="bg-primary text-white hover:bg-primary/90 h-10 px-6"
+                      >
+                        {castVote.isPending ? (
+                          <><Loader2 className="w-4 h-4 animate-spin mr-2" />Voting…</>
+                        ) : (
+                          `Vote for ${selectedSpecial}`
+                        )}
+                      </Button>
+                    );
+                  })()
                 )}
               </div>
             )}
 
-            {/* Already voted message */}
+            {/* Already voted */}
             {votedThisWeek && (
               <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900 rounded-xl px-5 py-4 mb-6 flex items-center gap-3 text-green-800 dark:text-green-400">
                 <CheckCircle2 className="w-5 h-5 shrink-0" />
@@ -246,7 +303,7 @@ export default function WeekendSpecials() {
               </div>
             )}
 
-            {/* Error message */}
+            {/* Error */}
             {castVote.isError && (
               <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-4 mb-6 flex items-center gap-3 text-red-700">
                 <AlertCircle className="w-5 h-5 shrink-0" />
@@ -263,43 +320,136 @@ export default function WeekendSpecials() {
                 const barWidth = votes.totalVotes > 0
                   ? Math.round((option.votes / maxVotes(votes.options)) * 100)
                   : 0;
+                const hasFish = needsFish(option.name);
+                const fish = getFish(option.name);
+                const url = shareUrl(option.name);
+                const shareText = buildShareText(option.name);
+                const isCopied = copiedId === option.name;
 
                 return (
-                  <button
+                  <div
                     key={option.name}
-                    onClick={() => {
-                      if (votes.isVotingOpen && !votedThisWeek) setSelectedSpecial(option.name === selectedSpecial ? null : option.name);
-                    }}
-                    disabled={!votes.isVotingOpen || !!votedThisWeek}
+                    id={slugify(option.name)}
                     className={[
-                      "text-left rounded-2xl border-2 p-5 transition-all",
-                      votes.isVotingOpen && !votedThisWeek ? "cursor-pointer hover:border-primary/50" : "cursor-default",
+                      "rounded-2xl border-2 transition-all overflow-hidden flex flex-col",
                       isSelected ? "border-primary bg-primary/5 shadow-md" : "border-border bg-card",
                       isWinner ? "border-[#C81212] bg-[#C81212]/5" : "",
                       isMyVote ? "border-green-500 bg-green-50 dark:bg-green-950/20" : "",
                     ].join(" ")}
                   >
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-bold font-display text-base leading-snug pr-2">{option.name}</h3>
-                      {isWinner && <Trophy className="w-4 h-4 text-[#C81212] shrink-0" />}
-                      {isMyVote && !isWinner && <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />}
-                    </div>
-                    <p className="text-xs text-muted-foreground leading-relaxed mb-4">{option.description}</p>
-
-                    {/* Vote bar */}
-                    <div className="space-y-1.5">
-                      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all duration-700 ${isWinner ? "bg-[#C81212]" : isMyVote ? "bg-green-500" : "bg-primary"}`}
-                          style={{ width: `${barWidth}%` }}
-                        />
+                    {/* Clickable vote area */}
+                    <button
+                      onClick={() => {
+                        if (votes.isVotingOpen && !votedThisWeek)
+                          setSelectedSpecial(option.name === selectedSpecial ? null : option.name);
+                      }}
+                      disabled={!votes.isVotingOpen || !!votedThisWeek}
+                      className={[
+                        "text-left p-5 flex-1",
+                        votes.isVotingOpen && !votedThisWeek ? "cursor-pointer" : "cursor-default",
+                      ].join(" ")}
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-bold font-display text-base leading-snug pr-2">{option.name}</h3>
+                        {isWinner && <Trophy className="w-4 h-4 text-[#C81212] shrink-0" />}
+                        {isMyVote && !isWinner && <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />}
                       </div>
-                      <p className="text-xs text-muted-foreground">
-                        {option.votes} {option.votes === 1 ? "vote" : "votes"}
-                        {votes.totalVotes > 0 && ` · ${Math.round((option.votes / votes.totalVotes) * 100)}%`}
-                      </p>
+                      <p className="text-xs text-muted-foreground leading-relaxed mb-4">{option.description}</p>
+
+                      {/* Vote bar */}
+                      <div className="space-y-1.5">
+                        <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full transition-all duration-700 ${
+                              isWinner ? "bg-[#C81212]" : isMyVote ? "bg-green-500" : "bg-primary"
+                            }`}
+                            style={{ width: `${barWidth}%` }}
+                          />
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {option.votes} {option.votes === 1 ? "vote" : "votes"}
+                          {votes.totalVotes > 0 && ` · ${Math.round((option.votes / votes.totalVotes) * 100)}%`}
+                        </p>
+                      </div>
+                    </button>
+
+                    {/* Fish choice (3 dishes) */}
+                    {hasFish && (
+                      <div className="px-5 pb-3 border-t border-border/50">
+                        <label className="text-xs font-bold uppercase tracking-wider text-foreground block mt-3 mb-2">
+                          Fish choice <span className="text-destructive">*</span>
+                          {votes.isVotingOpen && !votedThisWeek && (
+                            <span className="ml-1 font-normal text-muted-foreground normal-case tracking-normal">
+                              (required to vote)
+                            </span>
+                          )}
+                        </label>
+                        <div className="flex gap-2">
+                          {(["Tilapia", "Croaker"] as const).map((f) => (
+                            <button
+                              key={f}
+                              onClick={() =>
+                                setFishChoices((prev) => ({ ...prev, [option.name]: prev[option.name] === f ? "" : f }))
+                              }
+                              className={[
+                                "text-xs font-medium px-3 py-1.5 rounded-full border transition-all",
+                                fish === f
+                                  ? "bg-foreground text-background border-foreground"
+                                  : "border-border text-muted-foreground hover:border-foreground/40",
+                              ].join(" ")}
+                            >
+                              {f}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Share buttons */}
+                    <div className="px-5 py-3 border-t border-border/50 flex items-center gap-2 flex-wrap">
+                      <span className="text-xs text-muted-foreground flex items-center gap-1 mr-1">
+                        <Share2 className="w-3 h-3" /> Share:
+                      </span>
+                      {/* WhatsApp */}
+                      <a
+                        href={`https://wa.me/?text=${encodeURIComponent(`${shareText} ${url}`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors"
+                      >
+                        WhatsApp
+                      </a>
+                      {/* Facebook */}
+                      <a
+                        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(shareText)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#1877F2]/10 text-[#1877F2] hover:bg-[#1877F2]/20 transition-colors"
+                      >
+                        Facebook
+                      </a>
+                      {/* X / Twitter */}
+                      <a
+                        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(url)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-medium px-2.5 py-1 rounded-full bg-foreground/10 text-foreground hover:bg-foreground/15 transition-colors"
+                      >
+                        X
+                      </a>
+                      {/* Copy link */}
+                      <button
+                        onClick={() => handleCopyLink(option.name)}
+                        className="text-xs font-medium px-2.5 py-1 rounded-full bg-muted text-muted-foreground hover:bg-muted/80 transition-colors flex items-center gap-1"
+                      >
+                        {isCopied ? (
+                          <><Check className="w-3 h-3 text-green-500" /> Copied!</>
+                        ) : (
+                          <><Copy className="w-3 h-3" /> Copy link</>
+                        )}
+                      </button>
                     </div>
-                  </button>
+                  </div>
                 );
               })}
             </div>
@@ -307,7 +457,7 @@ export default function WeekendSpecials() {
         )}
       </section>
 
-      {/* ── Always-available breakfast plates ────────────────────────────── */}
+      {/* ── Always-available breakfast plates ──────────────────────────────── */}
       <section className="bg-muted/30 border-t border-border py-16 px-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2 mb-2">
@@ -352,7 +502,7 @@ export default function WeekendSpecials() {
         </div>
       </section>
 
-      {/* ── CTA ────────────────────────────────────────────────────────── */}
+      {/* ── CTA ──────────────────────────────────────────────────────────────── */}
       <section className="max-w-4xl mx-auto px-6 py-16 text-center">
         <h2 className="text-3xl font-display font-black mb-4">Ready to book?</h2>
         <p className="text-muted-foreground mb-8">

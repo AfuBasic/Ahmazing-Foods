@@ -14,28 +14,28 @@ interface Product {
 const groups: { heading: string; sub: string; products: Product[] }[] = [
   {
     heading: "Seeds & Spices",
-    sub: "Bold, ready-to-use bases for your own cooking.",
+    sub: "Ground and whole spices — no fillers, no additives.",
     products: [
-      { name: "Smoky Jollof Base",           size: "Glass jar · 250g",         price: "₦4,500", img: "smoky-jollof-base.jpg" },
-      { name: "Hibiscus Ginger Concentrate", size: "Glass bottle · 250ml",     price: "₦3,000", img: "hibiscus-ginger-concentrate.jpg" },
-      { name: "Premium Pepper Mix",          size: "Stand-up pouch · 150g",    price: "₦3,500", img: "premium-pepper-mix.jpg" },
-      { name: "Suya Marinade",               size: "Spout pouch · 200g",       price: "₦3,000", img: "suya-marinade.jpg" },
-      { name: "Coconut Curry Base",          size: "Resealable pouch · 200g",  price: "₦4,000", img: "coconut-curry-base.jpg" },
+      { name: "Chili Pepper",    size: "Ground · 100g",  price: "₦2,000", img: "" },
+      { name: "Cameroon Pepper", size: "Ground · 100g",  price: "₦2,500", img: "" },
+      { name: "Soya Mix",        size: "200g",            price: "₦2,500", img: "" },
+      { name: "Cinnamon Powder", size: "100g",            price: "₦2,000", img: "" },
+      { name: "Chia Seeds",      size: "150g",            price: "₦3,500", img: "" },
+      { name: "Melon Seed",      size: "200g",            price: "₦3,000", img: "" },
     ],
   },
   {
     heading: "Snacks",
     sub: "High-protein, no-preservative snacking.",
     products: [
-      { name: "Roasted Peanuts",               size: "Lightly salted · 200g",     price: "₦1,800", img: "roasted_peanut.jpg" },
-      { name: "Plantain Chips — Toasted & Crunchy", size: "150g",                      price: "₦2,200", img: "plantain__chips.jpg" },
-      { name: "Plantain Chips — Ripe & Spicy",    size: "150g",                      price: "₦2,200", img: "plantain_ripe.jpg" },
-      { name: "Coated Peanuts",                size: "Spicy BBQ · 200g",          price: "₦2,000", img: "peanut_spicy.jpg" },
-      { name: "Yogurt Mix — Seed & Nut Blend", size: "200g",                      price: "₦2,800", img: "parfait__toppings.jpg" },
-      { name: "Chin Chin",                     size: "200g",                      price: "₦2,800", img: "chinchin.jpg" },
-      { name: "Corn Sticks",                   size: "200g",                      price: "₦4,000", img: "corn_sticks.jpg" },
-      { name: "Kwili Kwili",                   size: "Spicy & crunchy · 200g",    price: "₦2,000", img: "kwilikwili.jpg" },
-      { name: "Cashew Nuts",                   size: "Roasted · 200g",            price: "₦2,800", img: "cashew_nuts.jpg" },
+      { name: "Roasted Peanuts",               size: "Lightly salted · 200g",  price: "₦1,800", img: "roasted_peanut.jpg" },
+      { name: "Plantain Chips — Toasted & Crunchy", size: "150g",              price: "₦2,200", img: "plantain__chips.jpg" },
+      { name: "Plantain Chips — Ripe & Spicy",    size: "150g",               price: "₦2,200", img: "plantain_ripe.jpg" },
+      { name: "Coated Peanuts",                size: "Spicy BBQ · 200g",       price: "₦2,000", img: "peanut_spicy.jpg" },
+      { name: "Yogurt Mix — Seed & Nut Blend", size: "200g",                  price: "₦2,800", img: "parfait__toppings.jpg" },
+      { name: "Chin Chin",                     size: "200g",                   price: "₦2,800", img: "chinchin.jpg" },
+      { name: "Corn Sticks",                   size: "200g",                   price: "₦4,000", img: "corn_sticks.jpg" },
+      { name: "Cashew Nuts",                   size: "Roasted · 200g",         price: "₦2,800", img: "cashew_nuts.jpg" },
     ],
   },
   {
@@ -70,7 +70,7 @@ export default function ProductsPage() {
             Take a piece of<br />AHmazing home
           </h1>
           <p className="text-xl text-background/75 max-w-2xl leading-relaxed">
-            Sauces, snacks, bottled drinks and spices — made with real ingredients, no MSG, no preservatives.
+            Spices, snacks, bottled drinks and seeds — made with real ingredients, no MSG, no preservatives.
             Tap <strong className="text-background">Order →</strong> on any item to go straight to the booking cart.
           </p>
         </div>

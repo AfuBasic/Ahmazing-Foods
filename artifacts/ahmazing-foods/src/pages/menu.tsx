@@ -17,19 +17,19 @@ const bannerImages: Record<string, string> = {
 
 const healthyPicks: Record<string, Array<{ name: string; why: string }>> = {
   soups: [
-    { name: "Edikang Ikong (Vegetable Soup)", why: "One of Nigeria's most vegetable-dense soups — loaded with ugu and waterleaf. Choose fish protein for the lightest version." },
-    { name: "Onugbu Soup (Bitterleaf)",        why: "Bitterleaf has long been associated with detoxifying properties. Pair with a smaller portion of swallow for a well-balanced meal." },
-    { name: "Efo-Riro",                         why: "Spinach-based and lower in fat than most. A solid daily soup choice — especially with fish." },
+    { name: "Edikang Ikong (Vegetable Soup)", why: "Nigeria's most vegetable-dense soup — loaded with ugu and waterleaf. Ask us to reduce the oil and use fish protein for the lightest version." },
+    { name: "Okro Soup",                       why: "High-fibre and filling, with a natural thickening that means less oil is needed. Pairs especially well with fish or any lean protein." },
+    { name: "Oha Soup",                         why: "Traditional, leafy, and relatively light on oil. A smart everyday choice — particularly good with smaller swallow portions." },
   ],
   stews: [
-    { name: "Peppered Chicken Stew",  why: "Chicken is leaner than beef. A good everyday protein choice in a well-spiced base." },
-    { name: "Peppered Turkey Stew",   why: "Turkey is one of the leanest proteins available. The pepper-based stew adds flavour without extra fat." },
-    { name: "Ata Din-Din (Fried Pepper Stew)", why: "Rich in pepper, which is high in vitamin C and antioxidants. Bold flavour with a clean base." },
+    { name: "Classic Tomato Stew",    why: "Tomato-based with most of the flavour from fresh peppers. Ask for a lighter-oil version — it's still full of flavour and one of the best everyday options." },
+    { name: "Ayamase (Ofada Stew)",   why: "Rich in green tatashe peppers, which are high in vitamin C and antioxidants. Available in a lighter, reduced-oil version on request." },
+    { name: "Coconut Curry Stew",     why: "Coconut-based fat rather than palm oil makes this naturally one of the lighter stew options. No extra-oil version needed." },
   ],
   breakfast: [
-    { name: "The Classic Nigerian",  why: "Akara is made from beans — high protein, high fiber, lower glycemic index than most breakfast carbs." },
-    { name: "The Sweet Start",       why: "Oats + fresh fruit: slow-release energy and natural sugars only. One of the most considered breakfast options available." },
-    { name: "The Hearty Plate",      why: "Boiled yam (not fried) with egg stew: fills you up steadily and adds good protein from the eggs." },
+    { name: "Boiled Unripe Plantain & Egg Sauce",         why: "Unripe plantain has a lower glycemic index than ripe — better for blood sugar management. Egg sauce adds protein without extra carbs." },
+    { name: "Unsweetened Oat Pap & Roasted Groundnuts",   why: "Oats release energy slowly; groundnuts add protein and healthy fats. No added sugar — you taste the grain itself." },
+    { name: "Whole Wheat Bread, Baked Akara & Cucumber",  why: "Baked instead of fried akara cuts a significant amount of oil. Whole wheat and cucumber add fibre and slow digestion." },
   ],
 };
 

@@ -188,10 +188,10 @@ export default function Home() {
               },
               {
                 num: "05",
-                title: "Healthy Meals",
-                href: "/healthy-meals",
-                img: "food-akara-pap.jpg",
-                desc: "Specific picks from our menu chosen to support healthy eating without giving up Nigerian food.",
+                title: "Trays & Platters",
+                href: "/trays-platters",
+                img: "food-catering.jpg",
+                desc: "Gift trays, party platters and small chops packs — for celebrations, gifting and gatherings.",
               },
               {
                 num: "06",

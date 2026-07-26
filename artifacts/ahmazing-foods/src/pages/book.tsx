@@ -24,12 +24,13 @@ import { useToast } from "@/hooks/use-toast";
 
 // ── STATIC PRODUCTS (not in DB — used for deep-link auto-add) ───────────────
 const STATIC_PRODUCTS: Record<string, number> = {
-  // Seeds & Spices (renamed from Pantry & Sauces)
-  "Smoky Jollof Base": 4500,
-  "Hibiscus Ginger Concentrate": 3000,
-  "Premium Pepper Mix": 3500,
-  "Suya Marinade": 3000,
-  "Coconut Curry Base": 4000,
+  // Seeds & Spices
+  "Chili Pepper": 2000,
+  "Cameroon Pepper": 2500,
+  "Soya Mix": 2500,
+  "Cinnamon Powder": 2000,
+  "Chia Seeds": 3500,
+  "Melon Seed": 3000,
   // Snacks
   "Roasted Peanuts": 1800,
   "Plantain Chips — Toasted & Crunchy": 2200,
@@ -38,7 +39,6 @@ const STATIC_PRODUCTS: Record<string, number> = {
   "Yogurt Mix — Seed & Nut Blend": 2800,
   "Chin Chin": 2800,
   "Corn Sticks": 4000,
-  "Kwili Kwili": 2000,
   "Cashew Nuts": 2800,
   // Drinks & Wellness
   "Zobo Drink": 2000,

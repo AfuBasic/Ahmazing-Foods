@@ -28,9 +28,14 @@ export const SPECIALS = [
       "A forgotten treasure. Breadfruit cooked with palm oil, crayfish and seasonings — earthy, filling, unique.",
   },
   {
-    name: "Assorted Pepper Soup",
+    name: "Assorted Meat Pepper Soup",
     description:
       "Goat, cow foot, tripe and offal in a light, aromatic pepper soup broth. Warming and deeply flavoured.",
+  },
+  {
+    name: "Roasted Plantain with Pepper & Fish",
+    description:
+      "Whole plantain roasted over open flame, served with a spiced pepper sauce and your choice of fish — Tilapia or Croaker.",
   },
 ];
 
