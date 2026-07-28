@@ -36,6 +36,7 @@ interface Item {
   size?: string;
   price: string;
   contains: string;
+  img?: string;
 }
 
 interface Subsection {
@@ -55,39 +56,46 @@ const SUBSECTIONS: Subsection[] = [
         name: "Breakfast Platter",
         price: "₦190,000",
         contains: "Pancakes, akara, sausage rolls, sandwiches, mixed fruit, sauce cups",
+        img: "/assets/platters/breakfast-platter.jpg",
       },
       {
         name: "Dinner Platter",
         price: "₦190,000",
         contains: "Jollof & fried rice, 2 proteins, coleslaw, fried plantain, small chops, dinner candles",
+        img: "/assets/platters/dinner-platter.jpg",
       },
       {
         name: "Anniversary Platter",
         price: "₦190,000",
         contains: "Jollof & fried rice, 2 proteins, coleslaw, fried plantain, small chops, dinner candles + anniversary card",
+        img: "/assets/platters/anniversary-platter.jpg",
       },
       {
         name: "Birthday Platter",
         price: "₦190,000",
         contains: "Jollof & fried rice, 2 proteins, coleslaw, fried plantain, small chops, candles + birthday card",
+        img: "/assets/platters/birthday-platter.jpg",
       },
       {
         name: "Party Starter Platter",
         size: "Feeds 15",
         price: "₦350,000",
         contains: "Large spread for 15 guests — jollof & fried rice, assorted proteins, coleslaw, small chops, fried plantain, sauces",
+        img: "/assets/platters/party-starter-platter.jpg",
       },
       {
         name: "Party Starter Platter",
         size: "Feeds 30",
         price: "₦550,000",
         contains: "Large spread for 30 guests — jollof & fried rice, assorted proteins, coleslaw, small chops, fried plantain, sauces",
+        img: "/assets/platters/party-starter-platter.jpg",
       },
       {
         name: "Party Starter Platter",
         size: "Feeds 50",
         price: "₦1,000,000",
         contains: "Large spread for 50 guests — jollof & fried rice, assorted proteins, coleslaw, small chops, fried plantain, sauces",
+        img: "/assets/platters/party-starter-platter.jpg",
       },
     ],
   },
@@ -190,14 +198,24 @@ function TrayCard({ item, type, wine, drinks, onWineChange, onDrinkToggle }: Car
 
   return (
     <div className="bg-card rounded-2xl border border-border overflow-hidden flex flex-col hover:shadow-lg transition-shadow">
-      {/* Placeholder image */}
-      <div className="aspect-video bg-muted flex flex-col items-center justify-center gap-2 text-muted-foreground/30">
-        <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
-          <rect x="3" y="3" width="18" height="18" rx="3" />
-          <circle cx="8.5" cy="8.5" r="1.5" />
-          <path d="M21 15l-5-5L5 21" />
-        </svg>
-        <span className="text-xs font-medium">Photo coming soon</span>
+      {/* Image */}
+      <div className="aspect-video bg-muted overflow-hidden">
+        {item.img ? (
+          <img
+            src={item.img}
+            alt={item.name}
+            className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted-foreground/30">
+            <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+              <rect x="3" y="3" width="18" height="18" rx="3" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <path d="M21 15l-5-5L5 21" />
+            </svg>
+            <span className="text-xs font-medium">Photo coming soon</span>
+          </div>
+        )}
       </div>
 
       <div className="p-5 flex flex-col flex-1 gap-4">
