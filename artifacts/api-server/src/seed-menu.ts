@@ -59,7 +59,7 @@ const items = [
     category: "soups",
     name: "Onugbu Soup (Bitterleaf)",
     description: "Rich bitterleaf soup garnished with dried fish, stockfish and cowhide.",
-    sizes: standardSoupSizes, proteins: soupProteins, imageUrl: SOUP_IMG,
+    sizes: standardSoupSizes, proteins: soupProteins, imageUrl: "assets/soups/onugbu-soup.jpg",
   },
   {
     category: "soups",
@@ -71,37 +71,37 @@ const items = [
     category: "soups",
     name: "Okro Soup",
     description: "Freshly made okro soup, silky and well-seasoned with your choice of protein.",
-    sizes: standardSoupSizes, proteins: soupProteins, imageUrl: SOUP_IMG,
+    sizes: standardSoupSizes, proteins: soupProteins, imageUrl: "assets/soups/okro-soup.jpg",
   },
   {
     category: "soups",
     name: "Edikang Ikong (Vegetable Soup)",
     description: "A rich, nutritious Cross River vegetable soup made with ugu and waterleaf.",
-    sizes: standardSoupSizes, proteins: soupProteins, imageUrl: SOUP_IMG,
+    sizes: standardSoupSizes, proteins: soupProteins, imageUrl: "assets/soups/edikang-ikong.jpg",
   },
   {
     category: "soups",
     name: "Egusi Soup",
     description: "Thick, golden egusi soup cooked low and slow with ground melon seeds.",
-    sizes: standardSoupSizes, proteins: soupProteins, imageUrl: SOUP_IMG,
+    sizes: standardSoupSizes, proteins: soupProteins, imageUrl: "assets/soups/egusi-soup.jpg",
   },
   {
     category: "soups",
     name: "Banga Soup (Ofe Akwu)",
     description: "Aromatic palm nut soup cooked the Delta way with native spices.",
-    sizes: standardSoupSizes, proteins: soupProteins, imageUrl: SOUP_IMG,
+    sizes: standardSoupSizes, proteins: soupProteins, imageUrl: "assets/soups/banga-soup.jpg",
   },
   {
     category: "soups",
     name: "Efo-Riro",
     description: "Yoruba spinach stew cooked with peppers, assorted meats and a rich base.",
-    sizes: standardSoupSizes, proteins: soupProteins, imageUrl: SOUP_IMG,
+    sizes: standardSoupSizes, proteins: soupProteins, imageUrl: "assets/soups/efo-riro.jpg",
   },
   {
     category: "soups",
     name: "Seafood Okro",
     description: "Luscious okro soup loaded with fresh mixed seafood. 5L and Cooler only.",
-    sizes: seafoodOkroSizes, proteins: [], imageUrl: SOUP_IMG,
+    sizes: seafoodOkroSizes, proteins: [], imageUrl: "assets/soups/seafood-okro.jpg",
   },
 
   // ════════════════════════════════════════════════════════════════════════════

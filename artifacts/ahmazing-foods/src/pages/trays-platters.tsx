@@ -135,11 +135,13 @@ const SUBSECTIONS: Subsection[] = [
         name: "Small Chops — Mini",
         price: "₦30,000",
         contains: "20 buns, 10 samosas, 6 pieces of chicken (no snail)",
+        img: "/assets/small-chops/mini.jpg",
       },
       {
         name: "Small Chops — Full",
         price: "₦55,000",
         contains: "40 buns, 20 samosas, 12 pieces of chicken, 2 pieces of snail",
+        img: "/assets/small-chops/full.jpg",
       },
     ],
   },

@@ -18,7 +18,7 @@ const groups: { heading: string; sub: string; products: Product[] }[] = [
     products: [
       { name: "Chili Pepper",    size: "Ground · 100g",  price: "₦2,000", img: "" },
       { name: "Cameroon Pepper", size: "Ground · 100g",  price: "₦2,500", img: "" },
-      { name: "Soya Mix",        size: "200g",            price: "₦2,500", img: "" },
+      { name: "Suya Mix",         size: "200g",            price: "₦2,500", img: "" },
       { name: "Cinnamon Powder", size: "100g",            price: "₦2,000", img: "" },
       { name: "Chia Seeds",      size: "150g",            price: "₦3,500", img: "" },
       { name: "Melon Seed",      size: "200g",            price: "₦3,000", img: "" },
