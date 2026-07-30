@@ -129,13 +129,13 @@ const items = [
     category: "stews",
     name: "Peppered Chicken Stew",
     description: "Succulent chicken pieces simmered in a spiced tomato and pepper stew.",
-    sizes: stewSizes(47000, 54000), proteins: [], imageUrl: STEW_IMG,
+    sizes: stewSizes(47000, 54000), proteins: [], imageUrl: "assets/stews/peppered-chicken-stew.jpg",
   },
   {
     category: "stews",
     name: "Peppered Turkey Stew",
     description: "Juicy turkey pieces slow-cooked in a bold, well-spiced pepper stew.",
-    sizes: stewSizes(49000, 59000), proteins: [], imageUrl: STEW_IMG,
+    sizes: stewSizes(49000, 59000), proteins: [], imageUrl: "assets/stews/peppered-turkey-stew.jpg",
   },
 
   // ════════════════════════════════════════════════════════════════════════════

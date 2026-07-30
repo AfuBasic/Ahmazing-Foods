@@ -37,6 +37,7 @@ interface Item {
   price: string;
   contains: string;
   img?: string;
+  requiredDrinks?: number; // overrides section default; 0 = no drink selector
 }
 
 interface Subsection {
@@ -47,58 +48,6 @@ interface Subsection {
 }
 
 const SUBSECTIONS: Subsection[] = [
-  {
-    type: "platters",
-    heading: "Platters",
-    sub: "Every platter is ₦190,000 or above. Each includes your choice of wine (White / Red / Non-Alcoholic — required) plus exactly 2 complimentary drinks from the list below.",
-    items: [
-      {
-        name: "Breakfast Platter",
-        price: "₦190,000",
-        contains: "Pancakes, akara, sausage rolls, sandwiches, mixed fruit, sauce cups",
-        img: "/assets/platters/breakfast-platter.jpg",
-      },
-      {
-        name: "Dinner Platter",
-        price: "₦190,000",
-        contains: "Jollof & fried rice, 2 proteins, coleslaw, fried plantain, small chops, dinner candles",
-        img: "/assets/platters/dinner-platter.jpg",
-      },
-      {
-        name: "Anniversary Platter",
-        price: "₦190,000",
-        contains: "Jollof & fried rice, 2 proteins, coleslaw, fried plantain, small chops, dinner candles + anniversary card",
-        img: "/assets/platters/anniversary-platter.jpg",
-      },
-      {
-        name: "Birthday Platter",
-        price: "₦190,000",
-        contains: "Jollof & fried rice, 2 proteins, coleslaw, fried plantain, small chops, candles + birthday card",
-        img: "/assets/platters/birthday-platter.jpg",
-      },
-      {
-        name: "Party Starter Platter",
-        size: "Feeds 15",
-        price: "₦350,000",
-        contains: "Large spread for 15 guests — jollof & fried rice, assorted proteins, coleslaw, small chops, fried plantain, sauces",
-        img: "/assets/platters/party-starter-platter.jpg",
-      },
-      {
-        name: "Party Starter Platter",
-        size: "Feeds 30",
-        price: "₦550,000",
-        contains: "Large spread for 30 guests — jollof & fried rice, assorted proteins, coleslaw, small chops, fried plantain, sauces",
-        img: "/assets/platters/party-starter-platter.jpg",
-      },
-      {
-        name: "Party Starter Platter",
-        size: "Feeds 50",
-        price: "₦1,000,000",
-        contains: "Large spread for 50 guests — jollof & fried rice, assorted proteins, coleslaw, small chops, fried plantain, sauces",
-        img: "/assets/platters/party-starter-platter.jpg",
-      },
-    ],
-  },
   {
     type: "trays",
     heading: "Trays",
@@ -145,7 +94,14 @@ const SUBSECTIONS: Subsection[] = [
         name: "Small Chops — Full",
         price: "₦55,000",
         contains: "40 buns, 20 samosas, 12 pieces of chicken, 2 pieces of snail",
-        img: "/assets/small-chops/full.jpg",
+        img: "/assets/small-chops/full-branded.jpg",
+      },
+      {
+        name: "Small Chops — Premium",
+        price: "₦150,000",
+        contains: "60 samosas, 60 spring rolls, 60 puff puff, 35 peppered beef, 60 moi moi, 25 chicken pieces — plus 7 drinks included (Carrot Boost, Zobo, Yogurt Drink, Pineapple Ginger, Ginger Immune Booster, 2× Still Water)",
+        img: "/assets/small-chops/premium.jpg",
+        requiredDrinks: 0,
       },
     ],
   },
@@ -192,7 +148,7 @@ interface CardProps {
 }
 
 function TrayCard({ item, type, wine, drinks, onWineChange, onDrinkToggle }: CardProps) {
-  const required = REQUIRED_DRINKS[type];
+  const required = item.requiredDrinks !== undefined ? item.requiredDrinks : REQUIRED_DRINKS[type];
   const wineOk = type !== "platters" || wine !== "";
   const drinksOk = drinks.length === required;
   const ready = wineOk && drinksOk;
@@ -370,7 +326,7 @@ export default function TraysAndPlattersPage() {
           </h1>
           <p className="text-xl text-background/75 max-w-2xl leading-relaxed">
             For gifting, celebrations and gatherings — sized between a single meal and a fully catered event.
-            Every item includes complimentary drinks. Platters also include your choice of wine.
+            Every item includes complimentary drinks.
           </p>
         </div>
       </div>
@@ -380,7 +336,7 @@ export default function TraysAndPlattersPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
             { step: "1", title: "Pick your item", body: "Browse Platters, Trays, or Packages below." },
-            { step: "2", title: "Make your selections", body: "Choose wine (Platters only) and your free drinks — the Order button unlocks once everything is set." },
+            { step: "2", title: "Pick your free drinks", body: "Choose your complimentary drinks from the list — the Order button unlocks once your selection is complete." },
             { step: "3", title: "Order on WhatsApp", body: "Your complete order details are pre-filled — just hit send to confirm with us." },
           ].map(({ step, title, body }) => (
             <div key={step} className="rounded-2xl bg-muted/50 border border-border px-5 py-4 flex gap-4">
