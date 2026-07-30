@@ -65,7 +65,7 @@ const items = [
     category: "soups",
     name: "Oha Soup",
     description: "Traditional Igbo oha leaf soup, hearty and deeply flavoured.",
-    sizes: standardSoupSizes, proteins: soupProteins, imageUrl: SOUP_IMG,
+    sizes: standardSoupSizes, proteins: soupProteins, imageUrl: "assets/soups/oha-soup.jpg",
   },
   {
     category: "soups",
