@@ -27,7 +27,7 @@ const STATIC_PRODUCTS: Record<string, number> = {
   // Seeds & Spices
   "Chili Pepper": 2000,
   "Cameroon Pepper": 2500,
-  "Soya Mix": 2500,
+  "Suya Mix": 2500,
   "Cinnamon Powder": 2000,
   "Chia Seeds": 3500,
   "Melon Seed": 3000,

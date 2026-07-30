@@ -185,15 +185,31 @@ export default function BookingConfirmedPage() {
           </div>
         </div>
 
-        {/* Next Steps Info */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-           <div className="bg-primary/10 text-primary-foreground p-6 rounded-2xl border border-primary/20 text-center">
-              <h4 className="font-bold text-primary font-display mb-1">Status</h4>
-              <p className="text-primary capitalize font-medium">{order.status}</p>
-           </div>
-           <div className="bg-card p-6 rounded-2xl border border-border text-center flex flex-col justify-center">
-              <p className="text-sm text-muted-foreground">Expect payment instructions via SMS shortly.</p>
-           </div>
+        {/* Payment Instructions */}
+        <div className="mt-8 rounded-2xl border-2 border-primary/30 bg-primary/5 p-6">
+          <h4 className="font-bold font-display text-lg mb-3 text-foreground">Payment Details</h4>
+          <p className="text-sm text-muted-foreground mb-4">Transfer your total of <span className="font-bold text-foreground">{formatNaira(order.total)}</span> to complete your booking:</p>
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm py-2 border-b border-border/50">
+              <span className="text-muted-foreground">Bank</span>
+              <span className="font-semibold">FCMB</span>
+            </div>
+            <div className="flex justify-between text-sm py-2 border-b border-border/50">
+              <span className="text-muted-foreground">Account Name</span>
+              <span className="font-semibold">Ahmazing Cuisine</span>
+            </div>
+            <div className="flex justify-between text-sm py-2">
+              <span className="text-muted-foreground">Account Number</span>
+              <span className="font-bold text-lg tracking-widest">1009414545</span>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground mt-4">Use your booking ref <span className="font-mono font-bold">AHM-{order.id.toString().padStart(4, '0')}</span> as payment narration. We'll confirm your order once payment is received.</p>
+        </div>
+
+        {/* Status */}
+        <div className="mt-4 bg-card p-5 rounded-2xl border border-border flex items-center justify-between">
+          <span className="text-sm text-muted-foreground">Order Status</span>
+          <span className="font-bold capitalize text-primary">{order.status}</span>
         </div>
 
       </div>

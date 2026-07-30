@@ -116,8 +116,11 @@ export async function sendBookingNotification(data: BookingEmailData): Promise<v
           </tr>
           ${data.notes ? `
           <tr>
-            <td style="padding: 6px 0; color: #6b5c55; font-size: 14px;">Notes</td>
-            <td style="padding: 6px 0; font-size: 14px;">${data.notes}</td>
+            <td colspan="2" style="padding: 10px 0 0;">
+              <div style="background: #fff8f0; border: 1px solid #e8ddd0; border-radius: 6px; padding: 14px; font-size: 13px; line-height: 1.7; white-space: pre-wrap; color: #2b2320;">
+                ${data.notes.replace(/\n/g, "<br>")}
+              </div>
+            </td>
           </tr>` : ""}
         </table>
 
