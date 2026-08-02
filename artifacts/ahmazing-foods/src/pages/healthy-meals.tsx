@@ -66,22 +66,14 @@ const dinnerPicks = [
   },
 ];
 
-const snackPicks = [
-  { name: "Tiger Nut Milk", note: "Dairy-free, naturally sweet. A prebiotic drink that supports gut health.", href: "/products" },
-  { name: "Zobo Drink (no sugar added)", note: "Hibiscus tea. Studies suggest it may support healthy blood pressure when consumed without added sugar.", href: "/products" },
-  { name: "Roasted Peanuts (small handful)", note: "Healthy fats and plant protein. Satiating without spiking blood sugar.", href: "/products" },
-  { name: "Fresh Pawpaw", note: "Low in sugar, rich in vitamin C and digestive enzymes. One of the most gut-friendly fruits.", href: "/products" },
-  { name: "Kale Cleanser Drink", note: "Kale, cucumber and apple — a green drink with real greens in it.", href: "/products" },
-  { name: "Cashew Nuts", note: "Good fats and minerals. Keep to a small handful — around 10–15 nuts — as a snack between meals.", href: "/products" },
-];
 
 const rotation = [
-  { day: "Day 1", breakfast: "Plantain & Egg Sauce",      lunch: "Plantain Porridge & Fish", dinner: "Vegetable Soup",           snack: "Roasted Peanuts" },
-  { day: "Day 2", breakfast: "Oat Pap & Groundnuts",      lunch: "Brown Rice Jollof",        dinner: "Grilled Fish & Ofada Rice", snack: "Garden Egg & Groundnut Paste" },
-  { day: "Day 3", breakfast: "Wheat Bread & Baked Akara", lunch: "Beans & Vegetable Sauce",  dinner: "Okra Soup",                snack: "Cucumber, Carrot & Peanut Butter" },
-  { day: "Day 4", breakfast: "Plantain & Egg Sauce",      lunch: "Brown Rice Jollof",        dinner: "Okra Soup",                snack: "Unsweetened Zobo" },
-  { day: "Day 5", breakfast: "Oat Pap & Groundnuts",      lunch: "Beans & Vegetable Sauce",  dinner: "Vegetable Soup",           snack: "Tiger Nut Milk" },
-  { day: "Day 6", breakfast: "Wheat Bread & Baked Akara", lunch: "Plantain Porridge & Fish", dinner: "Grilled Fish & Ofada Rice", snack: "Baked Plantain Chips" },
+  { day: "Day 1", breakfast: "Plantain & Egg Sauce",      lunch: "Plantain Porridge & Fish", dinner: "Vegetable Soup"           },
+  { day: "Day 2", breakfast: "Oat Pap & Groundnuts",      lunch: "Brown Rice Jollof",        dinner: "Grilled Fish & Ofada Rice" },
+  { day: "Day 3", breakfast: "Wheat Bread & Baked Akara", lunch: "Beans & Vegetable Sauce",  dinner: "Okra Soup"                },
+  { day: "Day 4", breakfast: "Plantain & Egg Sauce",      lunch: "Brown Rice Jollof",        dinner: "Okra Soup"                },
+  { day: "Day 5", breakfast: "Oat Pap & Groundnuts",      lunch: "Beans & Vegetable Sauce",  dinner: "Vegetable Soup"           },
+  { day: "Day 6", breakfast: "Wheat Bread & Baked Akara", lunch: "Plantain Porridge & Fish", dinner: "Grilled Fish & Ofada Rice" },
 ];
 
 // ── Full 15-item à la carte menu ─────────────────────────────────────────────
@@ -98,23 +90,23 @@ const menuPool: {
       {
         name: "Boiled Unripe Plantain & Egg Sauce",
         desc: "Unripe plantain (lower GI than ripe) with a light pepper-and-onion egg sauce.",
-        price: "₦4,500",
+        price: "₦15,750",
         waText: "Hi, I'd like to order Boiled Unripe Plantain and Egg Sauce",
-        img: "food-breakfast.jpg",
+        img: "healthy-meals/plantain-egg-sauce.png",
       },
       {
         name: "Unsweetened Oat Pap with Roasted Groundnuts",
         desc: "Traditional pap made with oats, no added sugar, topped with roasted peanuts.",
-        price: "₦3,500",
+        price: "₦12,250",
         waText: "Hi, I'd like to order Oat Pap with Roasted Groundnuts",
-        img: "food-akara-pap.jpg",
+        img: "healthy-meals/oat-pap-groundnuts.png",
       },
       {
         name: "Whole Wheat Bread, Baked Akara & Cucumber",
         desc: "Whole wheat bread, lightly-oiled baked akara, fresh cucumber slices.",
-        price: "₦4,000",
+        price: "₦14,000",
         waText: "Hi, I'd like to order Whole Wheat Bread with Baked Akara",
-        img: "food-akara-pap.jpg",
+        img: "healthy-meals/wheat-bread-akara.png",
       },
     ],
   },
@@ -125,23 +117,23 @@ const menuPool: {
       {
         name: "Unripe Plantain Porridge with Grilled Fish",
         desc: "Unripe plantain, spinach or ugu, light palm oil, grilled (not fried) fish.",
-        price: "₦7,500",
+        price: "₦15,000",
         waText: "Hi, I'd like to order Unripe Plantain Porridge with Grilled Fish",
-        img: "food-jollof-fish.jpg",
+        img: "healthy-meals/plantain-grilled-fish.png",
       },
       {
         name: "Brown Rice Jollof with Grilled Chicken & Vegetables",
         desc: "Unpolished brown rice, grilled chicken, side of steamed vegetables.",
-        price: "₦8,000",
+        price: "₦16,000",
         waText: "Hi, I'd like to order Brown Rice Jollof with Grilled Chicken",
-        img: "food-jollof-fish.jpg",
+        img: "healthy-meals/brown-rice-jollof.png",
       },
       {
         name: "Beans & Vegetable Sauce",
         desc: "Beans porridge with ugu or spinach, moderate palm oil, side of unripe plantain.",
-        price: "₦6,500",
+        price: "₦13,000",
         waText: "Hi, I'd like to order Beans and Vegetable Sauce",
-        img: "food-ingredients.jpg",
+        img: "healthy-meals/beans-veg-sauce.png",
       },
     ],
   },
@@ -152,71 +144,23 @@ const menuPool: {
       {
         name: "Vegetable Soup with Small Swallow",
         desc: "Ugu/efo riro style soup, lean fish or chicken, controlled swallow portion.",
-        price: "₦7,500",
+        price: "₦18,750",
         waText: "Hi, I'd like to order Vegetable Soup with Small Swallow",
-        img: "food-egusi-top.jpg",
+        img: "healthy-meals/veg-soup-swallow.png",
       },
       {
         name: "Grilled Fish with Ofada Rice & Vegetables",
         desc: "Grilled fish, modest portion of unpolished ofada rice, mixed steamed vegetables.",
-        price: "₦8,500",
+        price: "₦21,250",
         waText: "Hi, I'd like to order Grilled Fish with Ofada Rice",
-        img: "food-jollof-fish.jpg",
+        img: "healthy-meals/grilled-fish-ofada.png",
       },
       {
         name: "Okra Soup with Lean Protein",
         desc: "Fibre-rich okra soup, lean protein, small portion of swallow.",
-        price: "₦7,500",
+        price: "₦18,750",
         waText: "Hi, I'd like to order Okra Soup with Lean Protein",
-        img: "food-hero-soup.jpg",
-      },
-    ],
-  },
-  {
-    group: "Snacks",
-    sub: "Several of these overlap with our Products page — same items, repositioned as unsweetened/unsalted.",
-    items: [
-      {
-        name: "Roasted Peanuts (Unsalted)",
-        desc: "Lightly roasted with no added salt.",
-        price: "₦1,800",
-        waText: "Hi, I'd like to order Unsalted Roasted Peanuts",
-        img: "products/roasted_peanut.jpg",
-      },
-      {
-        name: "Garden Egg & Groundnut Paste",
-        desc: "Fresh garden egg with a natural groundnut paste dip.",
-        price: "₦2,000",
-        waText: "Hi, I'd like to order Garden Egg and Groundnut Paste",
-        img: "products/peanut-butter.jpg",
-      },
-      {
-        name: "Cucumber & Carrot Sticks with Peanut Butter",
-        desc: "Fresh-cut cucumber and carrot sticks with natural peanut butter.",
-        price: "₦2,500",
-        waText: "Hi, I'd like to order Cucumber and Carrot Sticks with Peanut Butter",
-        img: "products/carrot.jpg",
-      },
-      {
-        name: "Unsweetened Zobo",
-        desc: "Hibiscus drink, no added sugar.",
-        price: "₦1,500",
-        waText: "Hi, I'd like to order Unsweetened Zobo",
-        img: "products/zobo.jpg",
-      },
-      {
-        name: "Tiger Nut Milk (Unsweetened)",
-        desc: "Dairy-free, naturally sweet, no added sugar.",
-        price: "₦2,200",
-        waText: "Hi, I'd like to order Unsweetened Tiger Nut Milk",
-        img: "products/tigernut.jpg",
-      },
-      {
-        name: "Baked Plantain Chips (Unripe)",
-        desc: "Unripe plantain baked, not fried, with minimal oil.",
-        price: "₦1,800",
-        waText: "Hi, I'd like to order Baked Unripe Plantain Chips",
-        img: "products/plantain__chips.jpg",
+        img: "healthy-meals/okra-soup-protein.png",
       },
     ],
   },
@@ -294,7 +238,7 @@ export default function HealthyMealsPage() {
           </h1>
           <p className="text-xl text-background/75 max-w-2xl leading-relaxed">
             Nigerian food is not the enemy of healthy eating. A full day's meals — breakfast, lunch,
-            dinner and a snack — delivered on a schedule, or ordered individually any time.
+            dinner — delivered on a schedule, or ordered individually any time.
           </p>
         </div>
       </div>
@@ -325,7 +269,7 @@ export default function HealthyMealsPage() {
             </div>
             <h2 className="text-3xl font-bold font-display mb-3">Pick your meals, pick your length</h2>
             <p className="text-muted-foreground max-w-2xl">
-              Every meal includes its own snack. Choose how many meals a day you want, then how long —
+              Choose how many meals a day you want, then how long —
               the rate per meal drops the longer you commit.
             </p>
           </div>
@@ -355,7 +299,7 @@ export default function HealthyMealsPage() {
                     </button>
                   ))}
                 </div>
-                <p className="text-xs text-muted-foreground mt-1.5">Each meal comes with a snack included.</p>
+                <p className="text-xs text-muted-foreground mt-1.5">Mix and match meals across breakfast, lunch and dinner.</p>
               </div>
 
               {/* Plan length */}
@@ -675,23 +619,6 @@ export default function HealthyMealsPage() {
           </div>
         </section>
 
-        <section>
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold font-display mb-2">Snacks worth having</h2>
-            <p className="text-muted-foreground">Six things that tide you over between meals without undoing the work.</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {snackPicks.map((s) => (
-              <div key={s.name} className="bg-muted rounded-2xl p-5 flex gap-4 items-start">
-                <span className="text-xl mt-0.5">🌿</span>
-                <div>
-                  <Link href={s.href} className="font-bold text-sm hover:underline">{s.name}</Link>
-                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{s.note}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
 
         {/* ── 6-DAY ROTATION TABLE ────────────────────────────────────────── */}
         <section>
@@ -707,7 +634,7 @@ export default function HealthyMealsPage() {
               <table className="w-full text-sm">
                 <thead className="bg-foreground text-background">
                   <tr>
-                    {["Day", "Breakfast", "Lunch", "Dinner", "Snack"].map((h) => (
+                    {["Day", "Breakfast", "Lunch", "Dinner"].map((h) => (
                       <th key={h} className="text-left px-4 py-3 font-bold text-xs uppercase tracking-wider">{h}</th>
                     ))}
                   </tr>
@@ -719,7 +646,6 @@ export default function HealthyMealsPage() {
                       <td className="px-4 py-3 text-muted-foreground">{row.breakfast}</td>
                       <td className="px-4 py-3 text-muted-foreground">{row.lunch}</td>
                       <td className="px-4 py-3 text-muted-foreground">{row.dinner}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{row.snack}</td>
                     </tr>
                   ))}
                 </tbody>
