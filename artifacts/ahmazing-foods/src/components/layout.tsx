@@ -13,7 +13,6 @@ const MEAL_LINKS = [
   { href: "/breakfast",        label: "Breakfast",        desc: "Weekend combo plates, cooked fresh to order" },
   { href: "/soups",            label: "Soups",            desc: "Nigerian soups by the litre or cooler" },
   { href: "/stews",            label: "Stews",            desc: "Classic stews for families and events" },
-  { href: "/weekend-specials", label: "Weekend Specials", desc: "Rotating delicacies · vote for next week's" },
 ];
 
 const MEAL_PATHS = MEAL_LINKS.map((l) => l.href);
@@ -279,7 +278,6 @@ function SiteFooter() {
               <li><Link href="/breakfast"         className="hover:text-primary transition-colors">Breakfast</Link></li>
               <li><Link href="/soups"            className="hover:text-primary transition-colors">Rich Soups</Link></li>
               <li><Link href="/stews"            className="hover:text-primary transition-colors">Hearty Stews</Link></li>
-              <li><Link href="/weekend-specials" className="hover:text-primary transition-colors">Weekend Specials</Link></li>
               <li><Link href="/products"         className="hover:text-primary transition-colors">Products</Link></li>
               <li><Link href="/trays-platters"  className="hover:text-primary transition-colors">Trays & Platters</Link></li>
               <li><Link href="/healthy-meals"    className="hover:text-primary transition-colors">Healthy Meals</Link></li>

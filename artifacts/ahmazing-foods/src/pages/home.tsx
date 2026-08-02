@@ -27,7 +27,7 @@ export default function Home() {
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
               No storefront, no shortcuts. Every pot is started only once it's booked.
-              Choose your soup, stew or weekend special, pick your delivery slot, and we get cooking.
+              Choose your soup, stew or breakfast combo, pick your delivery slot, and we get cooking.
             </p>
             <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start pt-2">
               <Link
