@@ -66,14 +66,12 @@ const FOOD_CATS = new Set(["soups", "stews", "breakfast"]);
 const isFoodCat = (cat: string) => FOOD_CATS.has(cat);
 
 // Category display order and labels in the dropdown
-const CAT_ORDER  = ["soups", "stews", "breakfast", "drinks", "snacks", "seeds", "platters"] as const;
+const CAT_ORDER  = ["soups", "stews", "breakfast", "drinks", "platters"] as const;
 const CAT_LABELS: Record<string, string> = {
   soups:     "Soups",
   stews:     "Stews",
   breakfast: "Breakfast",
   drinks:    "Drinks & Wellness",
-  snacks:    "Snacks",
-  seeds:     "Seeds & Spices",
   platters:  "Platters & Trays",
 };
 

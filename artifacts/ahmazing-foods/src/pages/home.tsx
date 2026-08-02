@@ -184,7 +184,7 @@ export default function Home() {
                 title: "Products",
                 href: "/products",
                 img: "products/zobo.jpg",
-                desc: "Drinks, snacks and pantry staples — no MSG, no preservatives.",
+                desc: "Cold-pressed drinks, wellness shots and immune boosters — brewed fresh in small batches.",
               },
               {
                 num: "05",
