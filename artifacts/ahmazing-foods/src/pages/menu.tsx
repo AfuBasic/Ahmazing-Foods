@@ -11,7 +11,7 @@ const BRAND_GREEN = "#0F9E0F";
 
 const bannerImages: Record<string, string> = {
   soups:     "food-egusi-hands.jpg",
-  stews:     "food-jollof-fish.jpg",
+  stews:     "stews/classic-tomato-stew.webp",
   breakfast: "food-akara-pap.jpg",
 };
 

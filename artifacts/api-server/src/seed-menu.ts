@@ -111,19 +111,19 @@ const items = [
     category: "stews",
     name: "Classic Tomato Stew",
     description: "A rich, slow-cooked tomato base stew — the backbone of Nigerian cooking.",
-    sizes: stewSizes(47000, 54000), proteins: [], imageUrl: STEW_IMG,
+    sizes: stewSizes(47000, 54000), proteins: [], imageUrl: "assets/stews/classic-tomato-stew.webp",
   },
   {
     category: "stews",
     name: "Ayamase (Ofada Stew)",
     description: "Spicy green pepper stew with assorted offals — pairs perfectly with ofada rice.",
-    sizes: stewSizes(49000, 59000), proteins: [], imageUrl: STEW_IMG,
+    sizes: stewSizes(49000, 59000), proteins: [], imageUrl: "assets/stews/ayamase-stew.jpg",
   },
   {
     category: "stews",
     name: "Peppered Beef Stew",
     description: "Tender chunks of beef in a bold pepper stew with caramelised onions.",
-    sizes: stewSizes(47000, 54000), proteins: [], imageUrl: STEW_IMG,
+    sizes: stewSizes(47000, 54000), proteins: [], imageUrl: "assets/stews/peppered-beef-stew.jpg",
   },
   {
     category: "stews",
