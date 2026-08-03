@@ -37,7 +37,8 @@ interface Item {
   price: string;
   contains: string;
   img?: string;
-  requiredDrinks?: number; // overrides section default; 0 = no drink selector
+  requiredDrinks?: number;   // overrides section default; 0 = no drink picker
+  fixedDrinks?: string[];    // Premium tier: fixed drinks list, no picker
 }
 
 interface Subsection {
@@ -82,26 +83,43 @@ const SUBSECTIONS: Subsection[] = [
   {
     type: "packages",
     heading: "Packages",
-    sub: "Small chops packs — perfect for a party table. Choose exactly 2 complimentary drinks. No wine.",
+    sub: "Small chops packs — perfect for a party table. Starter and Mini are standalone. Full includes 2 complimentary drinks of your choice. Premium comes with 7 curated drinks included. No wine on any tier.",
     items: [
+      {
+        name: "Small Chops — Starter",
+        price: "₦18,000",
+        contains: "10 samosas, 10 spring rolls, 30 puff puff, 20 mosa, 5 peppered beef bites, 5 peppered gizzard, 5 sausages, 5 mini corn dogs",
+        img: "/assets/small-chops/starter.png",
+        requiredDrinks: 0,
+      },
       {
         name: "Small Chops — Mini",
         price: "₦30,000",
-        contains: "20 buns, 10 samosas, 6 pieces of chicken (no snail)",
-        img: "/assets/small-chops/mini.jpg",
+        contains: "30 samosas, 30 spring rolls, 80 puff puff, 40 mosa, 50 peppered beef bites",
+        img: "/assets/small-chops/mini.png",
+        requiredDrinks: 0,
       },
       {
         name: "Small Chops — Full",
         price: "₦55,000",
-        contains: "40 buns, 20 samosas, 12 pieces of chicken, 2 pieces of snail",
-        img: "/assets/small-chops/full-branded.jpg",
+        contains: "45 samosas, 40 spring rolls, 5 spring rolls with prawns & mayo, 80 puff puff, 30 mosa, 40 peppered beef bites, 10 peppered chicken, 15 peppered gizzard, 5 grilled snail, 5 sausages, 5 mini corn dogs",
+        img: "/assets/small-chops/full.png",
+        requiredDrinks: 2,
       },
       {
         name: "Small Chops — Premium",
         price: "₦150,000",
-        contains: "60 samosas, 60 spring rolls, 60 puff puff, 35 peppered beef, 60 moi moi, 25 chicken pieces — plus 7 drinks included (Carrot Boost, Zobo, Yogurt Drink, Pineapple Ginger, Ginger Immune Booster, 2× Still Water)",
-        img: "/assets/small-chops/premium.jpg",
+        contains: "60 samosas, 50 spring rolls, 10 spring rolls with prawns & mayo, 60 puff puff, 20 peppered beef bites, 20 peppered chicken, 10 peppered turkey, 15 peppered gizzard, 10 grilled snail, 8 sausages, 10 mini corn dogs",
+        img: "/assets/small-chops/premium.png",
         requiredDrinks: 0,
+        fixedDrinks: [
+          "Carrot Juice",
+          "Zobo Drink",
+          "Yogurt Drink",
+          "Pineapple Ginger Drink",
+          "Ginger Immune Booster",
+          "Pure Still Water (×2)",
+        ],
       },
     ],
   },
@@ -121,7 +139,9 @@ function buildWaMessage(item: Item, type: SubsectionType, wine: WineOption | "",
     `📋 Contains: ${item.contains}`,
   ];
   if (type === "platters" && wine) lines.push(`🍷 Wine choice: ${wine}`);
-  if (drinks.length > 0) {
+  if (item.fixedDrinks && item.fixedDrinks.length > 0) {
+    lines.push("", `🥤 Included drinks (${item.fixedDrinks.length}):`, ...item.fixedDrinks.map((d) => `  • ${d}`));
+  } else if (drinks.length > 0) {
     lines.push("", `🥤 Free drinks (${drinks.length}):`, ...drinks.map((d) => `  • ${d}`));
   }
   lines.push(
@@ -216,42 +236,61 @@ function TrayCard({ item, type, wine, drinks, onWineChange, onDrinkToggle }: Car
           </div>
         )}
 
-        {/* Drink selector */}
-        <div>
-          <label className="text-xs font-bold uppercase tracking-wider text-foreground block mb-2">
-            {type === "platters" ? "2" : type === "trays" ? "4" : "2"} free drinks{" "}
-            <span className="text-destructive">*</span>
-            {drinks.length > 0 && (
-              <span className="ml-2 font-normal text-muted-foreground normal-case tracking-normal">
-                ({drinks.length}/{required} chosen)
-              </span>
-            )}
-          </label>
-          <div className="flex flex-wrap gap-1.5">
-            {DRINK_OPTIONS.map((d) => {
-              const selected = drinks.includes(d);
-              const full = !selected && drinks.length >= required;
-              return (
-                <button
-                  key={d}
-                  onClick={() => onDrinkToggle(d)}
-                  disabled={full}
-                  className={[
-                    "text-xs px-2.5 py-1 rounded-full border transition-all",
-                    selected
-                      ? "bg-[#0F9E0F] text-white border-[#0F9E0F]"
-                      : full
-                      ? "border-border text-muted-foreground/40 cursor-not-allowed"
-                      : "border-border text-muted-foreground hover:border-[#0F9E0F]/60",
-                  ].join(" ")}
-                >
-                  {selected && <span className="mr-1">✓</span>}
+        {/* Fixed drinks list — Premium tier only */}
+        {item.fixedDrinks && (
+          <div>
+            <label className="text-xs font-bold uppercase tracking-wider text-foreground block mb-2">
+              Included Drinks
+            </label>
+            <ul className="space-y-1.5">
+              {item.fixedDrinks.map((d) => (
+                <li key={d} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#0F9E0F] shrink-0" />
                   {d}
-                </button>
-              );
-            })}
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>
+        )}
+
+        {/* Drink picker — Full tier (exactly 2) */}
+        {!item.fixedDrinks && required > 0 && (
+          <div>
+            <label className="text-xs font-bold uppercase tracking-wider text-foreground block mb-2">
+              Pick {required} free drink{required > 1 ? "s" : ""}{" "}
+              <span className="text-destructive">*</span>
+              {drinks.length > 0 && (
+                <span className="ml-2 font-normal text-muted-foreground normal-case tracking-normal">
+                  ({drinks.length}/{required} chosen)
+                </span>
+              )}
+            </label>
+            <div className="flex flex-wrap gap-1.5">
+              {DRINK_OPTIONS.map((d) => {
+                const selected = drinks.includes(d);
+                const full = !selected && drinks.length >= required;
+                return (
+                  <button
+                    key={d}
+                    onClick={() => onDrinkToggle(d)}
+                    disabled={full}
+                    className={[
+                      "text-xs px-2.5 py-1 rounded-full border transition-all",
+                      selected
+                        ? "bg-[#0F9E0F] text-white border-[#0F9E0F]"
+                        : full
+                        ? "border-border text-muted-foreground/40 cursor-not-allowed"
+                        : "border-border text-muted-foreground hover:border-[#0F9E0F]/60",
+                    ].join(" ")}
+                  >
+                    {selected && <span className="mr-1">✓</span>}
+                    {d}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Validation + Order button */}
         <div className="mt-auto pt-2 border-t border-border">
@@ -370,7 +409,7 @@ export default function TraysAndPlattersPage() {
                   wine={getWine(item)}
                   drinks={getDrinks(item)}
                   onWineChange={(w) => handleWineChange(item, w)}
-                  onDrinkToggle={(d) => handleDrinkToggle(item, d, REQUIRED_DRINKS[section.type])}
+                  onDrinkToggle={(d) => handleDrinkToggle(item, d, item.requiredDrinks !== undefined ? item.requiredDrinks : REQUIRED_DRINKS[section.type])}
                 />
               ))}
             </div>
