@@ -27,9 +27,9 @@ const healthyPicks: Record<string, Array<{ name: string; why: string }>> = {
     { name: "Peppered Chicken Stew",    why: "Leaner protein than red meat — ask us to prepare with less oil for a lighter, high-protein option that still carries the full pepper flavour." },
   ],
   breakfast: [
-    { name: "Boiled Unripe Plantain & Egg Sauce",         why: "Unripe plantain has a lower glycemic index than ripe — better for blood sugar management. Egg sauce adds protein without extra carbs." },
-    { name: "Unsweetened Oat Pap & Roasted Groundnuts",   why: "Oats release energy slowly; groundnuts add protein and healthy fats. No added sugar — you taste the grain itself." },
-    { name: "Whole Wheat Bread, Baked Akara & Cucumber",  why: "Baked instead of fried akara cuts a significant amount of oil. Whole wheat and cucumber add fibre and slow digestion." },
+    { name: "Classic Nigerian",  why: "Akara is a high-protein bean cake, and pap (ogi) is gentle on digestion. Grilled shrimp and smoked fish add lean protein without heavy oil — a filling, balanced Lagos morning." },
+    { name: "Sweet Start",       why: "Oats release energy slowly; the fruit bowl delivers natural sugars, fibre and antioxidants without a crash. Greek yogurt adds gut-friendly probiotics — genuinely one of the cleanest options on the menu." },
+    { name: "Protein Power",     why: "Turkey bacon, eggs, chicken sausages and baked beans together cover all essential amino acids. Whole wheat bread and roasted potatoes add complex carbs for sustained energy — ideal before a full day." },
   ],
 };
 

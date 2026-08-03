@@ -143,27 +143,27 @@ const items = [
   // ════════════════════════════════════════════════════════════════════════════
   {
     category: "breakfast",
-    name: "The Classic Nigerian",
-    description: "Akara (10pcs), pap (1L), 2 boiled eggs. A proper Lagos morning, made fresh.",
-    sizes: single(22000), proteins: [], imageUrl: BF_IMG,
+    name: "Classic Nigerian",
+    description: "Serves ~2. Akara (10pcs), Pap (1L), 2 Boiled Eggs, Fried Plantain, Grilled Shrimp (6–8pcs), Smoked Fish Flakes, Avocado Slices (2–3), Pineapple Ginger Drink & Zobo Drink, Nestle Pure Life Water (2), Pepper (Shombo & Ata Rodo), Honey. Contains fish.",
+    sizes: single(27000), proteins: [], imageUrl: "assets/breakfast/classic-nigerian.png",
   },
   {
     category: "breakfast",
-    name: "The Hearty Plate",
-    description: "Yam (5 slices), plantain (5 slices), egg stew (1L), sausages, choice of Orange or Carrot Juice.",
-    sizes: single(22000), proteins: [], imageUrl: BF_IMG,
+    name: "Hearty Plate",
+    description: "Serves ~2. Yam (8 slices), Plantain (5 slices), Egg Stew (1L), Sausages (8pcs), Grilled Shrimp Skewer (1), Smoked Turkey Slices (7pcs), Avocado Slices (2–3), Orange Juice & Carrot Juice, Nestle Pure Life Water (2).",
+    sizes: single(28000), proteins: [], imageUrl: "assets/breakfast/hearty-plate.png",
   },
   {
     category: "breakfast",
-    name: "The Sweet Start",
-    description: "Oats (1L), fresh fruit bowl, choice of Orange or Carrot Juice. Light, clean and energising.",
-    sizes: single(25000), proteins: [], imageUrl: BF_IMG,
+    name: "Sweet Start",
+    description: "Serves ~2. Fresh Fruit Bowl (Pineapple, Watermelon, Grapes, Mango, Blueberries, Strawberries), Oats with Milk (500ml), Berry Blast Smoothie, Kale Drink (500ml), Greek Yogurt Parfait with Granola & Honey, Toasted Coconut Flakes or Mixed Nuts, Peak Milk (170g). Contains nuts.",
+    sizes: single(25000), proteins: [], imageUrl: "assets/breakfast/sweet-start.png",
   },
   {
     category: "breakfast",
-    name: "The Protein Power",
-    description: "Moin-moin (2pcs), akara (10pcs), pap (1L), 2 boiled eggs. High protein, no shortcuts.",
-    sizes: single(25000), proteins: [], imageUrl: BF_IMG,
+    name: "Protein Power",
+    description: "Serves 3–4. Eggs (2pcs), Turkey Bacon (6 slices), Chicken Sausages (6pcs), Boiled Plantain (8pcs), Roasted Potatoes, Baked Beans (150g), Sliced Avocado (2–3), Grilled Shrimp Skewer (1), Smoked Turkey Slices (7pcs), Whole Wheat Bread (1 loaf), Carrot Juice & Lemon Honey Cleanser, Nestle Pure Life Water (2), Pepper (Shombo) (2), Honey. Contains nuts.",
+    sizes: single(32000), proteins: [], imageUrl: "assets/breakfast/protein-power.png",
   },
 
   // ════════════════════════════════════════════════════════════════════════════
