@@ -1,8 +1,9 @@
+import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
-import { Route, Switch, Router as WouterRouter } from 'wouter';
+import { Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 
 import { Layout } from './components/layout';
 import Home from './pages/home';
@@ -31,33 +32,44 @@ const queryClient = new QueryClient({
   },
 });
 
+function ScrollToTop() {
+  const [location] = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [location]);
+  return null;
+}
+
 function Router() {
   return (
-    <Layout>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/soups" component={MenuPage} />
-        <Route path="/stews" component={MenuPage} />
-        <Route path="/breakfast" component={MenuPage} />
-        <Route path="/weekend-specials" component={WeekendSpecialsPage} />
-        <Route path="/products" component={ProductsPage} />
-        <Route path="/healthy-meals" component={HealthyMealsPage} />
-        <Route path="/blog" component={BlogIndexPage} />
-        <Route path="/blog/diabetes-friendly-nigerian-foods" component={DiabetesFriendlyPage} />
-        <Route path="/blog/nigerian-soups-less-oil" component={SoupLessOilPage} />
-        <Route path="/blog/heart-healthy-nigerian-kitchen" component={HeartHealthyPage} />
-        <Route path="/trays-platters" component={TraysAndPlattersPage} />
-        <Route path="/catering" component={CateringPage} />
-        <Route path="/book" component={BookPage} />
-        <Route path="/booking-confirmed/:id" component={BookingConfirmedPage} />
+    <>
+      <ScrollToTop />
+      <Layout>
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/soups" component={MenuPage} />
+          <Route path="/stews" component={MenuPage} />
+          <Route path="/breakfast" component={MenuPage} />
+          <Route path="/weekend-specials" component={WeekendSpecialsPage} />
+          <Route path="/products" component={ProductsPage} />
+          <Route path="/healthy-meals" component={HealthyMealsPage} />
+          <Route path="/blog" component={BlogIndexPage} />
+          <Route path="/blog/diabetes-friendly-nigerian-foods" component={DiabetesFriendlyPage} />
+          <Route path="/blog/nigerian-soups-less-oil" component={SoupLessOilPage} />
+          <Route path="/blog/heart-healthy-nigerian-kitchen" component={HeartHealthyPage} />
+          <Route path="/trays-platters" component={TraysAndPlattersPage} />
+          <Route path="/catering" component={CateringPage} />
+          <Route path="/book" component={BookPage} />
+          <Route path="/booking-confirmed/:id" component={BookingConfirmedPage} />
 
-        <Route path="/admin" component={AdminDashboard} />
-        <Route path="/admin/orders" component={AdminOrdersList} />
-        <Route path="/admin/orders/:id" component={AdminOrderDetail} />
+          <Route path="/admin" component={AdminDashboard} />
+          <Route path="/admin/orders" component={AdminOrdersList} />
+          <Route path="/admin/orders/:id" component={AdminOrderDetail} />
 
-        <Route component={NotFound} />
-      </Switch>
-    </Layout>
+          <Route component={NotFound} />
+        </Switch>
+      </Layout>
+    </>
   );
 }
 
