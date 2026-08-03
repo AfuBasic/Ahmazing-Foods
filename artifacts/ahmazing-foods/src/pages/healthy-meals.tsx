@@ -88,22 +88,22 @@ const menuPool: {
     sub: "",
     items: [
       {
-        name: "Boiled Unripe Plantain & Egg Sauce",
-        desc: "Unripe plantain (lower GI than ripe) with a light pepper-and-onion egg sauce.",
+        name: "Boiled Unripe Plantain or Yam & Egg Sauce",
+        desc: "Unripe plantain or boiled yam (lower GI than ripe or fried) with a light pepper-and-onion egg sauce. Served with our mini drinks.",
         price: "₦15,750",
-        waText: "Hi, I'd like to order Boiled Unripe Plantain and Egg Sauce",
+        waText: "Hi, I'd like to order Boiled Unripe Plantain or Yam and Egg Sauce",
         img: "healthy-meals/plantain-egg-sauce.png",
       },
       {
         name: "Unsweetened Oat Pap with Roasted Groundnuts",
-        desc: "Traditional pap made with oats, no added sugar, topped with roasted peanuts.",
+        desc: "Traditional pap made with oats, no added sugar, topped with roasted peanuts. Served with our mini drinks.",
         price: "₦12,250",
         waText: "Hi, I'd like to order Oat Pap with Roasted Groundnuts",
         img: "healthy-meals/oat-pap-groundnuts.png",
       },
       {
         name: "Whole Wheat Bread, Baked Akara & Cucumber",
-        desc: "Whole wheat bread, lightly-oiled baked akara, fresh cucumber slices.",
+        desc: "Whole wheat bread, lightly-oiled baked akara, fresh cucumber slices. Served with our mini drinks.",
         price: "₦14,000",
         waText: "Hi, I'd like to order Whole Wheat Bread with Baked Akara",
         img: "healthy-meals/wheat-bread-akara.png",
@@ -149,11 +149,11 @@ const menuPool: {
         img: "healthy-meals/veg-soup-swallow.png",
       },
       {
-        name: "Grilled Fish with Ofada Rice & Vegetables",
-        desc: "Grilled fish, modest portion of unpolished ofada rice, mixed steamed vegetables.",
+        name: "Grilled Fish with Ofada Rice & Cucumber",
+        desc: "Grilled fish, modest portion of unpolished ofada rice, fresh cucumber slices on the side.",
         price: "₦21,250",
         waText: "Hi, I'd like to order Grilled Fish with Ofada Rice",
-        img: "healthy-meals/grilled-fish-ofada.png",
+        img: "healthy-meals/ofada-grilled-fish.png",
       },
       {
         name: "Okra Soup with Lean Protein",
