@@ -41,16 +41,16 @@ const STATIC_PRODUCTS: Record<string, number> = {
   "Corn Sticks": 4000,
   "Cashew Nuts": 2800,
   // Drinks & Wellness
-  "Zobo Drink": 2000,
-  "Yogurt Drink": 2800,
-  "Ginger Immune Booster": 2000,
-  "Turmeric Immune Booster": 2000,
-  "Pineapple Ginger Drink": 2500,
-  "Tiger Nut Milk": 2500,
-  "Kale Cleanser": 2200,
-  "Lemon Honey Cleanser": 3000,
-  "Orange Juice": 3000,
-  "Carrot Juice": 3000,
+  "Zobo Drink": 2900,
+  "Pineapple Ginger Drink": 2900,
+  "Orange Juice": 2900,
+  "Lemon Honey Cleanser": 3100,
+  "Ginger Immune Booster": 3200,
+  "Turmeric Immune Booster": 3200,
+  "Yogurt Drink": 3300,
+  "Tiger Nut Milk": 3300,
+  "Carrot Juice": 3300,
+  "Kale Cleanser": 3700,
 };
 
 // ── CONSTANTS ────────────────────────────────────────────────────────────────
