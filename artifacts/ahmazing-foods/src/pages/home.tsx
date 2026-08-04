@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { ArrowRight, Leaf } from "lucide-react";
+import { WatermarkedImage } from "@/components/ui/watermarked-image";
 
 const BASE = import.meta.env.BASE_URL;
 const asset = (p: string) => `${BASE}assets/${p}`;
@@ -48,11 +49,10 @@ export default function Home() {
 
           {/* Right — hero image + ticket */}
           <div className="flex-1 relative w-full max-w-lg lg:max-w-none">
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl rotate-1 hover:rotate-0 transition-transform duration-500 border-8 border-white">
-              <img
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl rotate-1 hover:rotate-0 transition-transform duration-500 border-8 border-white aspect-[4/3]">
+              <WatermarkedImage
                 src={asset("food-egusi-top.jpg")}
                 alt="Rich Nigerian soup with assorted meat, ready to eat"
-                className="w-full aspect-[4/3] object-cover"
               />
             </div>
             {/* Order ticket overlay */}
@@ -90,13 +90,13 @@ export default function Home() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid grid-cols-3 gap-3 md:gap-4">
             <div className="col-span-1 row-span-2 rounded-2xl overflow-hidden aspect-[2/3]">
-              <img src={asset("food-egusi-hands.jpg")} alt="Hands holding a bowl of rich Nigerian soup" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <WatermarkedImage src={asset("food-egusi-hands.jpg")} alt="Hands holding a bowl of rich Nigerian soup" imgClassName="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="rounded-2xl overflow-hidden aspect-square">
-              <img src={asset("food-akara-pap.jpg")} alt="Akara served with pap" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <WatermarkedImage src={asset("food-akara-pap.jpg")} alt="Akara served with pap" imgClassName="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="rounded-2xl overflow-hidden aspect-square">
-              <img src={asset("food-hero-soup.jpg")} alt="A rich pot of Nigerian soup ready to serve" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <WatermarkedImage src={asset("food-hero-soup.jpg")} alt="A rich pot of Nigerian soup ready to serve" imgClassName="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
           </div>
         </div>

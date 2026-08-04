@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "wouter";
 import { Leaf, AlertCircle, CalendarDays, Truck, Star, ShoppingBag } from "lucide-react";
+import { WatermarkedImage } from "@/components/ui/watermarked-image";
 
 const BASE = import.meta.env.BASE_URL;
 const asset = (p: string) => `${BASE}assets/${p}`;
@@ -518,12 +519,11 @@ export default function HealthyMealsPage() {
                     key={item.name}
                     className="bg-card rounded-2xl border border-border p-5 flex flex-col gap-3"
                   >
-                    <div className="rounded-xl overflow-hidden mb-1" style={{ height: 80 }}>
+                    <div className="rounded-xl overflow-hidden mb-1 aspect-video">
                       {item.img ? (
-                        <img
+                        <WatermarkedImage
                           src={asset(item.img)}
                           alt={item.name}
-                          className="w-full h-full object-cover"
                         />
                       ) : (
                         <div

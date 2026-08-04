@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { WatermarkedImage } from "@/components/ui/watermarked-image";
 import { Link } from "wouter";
 import { GlassWater, MessageCircle, AlertCircle, CheckCircle2 } from "lucide-react";
 
@@ -183,10 +184,10 @@ function TrayCard({ item, type, wine, drinks, onWineChange, onDrinkToggle }: Car
       {/* Image */}
       <div className="aspect-video bg-muted overflow-hidden">
         {item.img ? (
-          <img
+          <WatermarkedImage
             src={item.img}
             alt={item.name}
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+            imgClassName="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
           />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted-foreground/30">

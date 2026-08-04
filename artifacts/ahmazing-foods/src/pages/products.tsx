@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { ShoppingBag } from "lucide-react";
 
+import { WatermarkedImage } from "@/components/ui/watermarked-image";
 const BASE = import.meta.env.BASE_URL;
 const asset = (p: string) => `${BASE}assets/${p}`;
 
@@ -68,13 +69,10 @@ export default function ProductsPage() {
                   {/* Image */}
                   <div className="aspect-square bg-muted overflow-hidden">
                     {p.img ? (
-                      <img
+                      <WatermarkedImage
                         src={asset(`products/${p.img}`)}
                         alt={p.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        onError={(e) => {
-                          (e.currentTarget as HTMLImageElement).style.display = "none";
-                        }}
+                        imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-muted-foreground/40 text-xs text-center px-4">

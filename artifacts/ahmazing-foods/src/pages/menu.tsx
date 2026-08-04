@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNaira } from "@/lib/format";
 import { ArrowLeft, Leaf, MessageCircle } from "lucide-react";
+import { WatermarkedImage } from "@/components/ui/watermarked-image";
 
 const BASE = import.meta.env.BASE_URL;
 const asset = (p: string) => `${BASE}assets/${p}`;
@@ -131,10 +132,9 @@ export default function MenuPage() {
               <div key={item.id} className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-shadow flex flex-col">
                 <div className="aspect-video bg-muted relative overflow-hidden">
                   {item.imageUrl ? (
-                    <img
+                    <WatermarkedImage
                       src={item.imageUrl.startsWith("assets/") ? `${BASE}${item.imageUrl}` : item.imageUrl}
                       alt={item.name}
-                      className="w-full h-full object-cover"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground/30 text-5xl">🍲</div>
