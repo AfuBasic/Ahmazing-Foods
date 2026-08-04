@@ -656,9 +656,9 @@ export default function HealthyMealsPage() {
             Swallow portions: keep to a fist-size or less per meal. Protein: where soups allow, choose fish over red meat most days.
           </p>
           <div className="mt-6 text-center">
-            <a href="#plans" className="inline-flex items-center gap-2 rounded-full px-8 py-3 font-bold text-white hover:opacity-90 transition-opacity" style={{ background: BRAND_GREEN }}>
+            <button type="button" onClick={() => document.getElementById('plans')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="inline-flex items-center gap-2 rounded-full px-8 py-3 font-bold text-white hover:opacity-90 transition-opacity" style={{ background: BRAND_GREEN }}>
               See Subscription Plans ↑
-            </a>
+            </button>
           </div>
         </section>
 

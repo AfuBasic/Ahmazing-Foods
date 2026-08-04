@@ -35,7 +35,27 @@ const queryClient = new QueryClient({
 function ScrollToTop() {
   const [location] = useLocation();
   useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    const hash = window.location.hash;
+    if (hash) {
+      // Cross-page link with a hash anchor (e.g. /catering#catering-form).
+      // Give React two animation frames to finish painting the new page,
+      // then scroll to the element. Fall back to top if not found.
+      const id = hash.slice(1);
+      let raf1: number, raf2: number;
+      raf1 = requestAnimationFrame(() => {
+        raf2 = requestAnimationFrame(() => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } else {
+            window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+          }
+        });
+      });
+      return () => { cancelAnimationFrame(raf1); cancelAnimationFrame(raf2); };
+    } else {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
   }, [location]);
   return null;
 }

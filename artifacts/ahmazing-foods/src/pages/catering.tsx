@@ -89,13 +89,14 @@ export default function CateringPage() {
             not a generic package.
           </p>
           <div className="flex flex-wrap gap-4">
-            <a
-              href="#catering-form"
+            <button
+              type="button"
+              onClick={() => document.getElementById('catering-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
               className="rounded-full px-8 py-3 font-bold text-white shadow-md hover:opacity-90 transition-opacity"
               style={{ background: BRAND_GREEN }}
             >
               Start Your Request
-            </a>
+            </button>
             <a
               href="https://wa.me/2348105506052?text=Hi%2C%20I%27d%20like%20to%20ask%20about%20catering%20for%20an%20event"
               target="_blank"

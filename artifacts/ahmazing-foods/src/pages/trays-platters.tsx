@@ -424,7 +424,7 @@ export default function TraysAndPlattersPage() {
             <p className="text-muted-foreground">Our catering service covers everything from setup to service for larger events.</p>
           </div>
           <Link
-            href="/catering"
+            href="/catering#catering-form"
             className="shrink-0 rounded-full px-8 py-3 font-bold text-white shadow-lg hover:opacity-90 transition-opacity"
             style={{ background: "#0F9E0F" }}
           >
