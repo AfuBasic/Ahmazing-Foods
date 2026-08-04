@@ -288,10 +288,10 @@ export default function CateringPage() {
               >
                 {[
                   "Not sure yet — send recommendations",
-                  "Under ₦200,000",
-                  "₦200,000 – ₦500,000",
                   "₦500,000 – ₦1,000,000",
-                  "Above ₦1,000,000",
+                  "₦1,000,000 – ₦2,500,000",
+                  "₦2,500,000 – ₦5,000,000",
+                  "₦5,000,000 and above",
                 ].map(v => <option key={v} value={v}>{v}</option>)}
               </select>
             </div>
