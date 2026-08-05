@@ -212,7 +212,7 @@ export async function sendCustomerStatusEmail(data: CustomerStatusEmailData): Pr
         <p style="font-size: 14px; color: #6b5c55; margin: 0;">— The AHmazing Foods Team</p>
 
         <p style="margin: 24px 0 0; font-size: 11px; color: #9e8c84; border-top: 1px solid #e8ddd0; padding-top: 16px;">
-          AHmazing Foods · Lagos State · ahmazingcuisine@gmail.com
+          AHmazing Foods · Lagos State · ahmazingfoodsorders@gmail.com
         </p>
       </div>
     </div>

@@ -126,8 +126,8 @@ function SiteHeader({ location }: { location: string }) {
           <a href="tel:+2348105506052" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
             <Phone className="w-3.5 h-3.5 shrink-0" /> +234 (810)-550-6052
           </a>
-          <a href="mailto:ahmazingcuisine@gmail.com" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
-            <Mail className="w-3.5 h-3.5 shrink-0" /> ahmazingcuisine@gmail.com
+          <a href="mailto:ahmazingfoodsorders@gmail.com" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+            <Mail className="w-3.5 h-3.5 shrink-0" /> ahmazingfoodsorders@gmail.com
           </a>
           <span className="flex items-center gap-1.5">
             <MapPin className="w-3.5 h-3.5 shrink-0" /> Lagos State
@@ -295,7 +295,7 @@ function SiteFooter() {
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 shrink-0" />
-                <a href="mailto:ahmazingcuisine@gmail.com" className="hover:text-primary transition-colors">ahmazingcuisine@gmail.com</a>
+                <a href="mailto:ahmazingfoodsorders@gmail.com" className="hover:text-primary transition-colors">ahmazingfoodsorders@gmail.com</a>
               </li>
               <li className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 shrink-0" />

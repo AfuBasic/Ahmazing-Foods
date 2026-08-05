@@ -2,4 +2,4 @@
 - [API server seed runner](seed-runner.md) — run seed via `scripts/node_modules/.bin/tsx artifacts/api-server/src/seed-menu.ts` from workspace root
 - [Cart + pepper schema](cart-schema.md) — orders table has cartItems (jsonb nullable) + pepperLevel (text nullable); API parses extra fields manually (no zod) since zod is not a direct api-server dep
 - [Menu seed state](menu-seed.md) — 10 soups (Afang + Ogbono pending task), 5 stews, 4 breakfast combos; Seafood Okro is 5L/Cooler only; stews Medium/Large only; proteins trimmed to 10
-- [Email env vars](email-env.md) — GMAIL_APP_PASSWORD is a secret; GMAIL_USER must be set as a shared env var (ahmazingcuisine@gmail.com) — both required or email is silently disabled
+- [Email env vars](email-env.md) — GMAIL_APP_PASSWORD is a secret; GMAIL_USER must be set as a shared env var (ahmazingfoodsorders@gmail.com) — both required or email is silently disabled

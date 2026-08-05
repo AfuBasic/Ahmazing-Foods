@@ -10,6 +10,6 @@ description: Both GMAIL_USER and GMAIL_APP_PASSWORD are required for email to wo
 
 ## How to apply
 - `GMAIL_APP_PASSWORD` — stored as a Replit Secret (already set)
-- `GMAIL_USER` — stored as a shared env var: `ahmazingcuisine@gmail.com` (set via `setEnvVars`)
+- `GMAIL_USER` — stored as a shared env var: `ahmazingfoodsorders@gmail.com` (set via `setEnvVars`)
 - Always verify both exist before declaring email "working"
 - Production deployment inherits shared env vars, so GMAIL_USER is available in prod
