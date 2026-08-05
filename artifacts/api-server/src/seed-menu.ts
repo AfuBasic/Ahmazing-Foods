@@ -172,13 +172,13 @@ const items = [
     category: "drinks",
     name: "Zobo Drink",
     description: "Chilled hibiscus drink made fresh in-house, lightly sweetened.",
-    sizes: [{ label: "500ml bottle", price: 2900 }], proteins: [], imageUrl: "assets/products/zobo-drink.jpg",
+    sizes: [{ label: "500ml bottle", price: 2900 }], proteins: [], imageUrl: "assets/products/zobo.jpg",
   },
   {
     category: "drinks",
     name: "Pineapple Ginger Drink",
     description: "Freshly pressed pineapple with ginger — sweet, zingy, and deeply refreshing.",
-    sizes: [{ label: "500ml bottle", price: 2900 }], proteins: [], imageUrl: "assets/products/pineapple-ginger-drink.jpg",
+    sizes: [{ label: "500ml bottle", price: 2900 }], proteins: [], imageUrl: "assets/products/pineapple_ginger_lemon.jpg",
   },
   {
     category: "drinks",
@@ -190,31 +190,31 @@ const items = [
     category: "drinks",
     name: "Lemon Honey Cleanser",
     description: "Warming lemon and raw honey blend — soothing and immunity-building.",
-    sizes: [{ label: "500ml bottle", price: 3100 }], proteins: [], imageUrl: "assets/products/lemon-honey-cleanser.jpg",
+    sizes: [{ label: "500ml bottle", price: 3100 }], proteins: [], imageUrl: "assets/products/lemon__honey.jpg",
   },
   {
     category: "drinks",
     name: "Ginger Immune Booster",
     description: "Fresh ginger shot blended with lemon, turmeric and honey. Fiery and reviving.",
-    sizes: [{ label: "500ml bottle", price: 3200 }], proteins: [], imageUrl: "assets/products/ginger-immune-booster.jpg",
+    sizes: [{ label: "500ml bottle", price: 3200 }], proteins: [], imageUrl: "assets/products/ginger_immune_booster.jpg",
   },
   {
     category: "drinks",
     name: "Turmeric Immune Booster",
     description: "Anti-inflammatory turmeric blend with black pepper and a touch of honey.",
-    sizes: [{ label: "500ml bottle", price: 3200 }], proteins: [], imageUrl: "assets/products/turmeric-immune-booster.jpg",
+    sizes: [{ label: "500ml bottle", price: 3200 }], proteins: [], imageUrl: "assets/products/Turmeric.jpg",
   },
   {
     category: "drinks",
     name: "Yogurt Drink",
     description: "Creamy probiotic yogurt drink, natural and unsweetened.",
-    sizes: [{ label: "500ml bottle", price: 3300 }], proteins: [], imageUrl: "assets/products/yogurt-drink.jpg",
+    sizes: [{ label: "500ml bottle", price: 3300 }], proteins: [], imageUrl: "assets/products/yoghurt.jpg",
   },
   {
     category: "drinks",
     name: "Tiger Nut Milk",
     description: "Dairy-free tiger nut milk — creamy, nutty and naturally sweet.",
-    sizes: [{ label: "500ml bottle", price: 3300 }], proteins: [], imageUrl: "assets/products/tiger-nut-milk.jpg",
+    sizes: [{ label: "500ml bottle", price: 3300 }], proteins: [], imageUrl: "assets/products/tigernut.jpg",
   },
   {
     category: "drinks",
@@ -226,7 +226,7 @@ const items = [
     category: "drinks",
     name: "Kale Cleanser",
     description: "Green detox blend with kale, cucumber and lemon. Clean and light.",
-    sizes: [{ label: "500ml bottle", price: 3700 }], proteins: [], imageUrl: "assets/products/kale-cleanser.jpg",
+    sizes: [{ label: "500ml bottle", price: 3700 }], proteins: [], imageUrl: "assets/products/kale.jpg",
   },
 
   // ════════════════════════════════════════════════════════════════════════════
