@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { eq, desc, gte } from "drizzle-orm";
 import { db, ordersTable, menuItemsTable } from "@workspace/db";
 import { sendBookingNotification, sendCustomerStatusEmail } from "../lib/email";
+import { createDeliveryCalendarEvent } from "../lib/calendar";
 import {
   ListOrdersQueryParams,
   CreateOrderBody,
@@ -201,6 +202,20 @@ router.post("/orders", async (req, res): Promise<void> => {
     total: order.total,
     notes: order.notes ?? null,
   }).catch(() => {}); // errors are already logged inside sendBookingNotification
+
+  // Create Google Calendar delivery event — fire-and-forget, never blocks the response
+  createDeliveryCalendarEvent({
+    orderId:         order.id,
+    customerName:    order.customerName,
+    customerEmail:   order.customerEmail ?? null,
+    customerPhone:   order.customerPhone ?? null,
+    deliveryAddress: order.deliveryAddress ?? null,
+    deliveryDate:    deliveryDateStr,
+    deliverySlot:    order.deliverySlot,
+    menuItemName:    order.menuItemName,
+    total:           order.total,
+    notes:           order.notes ?? null,
+  }).catch(() => {}); // errors are already logged inside createDeliveryCalendarEvent
 
   res.status(201).json(CreateOrderResponse.parse(order));
 });
