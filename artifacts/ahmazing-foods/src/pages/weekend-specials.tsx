@@ -507,13 +507,20 @@ export default function WeekendSpecials() {
                     {item.description && (
                       <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{item.description}</p>
                     )}
-                    <div className="flex flex-wrap gap-1.5 mt-auto">
+                    <div className="flex flex-wrap gap-1.5 mb-4">
                       {item.sizes.map((s) => (
                         <span key={s.label} className="text-xs bg-muted px-2.5 py-1 rounded-full text-muted-foreground">
                           {s.label} · {formatNaira(s.price)}
                         </span>
                       ))}
                     </div>
+                    <Link
+                      href={`/book?cat=breakfast&item=${encodeURIComponent(item.name)}&size=Standard`}
+                      className="mt-auto block w-full text-center text-sm font-bold py-2.5 rounded-xl text-white transition-opacity hover:opacity-90"
+                      style={{ background: "#0F9E0F" }}
+                    >
+                      Order →
+                    </Link>
                   </div>
                 </div>
               ))}
