@@ -306,8 +306,14 @@ function SiteFooter() {
               <li className="pt-4">
                 <Link href="/admin" className="text-xs opacity-50 hover:opacity-100 transition-opacity">Admin Login</Link>
               </li>
-              <li>
-                <Link href="/partners" className="text-xs opacity-50 hover:opacity-100 transition-opacity">Partners & Investors</Link>
+              <li className="pt-2">
+                <Link
+                  href="/partners"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 transition-colors border border-primary/30 hover:border-primary/60 rounded-full px-3 py-1"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block" />
+                  Partners &amp; Investors
+                </Link>
               </li>
             </ul>
           </div>

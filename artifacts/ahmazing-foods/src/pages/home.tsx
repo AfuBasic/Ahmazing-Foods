@@ -285,6 +285,56 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── PARTNERS & INVESTORS STRIP ──────────────────────────────────── */}
+      <section style={{ background: "#1B1208" }} className="py-16">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10">
+
+            {/* Left — copy */}
+            <div className="flex-1 max-w-2xl">
+              <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest mb-4 px-3 py-1 rounded-full border"
+                style={{ color: BRAND_GREEN, borderColor: `${BRAND_GREEN}40` }}>
+                Partnership & Investment
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold font-display text-white leading-tight mb-4">
+                We're scaling a food brand<br className="hidden md:block" /> built on real, proven demand.
+              </h2>
+              <p className="text-white/60 text-sm leading-relaxed max-w-xl">
+                Every pot leaves this kitchen because someone already paid for it. No inventory waste, no guesswork —
+                just a growing customer base and a kitchen that needs to grow with it.
+                We're raising to expand capacity, logistics, and our product line. If you back food businesses in Nigeria, we'd like to talk.
+              </p>
+            </div>
+
+            {/* Right — stats + CTA */}
+            <div className="flex flex-col items-start lg:items-end gap-6 shrink-0">
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { stat: "100%", label: "Orders pre-paid before cooking" },
+                  { stat: "₦0",   label: "Inventory waste by design" },
+                  { stat: "10+",  label: "Menu categories, growing" },
+                  { stat: "Lagos",label: "Starting — then Nigeria-wide" },
+                ].map(({ stat, label }) => (
+                  <div key={label} className="text-center bg-white/5 border border-white/10 rounded-2xl px-5 py-4">
+                    <p className="text-2xl font-display font-black text-white">{stat}</p>
+                    <p className="text-[11px] text-white/50 mt-1 leading-snug">{label}</p>
+                  </div>
+                ))}
+              </div>
+              <Link
+                href="/partners"
+                className="rounded-full px-8 py-3.5 font-bold text-sm text-foreground hover:opacity-90 transition-opacity whitespace-nowrap inline-flex items-center gap-2"
+                style={{ background: BRAND_GREEN, color: "#fff" }}
+              >
+                Explore Investment Opportunity
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }
