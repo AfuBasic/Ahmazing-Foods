@@ -1,0 +1,1014 @@
+AHMAZING FOODS — FULL SITE BUILD SPEC
+======================================
+============================================================
+DEPLOY THIS — DO NOT STOP AT SAVING OR PREVIEWING
+============================================================
+Every change below must be pushed to the LIVE, PUBLISHED deployment
+— not just saved in the editor, not just visible in a preview pane,
+not just committed. When I check the site afterward, I will be
+opening the live public URL, the same one customers use — if what
+I see there doesn't match what's described below, the work is not
+finished, regardless of what the editor or a preview shows. After
+making all the changes in this document, explicitly REDEPLOY /
+REPUBLISH the site so the live URL is updated, then confirm back
+with the live URL you deployed to. Do not report this as complete
+until the live, public version of the site actually reflects every
+change — not the draft, not the workspace, the live one.
+============================================================
+
+Build a simple, static multi-page website (plain HTML/CSS/JS, no
+framework needed) for AHmazing Foods, a home-cooked meal and catering
+business in Lagos, Nigeria. Everything below reflects the actual,
+already-approved site — this is a rebuild/reference spec, not a
+first draft.
+
+BRAND
+-----
+- Logo: use the supplied logo file (red "AH" + green "mazing foods"
+  wordmark), transparent background.
+- Colors: Red #C81212 (primary/accent), Green #0F9E0F (primary CTA
+  buttons), Charcoal #221F1F (text), white/cream backgrounds
+  (#FFFFFF and #FCF1EF), Gold #D9A441 (small accents only).
+- Fonts: a warm serif for headings (e.g. Lora), a clean sans for
+  body text (e.g. Poppins), a monospace for prices/data labels.
+- Top of every page: a full-width red contact bar — phone
+  +234 (810)-550-6052, email ahmazingcuisine@gmail.com, "Lagos
+  State." — above the main white header (logo left, nav center,
+  green "Book a Meal" button right). Mobile: hamburger menu opens
+  an opaque dropdown panel (not transparent), listing all nav links
+  plus "Book a Meal" in green.
+
+SITE STRUCTURE (9 pages)
+-------------------------
+Home | Soups | Stews | Breakfast | Products | Trays & Platters |
+Healthy Meals | Catering | Book a Meal
+
+Every page shares the same header, contact bar, and footer (nav
+links repeated + "AHmazing Foods · Lagos, Nigeria").
+
+1. HOME
+   - Hero: headline + CTA buttons ("Book Your Meal", "See What's
+     Available") + a real food photo + an "order ticket" style
+     summary card (soup name, price, total, "Booked ahead · No
+     rush fee" stamp).
+   - Photo gallery strip (3 real food images).
+   - Full-width dark banner: "What makes us different" → promotes
+     Healthy Meals as a health-conscious differentiator, links to
+     that page.
+   - 6 service cards in a grid: Soups, Stews, Breakfast, Products,
+     Trays & Platters, Catering — each with a thumbnail, one-line
+     description, and a link.
+
+2. SOUPS — 8 soups × 3 fixed-price sizes (2L/3L/5L), except Seafood
+   Okro which is 5L only (no 2L/3L). PRICING METHOD (updated): the
+   earlier flat +₦4,000-over-one-competitor markup sat 14-78% above
+   real, live, current (2026) market pricing once checked against
+   multiple actual vendors — not just one screenshot. Rebalanced
+   using BuySoups.NG (a live, transactional Lagos soup delivery
+   site with a full litre × protein price matrix) as the primary
+   anchor, cross-checked against Delicioso Mobile Chefs (re-verified
+   live, unchanged from the original screenshot) and Enomy (a
+   smaller/cheaper vendor, confirms the real market spread):
+     - Onugbu, Oha, Okro, Edikang Ikong, Egusi, Banga, Efo-Riro —
+       all ₦32,000 (2L) / ₦36,000 (3L) / ₦43,000 (5L)
+     - Seafood Okro — ₦56,000 (5L only)
+   This lands at BuySoups' Beef-tier price once the ₦4,000 Beef
+   add-on below is included, while staying above Delicioso's base
+   (no-protein) price and Enomy. See the "Market Research (2026)"
+   tab for the full source list and reasoning — do not silently
+   revert this if you re-run a repricing pass; check that tab first.
+   COOLER SIZES (Small/Medium) ARE QUOTE-ONLY — no listed price
+   anywhere. Replace the price cells with "Contact Us" text, and add
+   a note above the pricing table linking to WhatsApp
+   (wa.me/2348105506052) so customers request a quote with their
+   guest count and soup choice instead of relying on a flat listed
+   price that could under-quote a large cooler order.
+   CONFIRMED: no 500ml or 1L soup sizes exist anywhere in this menu
+   — smallest is 2L. If your build has 500ml/1L soup options, that's
+   specific to that build; nothing to remove here.
+
+   SERVING SIZE — each size column in the pricing table shows an
+   approximate "Serves ~N" note next to the litre size (2L: Serves
+   ~3, 3L: Serves ~5, 5L: Serves ~7), so the value is obvious at a
+   glance without the customer having to do the math themselves —
+   this is a deliberate value-communication feature, not filler
+   text. Keep it on every soup pricing table, not just some rows.
+
+   Plus a 10-item Extra Protein add-on list — UNCHANGED by the
+   soup/stew repricing above (that applies to the dishes themselves,
+   not the protein add-ons): Beef ₦4,000 (fixed), every other
+   protein +₦1,700 from its prior price for inflation — Chicken
+   ₦4,700, Turkey ₦5,700, Croaker ₦5,700, Tilapia ₦4,700, Catfish
+   ₦5,700, Snail ₦6,700, Mixed Seafood ₦11,700, Gizzard ₦5,700,
+   Sausages ₦4,700. (Full data: AHmazing-Foods-FULL-Menu-
+   Reference.xlsx, "Soups" and "Extra Protein" tabs.) If your build
+   shows Beef with no price at all, that's a bug specific to that
+   build — it should never be blank, it's ₦4,000.
+
+BANK TRANSFER DETAILS
+------------------------
+   Account Name: Ahmazing Cuisine
+   Bank: FCMB
+   Account Number: 1009414545
+
+   Shown site-wide in the footer of every page (small pill next to
+   the copyright line). Also appended automatically to the end of:
+   - the itemized Book a Meal order confirmation (after the
+     customer's contact details)
+   - the Healthy Meals plan calculator's "Order This Plan" WhatsApp
+     message (computed dynamically for whatever meals-per-day/
+     plan-length combination the customer picked)
+   NOT added to the Catering request message — that's a quote
+   request with no fixed price yet, so payment details belong in
+   the follow-up quote, not the initial ask. NOT added to the
+   individual single-item "Order" links (Products, Healthy Meals
+   a la carte items, Healthy Picks) — those stay simple; the
+   business shares payment details directly when replying.
+
+3. STEWS — 5 stews (Ata Din-Din/Fried Pepper Stew removed) × 2 sizes
+   (3L/5L — the earlier "Medium/Large" naming was DROPPED, since it
+   told customers nothing about actual quantity and every real
+   competitor prices stews by the litre; that opacity worked against
+   conversion, not for it). PRICING (updated): rebalanced the same
+   way as Soups, anchored to BuySoups.NG's live Ofada Stew pricing
+   (2L with protein = ₦38,500), with our stew names mapped to their
+   closest matching tier since naming conventions differ:
+     - Classic Tomato Stew, Peppered Beef Stew, Peppered Chicken
+       Stew (standard tier) — ₦37,000 (3L) / ₦45,000 (5L)
+     - Ayamase (Ofada Stew), Peppered Turkey Stew (premium tier) —
+       ₦40,000 (3L) / ₦49,000 (5L)
+   SERVING SIZE — same "Serves ~N" note as Soups above, next to
+   each litre size in the pricing table (3L: Serves ~5, 5L: Serves
+   ~8). Same reasoning: a visible, immediate value comparison
+   against buying single portions elsewhere.
+   (See "Stews" and "Market Research (2026)" tabs.)
+
+4. BREAKFAST — 4 combo plates, price UNCHANGED (₦22,000/₦22,000/
+   ₦25,000/₦25,000) but CONTENTS EXPANDED to better justify that
+   price — market comparison showed breakfast was the one segment
+   where AHmazing's per-serving cost didn't hold up well against a
+   real local comparable (Culture Kitchen's Breakfast Bowl at
+   ₦8,200/person). Rather than lower the price, each combo gained
+   one additional item:
+     - The Classic Nigerian — added fried plantain
+     - The Hearty Plate — added a side salad
+     - The Sweet Start — added a boiled egg
+     - The Protein Power — added fried plantain
+   The added item must appear IN the visible "contains" text on the
+   card itself (e.g. "...2 boiled eggs, fried plantain"), not as a
+   separate footnote — the whole point is that the value is obvious
+   from the contents line alone. Also show a "Serves ~2" note next
+   to the price on each combo card, same value-at-a-glance approach
+   as the Soups/Stews serving notes.
+   (See "Breakfast" tab for full updated contents.)
+
+5. PRODUCTS — 3 segments: Seeds & Spices (Chili Pepper, Cameroon
+   Pepper, Soya Mix, Cinnamon Powder, Chia Seeds, Melon Seed — the
+   marinade/sauce items from an earlier iteration, e.g. Suya
+   Marinade, Smoky Jollof Base, are retired entirely, not moved
+   anywhere), Snacks (8 items, including Cashew Nuts and 2 Plantain
+   Chips variants — Ripe & Spicy, Toasted & Crunchy — both restored
+   after being briefly trimmed out), Drinks & Wellness (10 items).
+   Each item: photo, name, size, price, WhatsApp "Order" button
+   pre-filled with the item name. (Full data: see AHmazing-Foods-
+   FULL-Menu-Reference.xlsx, "Products" tab — 24 items total. Note:
+   "Orange Juice" and "Carrot Juice" variant descriptions were
+   corrected from a copy-paste error in the source data — see the
+   Overview tab.)
+
+6. TRAYS & PLATTERS — LIVE (visible in nav/footer/homepage, not
+   hidden). Full data also in AHmazing-Foods-FULL-Menu-
+   Reference.xlsx, "Trays & Platters" tab. Three subsections, each
+   with a different add-on rule — this is not optional decoration,
+   it changes what's on the "Order" button for every single card:
+
+   PLATTERS — every platter is ₦190,000 or more, no exceptions.
+   Each platter includes THREE required selections before checkout:
+     (a) WINE CHOICE (dropdown: White Wine / Red Wine / Non-Alcoholic
+         Wine — required, no default)
+     (b) PEPPER BLEND CHOICE (checkboxes with a quantity stepper per
+         blend, NOT a single-select dropdown and NOT plain checkboxes
+         without quantity — read carefully, this went through two
+         redesigns and the current version is the one below):
+         Straight Honey / Honey-Pepper Blend / Pepper-Citrus Blend /
+         Classic Ata. At least 1 unit required across all blends
+         combined, no maximum. This applies to ALL 7 platters,
+         including the Party Starter tiers. It exists specifically
+         because a single fixed savory pepper sauce doesn't suit the
+         Breakfast Platter (pancakes/fruit/pastries) the way it suits
+         the rice+protein platters — rather than pick one recipe for
+         everyone, the customer chooses, and the choice itself
+         becomes a branded, ownable touch across every platter rather
+         than an awkward mismatch on one of them.
+         QUANTITY PER BLEND — each blend checkbox, once checked,
+         reveals a tap +/- quantity stepper (starts at 1, floor of 1,
+         no cap). This exists so a customer ordering a large Party
+         Starter (e.g. Feeds 30) can scale a single favourite blend
+         up to match their guest count — e.g. 10 units of Honey-Pepper
+         Blend for a big order — rather than being limited to picking
+         from 4 distinct types once each. Unchecking a blend resets
+         its quantity back to 1 and hides the stepper.
+         PRICING — PER UNIT, NOT PER TYPE (this changed from an
+         earlier per-type-only version — do not revert to charging
+         only for extra distinct types while ignoring quantity):
+         total units = sum of quantities across every checked blend.
+         The FIRST unit (across everything combined) is free. Every
+         ADDITIONAL unit beyond that — whether it's more of the same
+         blend or a different type — costs ₦3,000 flat. Formula: extra
+         charge = max(0, total_units - 1) × ₦3,000. Examples: 1 unit
+         of one blend = ₦0 extra. 3 units of one blend + 1 unit of
+         another = 4 total units = ₦9,000 extra. 10 units of one
+         blend alone = ₦27,000 extra. This is intentionally
+         high-margin — real blend ingredient cost is under ₦1,000,
+         ₦3,000 is roughly 3x the real Lagos market rate for a basic
+         extra sauce (Culture Kitchen, a real local competitor
+         referenced earlier in this build, prices simple sauce extras
+         at ₦1,000). Show a LIVE running total next to the checkboxes
+         as quantities change (e.g. "4 units selected — 1st free,
+         +₦9,000 for the extra 3") so the charge is never a surprise
+         at checkout. In the WhatsApp order message, list each chosen
+         blend with its quantity where >1 (e.g. "Straight Honey x3,
+         Pepper-Citrus Blend"), then the extra-unit fee as its own
+         line, then include it in the TOTAL. The TOTAL line itself
+         must show whenever total differs from the base price for ANY
+         reason (rush fee OR extra blend charge OR both), not only
+         when a rush fee applies — an earlier version of this logic
+         only showed TOTAL when rush fee > 0, which silently hid the
+         extra blend charge from the total on any non-rush order;
+         this was caught and fixed, don't reintroduce it.
+     (c) exactly 2 FREE DRINKS (checkboxes from the 10-item Drinks &
+         Wellness list — required, exactly 2, not "up to 2")
+   The "Order" button must be blocked with a clear message if ANY of
+   the three requirements isn't met yet — not just wine and drinks.
+     - Breakfast Platter — ₦190,000 — pancakes, akara, sausage
+       rolls, sandwiches, mixed fruit, sauce cups, a dessert cup
+       (chin chin & yogurt mix) — Serves 6-8
+     - Dinner Platter — ₦190,000 — jollof & fried rice, 8 pieces
+       peppered chicken, 8 pieces peppered beef, coleslaw, plantain,
+       small chops, a dessert cup (chin chin & yogurt mix), dinner
+       candles — Serves 6-8
+     - Anniversary Platter — ₦190,000 — same base + an anniversary
+       card — Serves 6-8
+     - Birthday Platter — ₦190,000 — same base + a birthday card &
+       candles (this REPLACES the old "Birthday Tray" — there is no
+       Birthday Tray anymore) — Serves 6-8
+     - Party Starter Platter — Feeds 15 — ₦350,000
+     - Party Starter Platter — Feeds 30 — ₦550,000
+     - Party Starter Platter — Feeds 50 — ₦1,000,000
+   DESSERT CUP — Chin Chin + Yogurt Mix (Seed & Nut Blend), both real
+   existing Snacks items, not new products to source. Added to the 4
+   standard Platters only (not Party Starter, which wasn't asked for
+   this addition). "Two proteins" was deliberately replaced with real
+   piece counts (8 chicken + 8 beef) on Dinner/Anniversary/Birthday —
+   the vague version read as though it might mean two lonely pieces
+   total, not two protein types at real quantity.
+   SERVING SIZE — show "Serves 6-8" (a RANGE, not a single number) on
+   all four standard Platters (Breakfast/Dinner/Anniversary/
+   Birthday), same value-at-a-glance pattern already used on Soups/
+   Stews/Breakfast combos. The range exists deliberately — 8 was
+   verified as the honest, non-stretched ceiling (see the two-part
+   check below), so a single "Serves 8" risked implying that's the
+   guaranteed number every time; 6 is the honest floor where people
+   eat generously, 8 is where it's still comfortable, not stretched
+   further. Verify the 8-ceiling two ways if it's ever revisited:
+   (1) honest per-person portions (rice, protein, coleslaw, plantain
+   — real full-meal quantities, not a snack) support 8 without
+   stretching; (2) it's consistent with the Feeds-15 Party Starter's
+   own rate (₦350,000 ÷ 15 = ₦23,333/person — applying that rate to
+   ₦190,000 implies 8.1 people, matching independently). Party
+   Starter tiers don't need a separate serving note — the count is
+   already in the name ("Feeds 15/30/50").
+
+   TRAYS — no wine, ever. Each tray includes exactly 4 FREE DRINKS
+   (checkboxes, required, exactly 4). Repriced on a 120k→190k curve
+   (cheapest to priciest), contents restored from the original site:
+     - Classic Tray — ₦120,000 — fruit salad, coleslaw, peppered
+       fried fish (2pcs), jollof rice, chocolates, water (1 bottle)
+     - Deluxe Tray — ₦145,000 — fruit salad, coleslaw, jollof rice,
+       small chops, 2 peppered chicken thighs, Pringles & chocolates,
+       biscuits, water (1 bottle)
+     - Grand Tray — ₦170,000 — coleslaw, fruit salad, 10" cake,
+       jollof rice, fried rice, fried plantain, half peppered
+       chicken, water (2 bottles)
+     - Ultimate Tray — ₦190,000 — coleslaw, fruit salad, 10" cake,
+       jollof rice, fried rice, spaghetti, small chops, chocolate/
+       chips/biscuits, half peppered chicken, pancakes, water (2
+       bottles)
+
+   SMALL CHOP BOXES — a subsection, renamed from "Packages" (too
+   generic/flat a name for the actual product) — note this reverses
+   an even earlier decision to avoid the word "Box" in this section's
+   name; that earlier reasoning no longer applies, use "Small Chop
+   Boxes" going forward. Exempt from the ₦190,000 platter floor —
+   that floor applies to Platters only. FOUR tiers now (expanded from
+   an earlier 2-tier version, built
+   from real vendor market research — see the "Market Research (2026)"
+   Excel tab), each with a DIFFERENT drink rule — read carefully, this
+   is not uniform across the four:
+
+     - Small Chops — Starter — ₦23,000 (was ₦18,000, +₦5,000 markup
+       for margin) — 10 samosas, 10 spring rolls,
+       30 puff puff, 20 mosa, 5 peppered beef bites, 5 peppered
+       gizzard, 5 sausages, 5 mini corn dogs. NO DRINKS — no picker UI
+       at all on this card.
+     - Small Chops — Mini — ₦37,000 (was ₦30,000, +₦7,000) — 30
+       samosas, 30 spring rolls, 80
+       puff puff, 40 mosa, 50 peppered beef bites. NO DRINKS — no
+       picker UI at all on this card.
+     - Small Chops — Full — ₦69,000 (was ₦55,000, +₦14,000) — 45
+       samosas, 40 spring rolls, 5
+       spring rolls with prawns & mayo, 80 puff puff, 30 mosa, 40
+       peppered beef bites, 10 peppered chicken, 15 peppered gizzard,
+       5 grilled snail, 5 sausages, 5 mini corn dogs. Customer picks
+       EXACTLY 2 free drinks from the full 10-item list (checkboxes,
+       required, max-2 enforced) — same picker pattern as Trays.
+     - Small Chops — Premium — ₦178,000 (was ₦150,000, +₦28,000) — 60
+       samosas, 50 spring rolls,
+       10 spring rolls with prawns & mayo, 60 puff puff, 20 peppered
+       beef bites, 20 peppered chicken, 10 peppered turkey, 15
+       peppered gizzard, 10 grilled snail, 8 sausages, 10 mini corn
+       dogs. NO mosa in this tier. Drinks are FIXED, not
+       customer-picked — always exactly 1 Carrot Juice, 1 Zobo Drink,
+       1 Yogurt Drink, 1 Pineapple Ginger Drink, 1 Ginger Immune
+       Booster, plus 2 bottles of still water. Show this as a plain
+       list on the card with NO selection UI — this is the one
+       exception to the drink-picker pattern used everywhere else on
+       this page. The order confirmation message must still list these
+       fixed drinks even though the customer never selected them.
+
+   PRICE INCREASE REASONING — the ₦5k/₦7k/₦14k/₦28k markups (23.3-
+   27.8% of the original price, tightest at Starter, loosest at
+   Premium) were sized to actually cover ingredient cost, not just a
+   round number — verified NOT to reopen the cannibalization risk
+   below (Mini still beats 2x Starter on value-per-naira on every
+   shared item after the increase).
+
+   POSITIONING LOGIC (why Starter doesn't cannibalize Mini): Starter
+   and Mini deliberately have NO protein variety and NO drinks —
+   Starter is a "sampler," Mini is "the volume pick." Full and Premium
+   are where protein variety and drinks appear — Full is "the variety
+   pick," Premium is "the complete branded experience." Verified: on
+   every item Starter and Mini share, Mini has a strictly better
+   price-per-item ratio, and buying 2x Starter (₦36,000) costs more
+   than 1x Mini (₦30,000) while giving less of everything except a
+   tie on Mosa. Do not "smooth out" the tiers toward each other if
+   asked to revisit pricing — the gap in what each tier offers is
+   deliberate, not an oversight.
+
+   SINGLES SUBSECTION REMOVED ENTIRELY — Jollof Lunch Pack, Pasta
+   Bowl, and Mini Pancakes no longer exist anywhere on this page.
+
+   ORDER FLOW — each card's "Order" button gathers whatever
+   wine/drink selections apply to its subsection, validates the
+   required counts, and only then builds a WhatsApp message
+   containing the item name, price, wine choice (if any), the
+   selected drinks, and the bank transfer details. This requires
+   real client-side JS per card (not a static mailto/wa.me link),
+   since the message content depends on the customer's selections.
+
+   DELIVERY LEAD TIME — a SHARED date/time field above the product
+   grids (not per-card), tagged with data-segment="platters" /
+   "trays" / "packages" on every card so the order handler knows
+   which rule applies when its button is clicked:
+     - Platters & Trays: minimum 24-48 hours' notice. TODAY can
+       NEVER be selected for these — if it is, block the order with
+       a clear message ("Platters and Trays need at least 24-48
+       hours' notice — please choose tomorrow or a later date") and
+       do not proceed. No same-day option exists for these two
+       subsections at all, no exceptions.
+     - Small Chop Boxes: minimum 24 hours' notice, OR same-day
+       if ordered between 6:00-9:00 AM — this reuses the EXACT SAME
+       mechanism as Book a Meal's same-day rush system (see section
+       9): if today is selected and the current real time is within
+       6-9am, show the two delivery-window buttons (4-6pm / 6-8pm,
+       required) instead of a free time picker; if today is selected
+       but it's outside 6-9am right now, tell the customer plainly
+       that same-day has closed for the day rather than let them
+       attempt it. Rush fee on same-day Small Chop Boxes orders = lesser of
+       ₦20,000 flat or 50% of that item's own price (same capped-fee
+       logic as Book a Meal), added to the item price and shown in
+       the WhatsApp message total.
+   This means Platters/Trays are ALWAYS advance-order only; only
+   Small Chop Boxes ever gets a same-day path, and only within that specific
+   morning window.
+
+   Every card shows a "Contains:" line listing components, and uses
+   a clean dashed-pattern "Photo coming soon" placeholder until real
+   photography is supplied — do not substitute stock or competitor
+   images.
+
+7. HEALTHY MEALS (renamed from "Mindful Meals" — if your build still
+   has the old name anywhere, rename it: page file, nav link,
+   footer link, homepage banner, all blog cross-links, and the
+   Excel tab all need to say "Healthy Meals" now, URL is
+   healthy-meals.html) — a build-your-own plan, not fixed packages.
+   MUST include a visible disclaimer above the plan builder: not a
+   medical treatment plan, doesn't replace a doctor/dietitian,
+   consult a healthcare provider before starting.
+
+   PRICING MODEL — per meal, not per full day. Every meal includes
+   its own snack. Customer picks THREE things, in this order:
+     (a) meals per day: 1, 2, or 3 (button group)
+     (b) plan length, which sets BOTH the rate per meal AND the
+         allowed range of days (button group):
+           - Single Day — ₦20,000/meal — fixed at exactly 1 day
+           - Weekly — ₦15,000/meal — 4 to 7 days
+           - Two-Week — ₦14,000/meal — 7 to 14 days
+           - Monthly — ₦13,500/meal — 14 to 28 days
+     (c) number of days actually wanted, within that plan's allowed
+         range (a number input, bounded live by whichever plan is
+         selected — e.g. picking "Weekly" restricts this input to
+         4–7; picking "Single Day" locks it at 1 and disables it)
+   Total = rate × meals-per-day × days-chosen. The rate per meal
+   does NOT change based on how many days within the range are
+   picked — 4 days on a Weekly plan and 7 days on a Weekly plan both
+   use ₦15,000/meal. The minimum-days floor on each plan (4/7/14)
+   exists specifically so the discounted rate stays tied to genuine
+   bulk commitment — without it, someone could take the Weekly
+   discount for what's really just a couple of one-off days. State
+   this reasoning on the page (there's an "advice box" for it), not
+   just the numbers. Examples: 3 meals/day × 7 days on Weekly =
+   ₦315,000. 1 meal/day × 4 days (the Weekly floor) = ₦60,000.
+
+   BUILD YOUR MEALS — a new required step, added after (c) above.
+   Every dish across all 9 items on the page (3 Breakfast + 3 Lunch +
+   3 Dinner) is built to the same lower-sugar/lower-sodium/
+   higher-fibre standard, so dishes are NOT restricted to their
+   labeled meal-type — a customer can put a "Dinner" dish in their
+   breakfast slot and vice versa. This is deliberate, not a bug to
+   "fix" by re-adding the restriction. The number of dish-picker
+   dropdowns shown must match meals-per-day exactly (1, 2, or 3
+   dropdowns), each offering all 9 dishes as options. Show a fun-fact
+   line above the picker: "just 9 dishes, 729 possible ways to build
+   your week" (9^3 with repeats allowed at 3 meals/day — recompute
+   this number if the dish count or meals-per-day options ever
+   change, don't leave it hardcoded and wrong). The selection applies
+   as a STANDING choice repeated across the whole plan, not a
+   different pick for every individual day — a full day-by-day
+   picker for a 28-day Monthly plan would mean up to 84 separate
+   choices, which is a bad experience, not a feature. Block the
+   subscribe button with a clear alert if any slot is left unchosen
+   ("Please choose a dish for every meal slot before subscribing"),
+   and include every chosen dish by name in the WhatsApp order
+   message. NOTE ON THE HEALTH CLAIM: the "same standard regardless
+   of list" claim is a real statement about the food, not just UI
+   copy — if the actual dish formulations ever diverge (e.g. dinner
+   dishes become more calorie-dense than breakfast ones), this
+   feature's premise breaks and it should be revisited, ideally with
+   a nutritionist/dietitian confirming the standard actually holds.
+
+   DELIVERY TIMING — RESOLVED, no longer inconsistent with the rest of
+   the site (this closes a gap flagged several times earlier in this
+   spec). Healthy Meals deliberately does NOT use the same-day/rush
+   model that Book a Meal and Trays & Platters use — there is no
+   same-day option here at all, for any reason, no rush fee available
+   to buy one. Every plan's first delivery needs a minimum of 24
+   hours' notice, full stop — the date picker's minimum selectable
+   date is always tomorrow, regardless of what time it currently is;
+   today is never selectable, not even late at night when 24 hours
+   would technically land the next morning anyway. This is deliberate:
+   an ongoing subscription doesn't have the same "I need this
+   specific thing urgently, tonight" case that a one-off soup or
+   platter order does, and the 24-hour floor exists specifically to
+   give the kitchen real breathing room for a standing commitment.
+   Because delivery is always at least a full day out, every plan's
+   Day 1 already has a complete day ahead of it before the first
+   delivery arrives — there is no partial first day, no meal slot
+   that could fall before delivery, and therefore no makeup-meal or
+   slot-skipping logic needed anywhere in this feature. Do not
+   reintroduce a same-day or rush-fee path here if asked to "make it
+   consistent" with Book a Meal — the inconsistency was intentional,
+   not an oversight, and was confirmed explicitly.
+
+   DELIVERY LOGISTICS — a full week of pre-cooked food in one fridge
+   for 7 days is too long for freshness, so every plan delivers in
+   TWO drops per week: Days 1–3 at the start, Days 4–7 mid-week.
+   Meals arrive in fridge-safe, labelled containers (meal + day);
+   customer refrigerates on arrival and reheats before eating.
+   Two-Week and Monthly repeat this same two-drop pattern each week.
+   The 24-hour-minimum, no-same-day rule applies to every delivery
+   this product ever makes, not just the very first one — though in
+   practice the second (and any later) drop is auto-scheduled off the
+   first delivery date rather than separately booked by the customer,
+   so this is more a standing principle than a distinct mechanism to
+   build.
+
+   The 15-item menu (3 breakfast + 3 lunch + 3 dinner + 6 snacks)
+   remains individually orderable a la carte for anyone who doesn't
+   want a plan — full data in AHmazing-Foods-FULL-Menu-Reference.xlsx,
+   "Healthy Meals" tab (includes the build-your-own pricing table
+   too, now with min/max days per plan). Snacks overlap with existing
+   Products (Roasted Peanuts, Zobo, Tiger Nut Milk, Peanut Butter),
+   repositioned as unsweetened/unsalted. Keep the 6-day sample
+   rotation table showing how the menu avoids repeating.
+
+8. CATERING — event quote request form: name, phone, email, event
+   type (wedding/birthday/corporate/wake/house party/other), guest
+   count, date, time, service type (delivery/pickup/full setup with
+   staff), venue address, menu request (free text), budget range,
+   notes. No fixed price — submitting builds a formatted WhatsApp
+   message with every field and opens it.
+
+9. BOOK A MEAL — now a CART, not a single-item form:
+   - Customer configures a dish (category → dish → size → qty →
+     protein) and clicks "Add to Order" to add it as a cart line.
+     They can add more dishes before checking out. Each cart line
+     is removable.
+   - "Meals" for pricing purposes = number of DISTINCT DISHES in
+     the cart, not total quantity/litres. Ordering 2L + 5L of the
+     same soup is still one meal. Ordering Egusi (any amount) AND
+     a different soup is two meals — they're two separate pots
+     cooking at once, so they're priced separately.
+   - Live order summary shows: cart lines with remove buttons,
+     subtotal, rush fee line (only when applicable), and grand
+     total — updates instantly as items are added/removed or the
+     delivery time changes.
+   - BUSINESS HOURS — deliveries only between 9:00 AM and 9:00 PM
+     daily for NORMAL (future-date) bookings, using a continuous
+     time picker with no rush fee at all.
+
+   - SAME-DAY / RUSH DELIVERY IS A SEPARATE, DISCRETE SYSTEM — not a
+     continuous "X hours from now" calculation. This replaced an
+     earlier version that used a continuous 12-24hr rush window,
+     which was removed because it mathematically forced most rush
+     orders to land on the next day anyway (see below) — customers
+     were paying a rush fee and still not getting same-day delivery.
+     The current, correct system:
+       (a) Same-day/rush delivery is ONLY offered if the customer is
+           placing the order RIGHT NOW between 6:00 AM and 9:00 AM.
+           Check the real current time when the date field is set to
+           today, not any stored/cached time.
+       (b) If eligible, replace the free time picker entirely with
+           two fixed delivery-window buttons: "4:00–6:00 PM" and
+           "6:00–8:00 PM" — no other delivery time is offered for
+           same-day. The customer must pick one before checkout; if
+           they haven't, block submission with a clear message.
+       (c) If the customer has today's date selected but it is NOT
+           between 6-9am right now, same-day is impossible — do NOT
+           show the picker or let them attempt it. Show a plain
+           message ("Same-day booking closes at 9:00 AM — the next
+           available slot is tomorrow") and automatically move the
+           date to tomorrow, reverting to the normal continuous
+           picker for that day.
+       (d) Any date other than today always uses the normal
+           continuous 9am-9pm picker — this rush system only applies
+           to today.
+     WHY 6-9am / 4-6pm-or-6-8pm specifically: with an 8-hour minimum
+     lead time, ordering at the LATEST point in the 6-9am window
+     (9am) still reaches the EARLIEST delivery window (4pm) with
+     margin to spare (9am+8h=5pm, comfortably inside 4-6pm). Verify
+     this math holds if either number changes — the whole point is
+     that every order placed in the eligible window can always reach
+     one of the two delivery windows without exception.
+   - RUSH FEE AMOUNT — unchanged from before, charged PER DISTINCT
+     MEAL, dropping as more meals are in the same order:
+       1 meal=₦20,000, 2=₦15,000 each, 3=₦13,000 each, 4=₦12,000
+       each, 5=₦10,000 each
+   - RUSH FEE CAP — the rush fee actually charged is whichever is
+     LOWER: the flat tiered amount above, or 50% of the order's own
+     subtotal. This means a single cheap item (e.g. a ₦15,000 soup)
+     is never charged a rush fee bigger than half its own price —
+     it's capped at ₦7,500 instead of the full ₦20,000. Orders large
+     enough that the cap wouldn't bind pay the same flat fee as
+     before; nothing changes for those. Show which one applied in
+     the UI (e.g. "rush fee capped at 50% of your subtotal") so it's
+     never a mystery why the number is what it is.
+   - "Meal" = distinct dish ordered — multiple sizes/quantities of
+     the SAME dish still count as one meal
+   - Order capped at 5 distinct meals; going over is blocked with a
+     message pointing to Catering or Trays & Platters
+   - GOOGLE CALENDAR (customer side) — on successful checkout, a
+     "Add to Google Calendar" button appears, pre-filled with the
+     delivery date/time, order summary, and address, using Google's
+     calendar.google.com/calendar/render URL template. This works
+     client-side, no backend needed — but it's one click, not fully
+     automatic. To make it genuinely automatic when an email was
+     given (zero clicks from the customer), the backend must, on
+     payment success: (1) create the event on AHmazing Foods' own
+     Google Calendar via a service account, (2) add the customer's
+     email as a GUEST/ATTENDEE on that event through the Calendar
+     API. Google then emails that guest an invite automatically —
+     no OAuth or account access needed from the customer, because
+     Google handles the invite step itself. This also solves the
+     kitchen-calendar sync in the same step. This is backend-only,
+     which is why only the one-click version exists in this static
+     build.
+   - ITEMIZED CONFIRMATION — checkout builds one message containing
+     EVERY cart line (not just the first), each with size, quantity,
+     and protein add-on, plus pepper level, delivery date/time,
+     subtotal, rush fee breakdown, grand total, and the bank
+     transfer details, and the customer's contact details — sent via
+     WhatsApp so both the business and (by forwarding) the customer
+     have a complete copy.
+   - Required pepper-level slider (Low / Medium / Really Peppery),
+     with the 3 positions visibly marked on the track (circles or
+     boxes, not just a plain gradient bar) so it reads as a discrete
+     3-position control. Checkout is blocked with a visible warning
+     until the customer has actually moved it — a default value
+     alone doesn't count as a real selection.
+   - Paystack integration point clearly marked as a placeholder
+     needing a real backend; Google Calendar's business-side sync
+     likewise.
+
+BREAKFAST IS SOLD AS COMBOS, NOT SMALL INDIVIDUAL DISHES
+----------------------------------------------------------
+Small a-la-carte breakfast items read as snacks, not meals. Sell
+generously-portioned combo plates instead — sized so one pack can't
+be finished in one sitting. Minimum price ₦22,000 per combo (this is
+a deliberate floor, not a mistake):
+   - The Classic Nigerian — Akara (10pcs), pap (1L bowl), 2 boiled
+     eggs — ₦22,000
+   - The Hearty Plate — Yam (5 slices), plantain (5 slices), egg
+     stew (1L container), sausages wrapped separately, choice of
+     Orange Drink or Carrot Boost juice — ₦22,000
+   - The Sweet Start — Oats (1L bowl), a bowl of fresh fruit, choice
+     of Orange Drink or Carrot Boost juice — ₦25,000
+   - The Protein Power — Moin-moin (2pcs), akara (10pcs), pap (1L
+     bowl), 2 boiled eggs — ₦25,000
+One combo = one distinct meal for the Book a Meal rush-fee logic.
+
+MINDFUL PICKS — WOVEN INTO SOUPS, STEWS &amp; BREAKFAST
+----------------------------------------------------------
+Not siloed on the Healthy Meals page alone — each of these three
+pages gets a "Healthy Picks" callout (3 items, table format, "why
+it's a good pick" column), linking to Healthy Meals for the full
+disclaimer:
+   - SOUPS: Edikang Ikong (Vegetable Soup), Okro Soup, Oha Soup —
+     framed as naturally lighter, ask for reduced oil/salt.
+   - STEWS: all 3 existing stews (Classic Tomato, Ayamase, Coconut
+     Curry) — framed as available in a lighter, reduced-oil version
+     on request.
+   - BREAKFAST: reuse the 3 existing Healthy Meals breakfast items
+     (Boiled Unripe Plantain &amp; Egg Sauce, Unsweetened Oat Pap &amp;
+     Roasted Groundnuts, Whole Wheat Bread/Baked Akara/Cucumber) as
+     a second card grid below the 4 combo plates.
+Homepage differentiator banner copy should mention this integration
+explicitly — Healthy Meals isn't just a separate page, it's part of the
+whole menu.
+
+GLOBAL RULES
+------------
+- DEEP-LINK AUTO-ADD: every "Order"/"Book" link across Soups,
+  Stews, Breakfast, and Products now points to
+  book.html?cat=X&item=Y&size=Z instead of a generic WhatsApp
+  message. On page load, Book a Meal reads these URL params,
+  pre-selects that exact item, and automatically adds it to the
+  cart — the customer arrives with their choice already in, sees a
+  green confirmation banner naming it, and can still add more items
+  or remove it like any other cart line. Soups/Stews are pricing
+  tables (not cards), so each row got a small "Book" pill-button
+  using a sensible default size (2L for soups, Medium for stews —
+  Seafood Okro defaults to 5L since that's its only size). Products
+  is now a 4th booking category (single "Standard" size per item,
+  no protein add-on field — that field hides automatically for
+  Breakfast and Products since it doesn't apply to either).
+  IMPORTANT: this does NOT restrict the cart to one item — "mix
+  booking" (adding multiple different meals to one order) still
+  works exactly as before after a deep-link arrival.
+
+- IMAGE POLICY: never substitute stock or competitor photos.
+  Placeholder "Photo coming soon" cards are honest and intentional
+  where no real photo exists. Where a real AHmazing photo already
+  on file is a genuine visual match for a different menu item (e.g.
+  the akara & pap photo now also represents Breakfast combos built
+  around akara/pap, and product bottle photos now represent
+  matching items on the Healthy Meals menu), reuse it — but only
+  where the match is real, never as a generic filler. Do NOT touch
+  or replace the 21 existing real product images on the Products
+  page — those are confirmed correct and must stay as-is.
+- BUG FIX — PEPPER SLIDER VISIBILITY: the 3 selectable positions
+  (Low/Medium/Really Peppery) must be visually marked on the track
+  itself with circles or boxes at each of the 3 stop points, not
+  just a plain gradient bar — otherwise it doesn't read as a
+  discrete 3-position selector. Ticks up to and including the
+  current level should visually fill/highlight as the slider moves.
+
+- BUG FIX — ITEMIZED ORDER CONFIRMATION: the checkout confirmation
+  must list EVERY item in the cart, not just the first one. Build
+  the confirmation message by looping over the full cart array —
+  each line item, its size, quantity, and protein add-on — plus
+  pepper level, delivery date/time, subtotal, rush fee (if any),
+  and grand total, followed by the customer's contact details. This
+  is what gets sent to the business (and can be forwarded to the
+  customer) as the order's record — a single-item summary is a bug,
+  not a simplification.
+
+- BUG REPORTED BUT NOT REPRODUCIBLE IN THIS BUILD — clicking "Book
+  Your Meal"/"Book a Meal" landing on the footer instead of the top
+  of the booking form: tested directly (scripted click from the
+  homepage CTA straight through to the destination page) and it
+  loads at the very top every time in this codebase. If this
+  happens on your build, check for: a stray `#` anchor somewhere in
+  that specific link, an element with `autofocus` near the bottom
+  of book.html, or a leftover `scrollIntoView()` call running on
+  page load rather than only on the specific validation failures
+  it's meant for.
+
+- BUG REPORTED BUT NOT REPRODUCIBLE IN THIS BUILD — auto-scroll to
+  footer on selection: tested directly (every category/item/size/
+  protein change, add-to-cart, pepper slider move) with no unwanted
+  scroll in this codebase. If this happens on your build, common
+  causes to check: an errant `href="#"` link without
+  preventDefault(), an element with `autofocus`, a `scrollIntoView()`
+  call firing outside the one intentional case (failed pepper
+  validation on submit), or native mobile browser behavior scrolling
+  a focused `<select>` into view — test on the actual device/browser
+  where it was seen and isolate which specific interaction triggers it.
+
+10. WEEKEND SPECIALS — new page, "weekend-specials.html", linked in
+    nav/footer/homepage between Trays & Platters and Healthy Meals.
+    A voting page for 6 candidate weekend dishes, NOW PRICED (was
+    unpriced — a real gap flagged repeatedly, now fixed using
+    Culture Kitchen, a real current local competitor, as the basis
+    where dishes matched directly, then a further flat +₦7,000
+    added to each afterward):
+      - Ukwa (African Breadfruit) — ₦27,000 — served with a choice
+        of fish
+      - Isi Ewu (Goat Head Delicacy) — ₦24,000 — a complete meal on
+        its own, no fish choice
+      - Nkwobi — ₦21,000 — no fish choice
+      - Assorted Meat Pepper Soup — ₦25,000 — no fish choice
+      - Abacha (African Salad) — ₦16,000 — garden egg slices, 2
+        pieces of a choice of fish
+      - Roasted Plantain with Pepper & Fish — ₦21,000 — a choice of
+        fish (no direct competitor match — built from a roasted
+        plantain side + a fish portion, flagged as the least certain
+        of the six)
+    Show the price on each dish card, plus a "Serves 1" note next to
+    it — these are single-portion dishes, unlike the bulk-litre
+    Soups/Stews, so the serving note here is about setting the right
+    expectation rather than demonstrating bulk value.
+    (See "Weekend Specials" and "Market Research (2026)" tabs in the
+    Excel for the full basis.)
+
+    FISH CHOICE — Ukwa, Abacha, and Roasted Plantain each need a
+    real dropdown (Tilapia / Croaker) on their card, required before
+    the vote can be recorded — same validation pattern as the wine
+    picker on Platters (block with a clear message if not chosen).
+    The chosen fish is included in that dish's share text (e.g.
+    "...voting for Abacha (Croaker)..."). Isi Ewu, Nkwobi, and
+    Assorted Meat Pepper Soup have no fish choice — they're complete
+    meals as-is.
+
+    RULES: voting closes every Friday. Whichever dish reaches 50
+    votes FIRST is confirmed for the weekend (not all dishes that
+    hit 50 — first past the post). Votes reset every Sunday night
+    for a fresh week. This is business logic that needs a real
+    backend to enforce properly (see below) — the current build
+    only handles the "record my own vote" and "share" pieces.
+
+    CURRENT STATE — LOCAL VOTE ONLY, NOT YET A SHARED LIVE COUNT:
+    each dish has an "I Want This" button. Clicking it records the
+    vote in that browser's localStorage only (one vote per device,
+    persists across reloads) and swaps the button for a "Your vote
+    is in" confirmation. There is NO cross-visitor synced count yet
+    — a static site has nowhere shared for that number to live.
+    This was discussed explicitly and deferred on purpose; do not
+    silently add a fake/random counter to make it look live.
+
+    NEXT STEP FOR A REAL LIVE COUNT (not built yet, needs backend):
+    Firebase Realtime Database or Firestore is the recommended
+    approach — free tier easily covers this volume, updates
+    instantly across every visitor, and needs no server to
+    maintain. Each dish gets a document/counter; the vote button
+    increments it via the Firebase SDK; the page listens for
+    real-time updates and re-renders the count and a progress bar
+    toward 50. The "first to 50 locks in, others stop counting for
+    the week" rule and the Sunday-night reset should also live in
+    Firebase (or a small Cloud Function) once this is built, not in
+    client-side JS alone, since client-side logic can be bypassed.
+
+    SHARING (built now): each dish card has 4 share controls —
+    WhatsApp, Facebook, X (Twitter), and a "copy link" button. Every
+    share carries the dish name in the message text and a link back
+    to weekend-specials.html#<dish-id>, so a friend clicking through
+    lands directly on that dish's card, not just the general page.
+    No live count or "competing dishes" data is included in the
+    share text yet, since there's no live count to show — once the
+    Firebase piece above is built, extend the share text to include
+    the live number and how it compares to the other candidates.
+
+11. ORDER STATUS TRACKING — two new pages, "order-status.html"
+    (customer-facing) and "staff-order-links.html" (internal, for
+    riders/kitchen staff only — noindex, not linked from any
+    customer-facing nav). NOTE: this started as a single-purpose
+    "arrival countdown" feature and was expanded to 4 stages — if
+    you see an older reference anywhere to "staff-arrival-link.html"
+    (singular purpose), that file was renamed/replaced, update the
+    reference rather than recreate the old file.
+
+    THE PROBLEM THIS SOLVES: the client wants customers to see
+    order-progress updates — Preparing, Dispatched, Arrived,
+    Delivered — without building a full backend/admin system. A
+    static site has no server to run a clock, hold order state, or
+    push a notification, so none of this can work by "the site
+    detects what stage the order is at." It works by a different
+    mechanism entirely — READ THIS BEFORE CHANGING ANYTHING HERE:
+
+    THE MECHANISM — each stage update is its own independently
+    generated link, not one page that updates itself. staff-order-
+    links.html has 4 buttons, one per stage. Tapping any button
+    builds a link to order-status.html with either a `stage` query
+    param (preparing / dispatched / delivered — simple static
+    states) or, for the Arrived stage specifically, a `start` param
+    holding the exact current timestamp (Date.now(), milliseconds —
+    this one needs a live countdown, not just a static message, see
+    below). That link is sent to the customer over WhatsApp (a human
+    action — the "Open in WhatsApp" button opens a pre-filled wa.me
+    message with the link already in it, same pattern used
+    everywhere else on this site). This is why it needs no backend:
+    the page's entire state is fully determined by which link the
+    customer happens to be viewing — there's no order database, no
+    session, no memory between page loads, and none is needed.
+    IMPORTANT — staff choose which stages to actually use per order.
+    Not every order needs all 4 links sent: a quick, simple order
+    can skip straight to Dispatched; a large or slow order (a
+    Platter, a Party Starter, a first Healthy Meals drop) benefits
+    from using all 4, since the added reassurance matters more when
+    there's more elapsed time and more money on the line. Build all
+    4 buttons as always-available tools — do not make the UI imply
+    they're a mandatory sequence that must all be tapped in order
+    for every single order.
+    ALSO NOTE: order confirmation itself ("Booked") is deliberately
+    NOT one of the 4 stages — the itemized WhatsApp confirmation a
+    customer already receives immediately on placing an order already
+    serves that purpose. Adding a separate "Booked" stage link would
+    just duplicate a message they already get automatically — don't
+    add a 5th button for it.
+
+    ORDER-STATUS.HTML STATES (six total):
+      - No "stage" or "start" param at all → "Your order is on the
+        way" — generic friendly waiting message (this is also the
+        fallback for a malformed/unrecognized URL).
+      - stage=preparing → "Your order is being prepared."
+      - stage=dispatched → "Your order is dispatched" (on its way,
+        arrival update to follow).
+      - start=<timestamp>, less than 15 minutes elapsed → shows a
+        live MM:SS countdown, updating every second via setInterval
+        (not a one-time render — it must visibly tick). Under 3
+        minutes remaining, switch to an "urgent" visual style (color
+        change) as an extra visual cue. This is the ONLY stage that
+        needs the live-countdown treatment — the other 3 stages are
+        static messages with no timer.
+      - start=<timestamp>, 15+ minutes elapsed (including if the
+        link is opened AFTER the window already closed, e.g. a
+        customer checks it late) → "Waiting time has expired" state,
+        with a WhatsApp button pre-filled to request redelivery
+        (which per policy incurs a new delivery fee, no free second
+        attempt).
+      - stage=delivered → "Delivered — enjoy your meal!" (a distinct
+        positive/success visual style, not the same neutral style as
+        the waiting states).
+    If a request somehow includes BOTH a "start" param and a "stage"
+    param, "start" (the countdown) always takes priority, since
+    arrival is the most time-sensitive state to get right.
+    KNOWN BUG, ALREADY FIXED, DON'T REINTRODUCE: an early version
+    referenced the setInterval ID inside the tick() function before
+    it had been assigned (a const declared after the first call to
+    tick()), which threw "Cannot access before initialization" on
+    the exact case where a link is opened already-expired. Declare
+    the interval variable with `let` BEFORE the first tick() call,
+    assign it after — don't restructure this back to a single const
+    declared inline with setInterval().
+
+    STAFF-ORDER-LINKS.HTML — deliberately no nav, no customer-facing
+    styling polish, `<meta name="robots" content="noindex">`, not
+    linked from anywhere a customer could stumble onto it. Has ONE
+    text input at the top ("Who is this message going to?") where
+    staff type the correct name for THIS specific message — either
+    the person who ordered, or their designated recipient, whichever
+    one is actually being contacted for that delivery. This is
+    plain manual entry, typed once per order, not pulled
+    automatically from anywhere — there is no OCR, no payment
+    receipt reading, no database lookup; a static site has no way to
+    read a name off an image. What it DOES do: that name
+    auto-populates into whichever stage message is generated next,
+    so staff aren't retyping it for every one of the 4 stage
+    taps — type it once, tap through stages as needed, name carries
+    over automatically. If the field is left blank, the message
+    skips the greeting entirely rather than producing an awkward
+    "Hi ," — build the greeting as `name ? "Hi " + name + ", " : ""`.
+    4 stage buttons (Preparing Meal / Dispatched / Arrived /
+    Delivered), each generating that stage's specific link AND a
+    matching pre-written WhatsApp message with the name interpolated
+    in (see the MESSAGES object in the script — one message template
+    per stage, don't make staff compose messages by hand). The full
+    MESSAGE (not just the bare link) is shown in a copyable text box
+    with both a "Copy Message" and an "Open in WhatsApp" button — the
+    whole point is staff can copy-paste-send without typing anything
+    beyond the name field.
+
+    NOT A DASHBOARD — IMPORTANT DISTINCTION IF ASKED TO EXPAND THIS:
+    this tool has no memory of past orders, no list of pending
+    deliveries, and nothing to log into. It only ever knows about
+    "whatever order someone is dealing with right now" — there is no
+    order database anywhere in this build. If the client asks for a
+    real admin dashboard (log in, see every order, watch it
+    auto-update across staff/devices), that is a genuinely different,
+    larger project requiring real accounts/login, a real database
+    that persists order state, and a way to keep that data in sync in
+    real time (e.g. Firebase, same category of dependency already
+    flagged for Weekend Specials' live vote count). Do not represent
+    staff-order-links.html as a step toward that without flagging the
+    architecture change it requires — it's a stateless per-order tool,
+    not a lightweight version of a dashboard.
+
+    NOT YET BUILT, FLAGGED FOR A FOLLOW-UP: the broader delivery
+    confirmation flow this feature is part of — a required
+    "I understand, send my order" confirmation step before every
+    WhatsApp order button site-wide, plus new required fields (payer
+    name, recipient name if different, recipient phone, optional
+    alternative phone, delivery address) and the full Delivery &
+    Receipt Policy text displayed with a required acknowledgment —
+    was discussed and the policy wording was finalized, but the
+    actual form fields and confirmation-gate UI have NOT been built
+    into the order flows yet. Do not assume this exists just because
+    the countdown page that depends on it (linking back to the
+    policy) has been built — check book.html and every other order
+    flow directly before claiming this is done.
+
+12. BLOG — new section, "blog.html" listing page + individual post
+    pages, linked in nav/footer/homepage between Healthy Meals and
+    Catering. Three posts live now:
+    - "5 Nigerian Foods That Are Naturally Diabetes-Friendly"
+    - "How to Cook Nigerian Soups With Less Oil (Without Losing
+      Flavour)"
+    - "What Makes a Meal 'Heart-Healthy'? A Nigerian Kitchen Guide"
+    Each post: one h1, a meta description, canonical URL, Open
+    Graph tags, cross-links back to Healthy Meals/Soups/Stews, and
+    the same "not medical advice, consult your doctor" framing used
+    on Healthy Meals. This is where new wellness content should be
+    added going forward — it's the main lever for organic search
+    growth over time.
+
+SEO REQUIREMENTS (apply to every page)
+----------------------------------------
+- Exactly one <h1> per page, containing the page's primary keyword
+  naturally (e.g. "Nigerian Soup Delivery in Lagos").
+- Unique <title> tag per page (under ~60 characters where possible,
+  include "Lagos" and the relevant dish/service).
+- Unique <meta name="description"> per page (under ~160 characters).
+- <link rel="canonical"> pointing to the page's own URL.
+- Open Graph tags (og:title, og:description, og:type) on every page.
+- JSON-LD Restaurant/LocalBusiness schema on the homepage (name,
+  cuisine, phone, email, address locality "Lagos", region "Lagos
+  State", country "NG").
+- alt text on every image describing what it actually shows.
+- A sitemap.xml listing every live (non-hidden) page, and a
+  robots.txt pointing to it.
+- IMPORTANT — set honest expectations: none of the above guarantees
+  a #1 Google ranking. On-page SEO is necessary but not sufficient;
+  ranking also depends on backlinks, domain age, content freshness,
+  and competition, and typically takes months to show results even
+  when done well. Don't oversell this to the client as an instant
+  fix.
+- Every price in Naira (₦), formatted with commas.
+- Every product card's "Order" button opens WhatsApp
+  (wa.me/2348105506052) with the item name pre-filled in the
+  message text.
+- No image should ever be a stock photo or a competitor's photo —
+  use real AHmazing photography where supplied, clearly-marked
+  placeholders everywhere else.
+- Mobile-responsive throughout; nav collapses to a hamburger with
+  an opaque dropdown below 860px width.
+
+============================================================
+FINAL STEP — DO NOT SKIP, BEFORE THIS SITE GOES LIVE
+============================================================
+Go through every item in this document, one at a time, and confirm
+against the actual live build — not from memory, not by assuming
+something is done because it was described here — whether it is
+genuinely present and working. For each item:
+  1. If it's confirmed working, move to the next.
+  2. If it's missing, partially done, or behaves differently than
+     specified here, fix it before moving on.
+  3. If you are not fully sure whether something is correctly
+     implemented, do not guess — go back through the relevant
+     section again and re-check it against the live build.
+Repeat this pass as many times as needed until you can confirm,
+with actual evidence from the build (not assumption), that every
+item in this document is accounted for.
+
+Then produce a REPORT AS A TABLE (not a paragraph, not a checklist
+of prose) with exactly these four columns:
+
+| Section / Feature | Status (Done / Partial / Missing) | Evidence checked | Notes |
+
+One row per numbered section above (Home, Soups, Stews, Breakfast,
+Products, Trays & Platters, Healthy Meals, Catering, Book a Meal,
+Weekend Specials, Order Status / Arrival Countdown, Blog), plus
+separate rows for: the rush fee cap,
+the same-day 6-9am order window and 4-6pm/6-8pm delivery windows,
+the pepper slider, the itemized confirmation, the bank transfer
+details, the deep-link auto-add, the Seeds & Spices contents, the
+per-card wine/drink pickers on Trays & Platters, and SEO basics.
+"Evidence checked" means what was actually clicked/tested/read to
+confirm it — not "described in the spec." Do not summarize the
+whole build as "complete" in prose before this table exists and
+every row in it says Done.
+
+FINALLY: after every row in that table says Done, deploy/publish
+the site and paste back the live URL you deployed to. "Done" in the
+table means done on that live URL, not done in the editor. If for
+any reason the deployment step fails or can't be completed, say so
+explicitly — do not report success without it.

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Status Links | AHmazing Foods (Staff)</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .staff-wrap{ max-width:480px; margin:0 auto; padding:60px 20px; }
+  .staff-title{ font-family:var(--font-display); font-size:1.5rem; margin-bottom:8px; text-align:center; }
+  .staff-sub{ color:rgba(34,31,31,0.7); margin-bottom:28px; font-size:0.9rem; text-align:center; }
+  .stage-note{ font-size:0.8rem; color:rgba(34,31,31,0.55); margin:0 0 24px; text-align:center; padding:10px 14px; background:var(--sand-deep); border-radius:8px; }
+  .name-field{ margin-bottom:22px; }
+  .name-field label{ display:block; font-size:0.8rem; font-weight:700; color:var(--charcoal); margin-bottom:6px; }
+  .name-field input{ width:100%; padding:11px 12px; border-radius:8px; border:1px solid var(--line); font-family:var(--font-body); font-size:0.95rem; }
+  .name-field .hint{ font-size:0.75rem; color:rgba(34,31,31,0.55); margin-top:5px; }
+  .stage-btn{ width:100%; justify-content:center; margin-bottom:12px; }
+  #message-output{ width:100%; padding:14px; border-radius:8px; border:1px solid var(--line); font-family:var(--font-body); font-size:0.88rem; line-height:1.5; margin:16px 0 14px; background:var(--sand-deep); word-break:break-word; text-align:left; min-height:70px; display:none; white-space:pre-wrap; }
+  .output-actions{ display:none; gap:10px; }
+  .output-actions button{ flex:1; justify-content:center; }
+</style>
+</head>
+<body>
+
+<div class="staff-wrap">
+  <div class="staff-title">Order Status Links</div>
+  <div class="staff-sub">For riders/kitchen staff only. Tap a stage below to generate that update's message, then send it to the customer on WhatsApp.</div>
+  <div class="stage-note">Not every order needs all 4 — for quick orders, skip straight to Dispatched. For bigger or slower orders, using all 4 helps reassure the customer.</div>
+
+  <div class="name-field">
+    <label for="recipient-name">Who is this message going to?</label>
+    <input type="text" id="recipient-name" placeholder="e.g. Chidinma, or Chidinma's driver Emeka">
+    <div class="hint">Enter whichever name is correct for THIS message — the person who ordered, or their designated recipient, whichever one you're actually contacting right now. Type it once, it fills into every stage below. If left blank, the message just skips the greeting.</div>
+  </div>
+
+  <button type="button" class="btn stage-btn" data-stage="preparing" data-label="Preparing Meal">👩‍🍳 Preparing Meal</button>
+  <button type="button" class="btn stage-btn" data-stage="dispatched" data-label="Dispatched">🛵 Dispatched</button>
+  <button type="button" class="btn btn-primary stage-btn" data-stage="arrived" data-label="Arrived — Start 15-Min Timer">⏰ Arrived — Start 15-Min Timer</button>
+  <button type="button" class="btn stage-btn" data-stage="delivered" data-label="Delivered">✅ Delivered</button>
+
+  <div id="message-output"></div>
+  <div class="output-actions" id="output-actions">
+    <button type="button" class="btn" id="copy-btn">Copy Message</button>
+    <button type="button" class="btn" id="whatsapp-btn">Open in WhatsApp</button>
+  </div>
+</div>
+
+<script>
+  const SITE_URL = "https://ahmazingfoods.com/order-status.html";
+
+  const MESSAGES = {
+    preparing: (greeting, link) => `${greeting}Your AHmazing Foods order is being prepared! We'll message you again once it's dispatched. Track it here: ${link}`,
+    dispatched: (greeting, link) => `${greeting}Your AHmazing Foods order is dispatched and on its way! We'll message you again once our rider has arrived. Track it here: ${link}`,
+    arrived: (greeting, link) => `${greeting}We've arrived with your AHmazing Foods order! Please send someone out to collect it. Track your 15-minute pickup window here: ${link}`,
+    delivered: (greeting, link) => `${greeting}Delivered! Enjoy your AHmazing Foods order. Thank you for ordering with us: ${link}`,
+  };
+
+  function buildLink(stage) {
+    if (stage === "arrived") {
+      return `${SITE_URL}?start=${Date.now()}`;
+    }
+    return `${SITE_URL}?stage=${stage}`;
+  }
+
+  function buildGreeting() {
+    const name = document.getElementById("recipient-name").value.trim();
+    return name ? `Hi ${name}, ` : "";
+  }
+
+  document.querySelectorAll(".stage-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const stage = btn.dataset.stage;
+      const link = buildLink(stage);
+      const greeting = buildGreeting();
+      const message = MESSAGES[stage](greeting, link);
+
+      const output = document.getElementById("message-output");
+      output.style.display = "block";
+      output.textContent = message;
+
+      document.getElementById("output-actions").style.display = "flex";
+
+      document.getElementById("copy-btn").onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(message);
+          const copyBtn = document.getElementById("copy-btn");
+          const original = copyBtn.textContent;
+          copyBtn.textContent = "Copied!";
+          setTimeout(() => { copyBtn.textContent = original; }, 1500);
+        } catch (e) {
+          alert("Copy this message:\n\n" + message);
+        }
+      };
+
+      document.getElementById("whatsapp-btn").onclick = () => {
+        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank");
+      };
+    });
+  });
+</script>
+
+</body>
+</html>
