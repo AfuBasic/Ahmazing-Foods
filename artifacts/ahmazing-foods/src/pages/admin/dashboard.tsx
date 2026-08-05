@@ -174,21 +174,28 @@ function StatCard({ title, value, subtitle, icon, highlight = false, trend }: { 
   );
 }
 
-export function StatusBadge({ status }: { status: string }) {
-  const styles: Record<string, string> = {
-    pending: "bg-amber-100 text-amber-800 border-amber-200",
-    confirmed: "bg-blue-100 text-blue-800 border-blue-200",
-    cooking: "bg-primary/20 text-primary border-primary/30",
-    delivered: "bg-secondary/20 text-secondary border-secondary/30",
-    cancelled: "bg-destructive/10 text-destructive border-destructive/20",
-  };
+const STATUS_CONFIG: Record<string, { label: string; cls: string }> = {
+  pending:            { label: "Pending",             cls: "bg-amber-100 text-amber-800 border-amber-200" },
+  payment_confirmed:  { label: "Payment Confirmed",   cls: "bg-blue-100 text-blue-800 border-blue-200" },
+  cooking_in_progress:{ label: "Cooking in Progress", cls: "bg-orange-100 text-orange-800 border-orange-200" },
+  rider_on_the_way:   { label: "Rider on the Way",    cls: "bg-purple-100 text-purple-800 border-purple-200" },
+  rider_waiting:      { label: "Rider Waiting",       cls: "bg-pink-100 text-pink-800 border-pink-200" },
+  rider_heading_back: { label: "Rider Heading Back",  cls: "bg-red-100 text-red-800 border-red-200" },
+  delivered:          { label: "Delivered",           cls: "bg-secondary/20 text-secondary border-secondary/30" },
+  cancelled:          { label: "Cancelled",           cls: "bg-destructive/10 text-destructive border-destructive/20" },
+  // legacy — kept for backward-compat display
+  confirmed:          { label: "Payment Confirmed",   cls: "bg-blue-100 text-blue-800 border-blue-200" },
+  cooking:            { label: "Cooking in Progress", cls: "bg-orange-100 text-orange-800 border-orange-200" },
+};
 
+export function StatusBadge({ status }: { status: string }) {
+  const cfg = STATUS_CONFIG[status];
   return (
     <span className={cn(
-      "px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-full border",
-      styles[status] || "bg-muted text-muted-foreground"
+      "px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-full border whitespace-nowrap",
+      cfg?.cls ?? "bg-muted text-muted-foreground border-border"
     )}>
-      {status}
+      {cfg?.label ?? status}
     </span>
   );
 }

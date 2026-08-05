@@ -18,7 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { formatNaira } from "@/lib/format";
 import {
   Loader2, Trash2, PlusCircle, AlertCircle, ShoppingCart,
-  ChevronRight, Check, Minus, Plus,
+  ChevronRight, Check, Minus, Plus, Users, ChevronDown, ChevronUp,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -108,6 +108,8 @@ const customerSchema = z.object({
   deliveryDate:    z.string().min(1, "Delivery date is required"),
   deliverySlot:    z.string().min(1, "Delivery slot is required"),
   notes:           z.string().optional(),
+  recipientName:   z.string().optional().or(z.literal("")),
+  recipientPhone:  z.string().optional().or(z.literal("")),
 });
 
 // ── SMOOTH SCROLL ─────────────────────────────────────────────────────────────
@@ -176,6 +178,7 @@ export default function BookPage() {
     {}, { query: { queryKey: ["menuItems"] } }
   );
   const createOrder = useCreateOrder();
+  const [hasAltRecipient, setHasAltRecipient] = useState(false);
 
   // ── CART ────────────────────────────────────────────────────────────────────
   const [cart, setCart]                   = useState<CartItem[]>([]);
@@ -424,6 +427,9 @@ export default function BookPage() {
         : `Total: ${formatNaira(grandTotal)}`,
       `Customer: ${values.customerName} | ${values.customerPhone}${values.customerEmail ? ` | ${values.customerEmail}` : ""}`,
       `Delivery address: ${values.deliveryAddress}`,
+      hasAltRecipient && values.recipientName
+        ? `Recipient (receiving order): ${values.recipientName}${values.recipientPhone ? ` | ${values.recipientPhone}` : ""}`
+        : "",
       values.notes ? `Customer notes: ${values.notes}` : "",
     ].filter(Boolean).join("\n\n") + "\n\n---\nPAYMENT DETAILS\nAccount Name: Ahmazing Cuisine\nBank: FCMB\nAccount Number: 1009414545";
 
@@ -981,6 +987,53 @@ export default function BookPage() {
                         <FormMessage />
                       </FormItem>
                     )} />
+
+                    {/* ── Secondary recipient ─────────────────────────── */}
+                    <div className="border border-border rounded-xl overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => setHasAltRecipient((p) => !p)}
+                        className="w-full flex items-center justify-between px-4 py-3.5 text-sm font-semibold hover:bg-muted/50 transition-colors text-left"
+                      >
+                        <span className="flex items-center gap-2.5">
+                          <Users className="w-4 h-4 text-muted-foreground shrink-0" />
+                          <span>Someone else is receiving this order</span>
+                          <span className="text-xs font-normal text-muted-foreground">(optional)</span>
+                        </span>
+                        {hasAltRecipient
+                          ? <ChevronUp className="w-4 h-4 text-muted-foreground shrink-0" />
+                          : <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />}
+                      </button>
+
+                      {hasAltRecipient && (
+                        <div className="px-4 pb-4 pt-4 border-t border-border bg-muted/20 space-y-4">
+                          <p className="text-xs text-muted-foreground leading-relaxed">
+                            Gifting this order, or sending it to someone who will collect on your behalf?
+                            Add their name and phone number so our rider can reach them directly on arrival.
+                          </p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <FormField control={form.control} name="recipientName" render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Recipient's Full Name</FormLabel>
+                                <FormControl>
+                                  <Input className="h-11" placeholder="Ngozi Okonkwo" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )} />
+                            <FormField control={form.control} name="recipientPhone" render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Recipient's Phone Number</FormLabel>
+                                <FormControl>
+                                  <Input className="h-11" placeholder="08012345678" type="tel" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )} />
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </form>
                 </Form>
               </div>

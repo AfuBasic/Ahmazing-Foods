@@ -45,7 +45,7 @@ export interface CustomerStatusEmailData {
   deliveryDate: string;
   deliverySlot: string;
   total: number;
-  status: "confirmed" | "cooking";
+  status: "payment_confirmed" | "cooking_in_progress";
 }
 
 function formatNaira(amount: number): string {
@@ -168,7 +168,7 @@ export async function sendCustomerStatusEmail(data: CustomerStatusEmailData): Pr
   const transporter = getTransporter();
   if (!transporter) return;
 
-  const isConfirmed = data.status === "confirmed";
+  const isConfirmed = data.status === "payment_confirmed";
 
   const subject = isConfirmed
     ? `Your booking is confirmed — Order #${data.orderId} | AHmazing Foods`

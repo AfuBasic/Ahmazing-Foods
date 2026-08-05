@@ -327,6 +327,17 @@ function SiteFooter() {
             </span>
           </div>
           <p>© {new Date().getFullYear()} AHmazing Foods · Lagos, Nigeria</p>
+          <p className="text-background/35 text-xs">
+            Site built by{" "}
+            <a
+              href="https://www.brandsenvoy.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-background/50 hover:text-primary transition-colors underline underline-offset-2"
+            >
+              Brand Envoy Africa
+            </a>
+          </p>
         </div>
       </div>
     </footer>

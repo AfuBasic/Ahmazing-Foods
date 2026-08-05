@@ -247,8 +247,8 @@ router.get("/orders/summary", async (_req, res): Promise<void> => {
   const summary = {
     totalOrders: allOrders.length,
     pendingOrders: countByStatus("pending"),
-    confirmedOrders: countByStatus("confirmed"),
-    cookingOrders: countByStatus("cooking"),
+    confirmedOrders: countByStatus("payment_confirmed"),
+    cookingOrders: countByStatus("cooking_in_progress"),
     deliveredOrders: countByStatus("delivered"),
     cancelledOrders: countByStatus("cancelled"),
     totalRevenue,
@@ -307,7 +307,7 @@ router.patch("/orders/:id/status", async (req, res): Promise<void> => {
   res.json(UpdateOrderStatusResponse.parse(order));
 
   // Fire-and-forget customer notification on key status changes
-  if (parsed.data.status === "confirmed" || parsed.data.status === "cooking") {
+  if (parsed.data.status === "payment_confirmed" || parsed.data.status === "cooking_in_progress") {
     sendCustomerStatusEmail({
       orderId: order.id,
       customerName: order.customerName,
@@ -317,7 +317,7 @@ router.patch("/orders/:id/status", async (req, res): Promise<void> => {
       deliveryDate: String(order.deliveryDate).slice(0, 10),
       deliverySlot: order.deliverySlot,
       total: order.total,
-      status: parsed.data.status as "confirmed" | "cooking",
+      status: parsed.data.status as "payment_confirmed" | "cooking_in_progress",
     }).catch(() => {});
   }
 });

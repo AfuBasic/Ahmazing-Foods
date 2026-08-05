@@ -49,8 +49,11 @@ export default function AdminOrdersList() {
               <SelectContent>
                 <SelectItem value="all">All Statuses</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="confirmed">Confirmed</SelectItem>
-                <SelectItem value="cooking">Cooking</SelectItem>
+                <SelectItem value="payment_confirmed">Payment Confirmed</SelectItem>
+                <SelectItem value="cooking_in_progress">Cooking in Progress</SelectItem>
+                <SelectItem value="rider_on_the_way">Rider on the Way</SelectItem>
+                <SelectItem value="rider_waiting">Rider Waiting</SelectItem>
+                <SelectItem value="rider_heading_back">Rider Heading Back</SelectItem>
                 <SelectItem value="delivered">Delivered</SelectItem>
                 <SelectItem value="cancelled">Cancelled</SelectItem>
               </SelectContent>

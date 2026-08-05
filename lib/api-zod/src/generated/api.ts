@@ -72,7 +72,7 @@ export const GetMenuItemResponse = zod.object({
  * @summary List all orders (admin)
  */
 export const ListOrdersQueryParams = zod.object({
-  "status": zod.enum(['pending', 'confirmed', 'cooking', 'delivered', 'cancelled']).optional()
+  "status": zod.enum(['pending', 'payment_confirmed', 'cooking_in_progress', 'rider_on_the_way', 'rider_waiting', 'rider_heading_back', 'delivered', 'cancelled']).optional()
 })
 
 export const ListOrdersResponseItem = zod.object({
@@ -91,7 +91,7 @@ export const ListOrdersResponseItem = zod.object({
   "itemPrice": zod.number(),
   "rushFee": zod.number(),
   "total": zod.number(),
-  "status": zod.enum(['pending', 'confirmed', 'cooking', 'delivered', 'cancelled']),
+  "status": zod.enum(['pending', 'payment_confirmed', 'cooking_in_progress', 'rider_on_the_way', 'rider_waiting', 'rider_heading_back', 'delivered', 'cancelled']),
   "paystackRef": zod.string().nullish(),
   "notes": zod.string().nullish(),
   "createdAt": zod.coerce.date()
@@ -132,7 +132,7 @@ export const CreateOrderResponse = zod.object({
   "itemPrice": zod.number(),
   "rushFee": zod.number(),
   "total": zod.number(),
-  "status": zod.enum(['pending', 'confirmed', 'cooking', 'delivered', 'cancelled']),
+  "status": zod.enum(['pending', 'payment_confirmed', 'cooking_in_progress', 'rider_on_the_way', 'rider_waiting', 'rider_heading_back', 'delivered', 'cancelled']),
   "paystackRef": zod.string().nullish(),
   "notes": zod.string().nullish(),
   "createdAt": zod.coerce.date()
@@ -168,7 +168,7 @@ export const GetOrderSummaryResponse = zod.object({
   "itemPrice": zod.number(),
   "rushFee": zod.number(),
   "total": zod.number(),
-  "status": zod.enum(['pending', 'confirmed', 'cooking', 'delivered', 'cancelled']),
+  "status": zod.enum(['pending', 'payment_confirmed', 'cooking_in_progress', 'rider_on_the_way', 'rider_waiting', 'rider_heading_back', 'delivered', 'cancelled']),
   "paystackRef": zod.string().nullish(),
   "notes": zod.string().nullish(),
   "createdAt": zod.coerce.date()
@@ -214,7 +214,7 @@ export const GetOrderResponse = zod.object({
   "itemPrice": zod.number(),
   "rushFee": zod.number(),
   "total": zod.number(),
-  "status": zod.enum(['pending', 'confirmed', 'cooking', 'delivered', 'cancelled']),
+  "status": zod.enum(['pending', 'payment_confirmed', 'cooking_in_progress', 'rider_on_the_way', 'rider_waiting', 'rider_heading_back', 'delivered', 'cancelled']),
   "paystackRef": zod.string().nullish(),
   "notes": zod.string().nullish(),
   "createdAt": zod.coerce.date(),
@@ -230,7 +230,7 @@ export const UpdateOrderStatusParams = zod.object({
 })
 
 export const UpdateOrderStatusBody = zod.object({
-  "status": zod.enum(['pending', 'confirmed', 'cooking', 'delivered', 'cancelled'])
+  "status": zod.enum(['pending', 'payment_confirmed', 'cooking_in_progress', 'rider_on_the_way', 'rider_waiting', 'rider_heading_back', 'delivered', 'cancelled'])
 })
 
 export const UpdateOrderStatusResponse = zod.object({
@@ -249,7 +249,7 @@ export const UpdateOrderStatusResponse = zod.object({
   "itemPrice": zod.number(),
   "rushFee": zod.number(),
   "total": zod.number(),
-  "status": zod.enum(['pending', 'confirmed', 'cooking', 'delivered', 'cancelled']),
+  "status": zod.enum(['pending', 'payment_confirmed', 'cooking_in_progress', 'rider_on_the_way', 'rider_waiting', 'rider_heading_back', 'delivered', 'cancelled']),
   "paystackRef": zod.string().nullish(),
   "notes": zod.string().nullish(),
   "createdAt": zod.coerce.date()
