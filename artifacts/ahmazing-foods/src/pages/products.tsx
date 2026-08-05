@@ -12,6 +12,9 @@ interface Product {
   img: string;
 }
 
+// Seeds & Spices and Snacks are temporarily hidden — restore by removing the filter below
+const HIDDEN_SECTIONS = ["Seeds & Spices", "Snacks"];
+
 const groups: { heading: string; sub: string; products: Product[] }[] = [
   {
     heading: "Drinks & Wellness",
@@ -71,7 +74,7 @@ export default function ProductsPage() {
             Take a piece of<br />AHmazing home
           </h1>
           <p className="text-xl text-background/75 max-w-2xl leading-relaxed">
-            Cold-pressed drinks, seeds, spices, and homemade snacks — no MSG, no preservatives.
+            Cold-pressed drinks and wellness shots, brewed in small batches — no MSG, no preservatives.
             Tap <strong className="text-background">Order →</strong> on any item to go straight to the booking cart.
           </p>
         </div>
@@ -79,7 +82,7 @@ export default function ProductsPage() {
 
       {/* Product groups */}
       <div className="container mx-auto px-4 md:px-6 space-y-20">
-        {groups.map((group) => (
+        {groups.filter(g => !HIDDEN_SECTIONS.includes(g.heading)).map((group) => (
           <section key={group.heading}>
             <div className="mb-10">
               <h2 className="text-3xl font-bold font-display mb-2">{group.heading}</h2>
