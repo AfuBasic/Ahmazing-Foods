@@ -10,6 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatNaira } from "@/lib/format";
 
+const BASE = import.meta.env.BASE_URL;
+const asset = (p: string) => `${BASE}${p}`;
+
 // ── Types ────────────────────────────────────────────────────────────────────
 
 interface SpecialOption {
@@ -95,7 +98,7 @@ export default function WeekendSpecials() {
 
   // Fetch always-available breakfast plates
   const { data: menuData } = useListMenuItems({ category: "breakfast" });
-  const breakfastPlates = menuData?.items ?? [];
+  const breakfastPlates = menuData ?? [];
 
   // Countdown ticker
   useEffect(() => {
@@ -478,22 +481,39 @@ export default function WeekendSpecials() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {breakfastPlates.map((item) => (
-                <div key={item.id} className="bg-card border border-border rounded-2xl p-6">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-bold font-display text-lg">{item.name}</h3>
-                    <span className="text-primary font-bold text-sm whitespace-nowrap ml-2">
-                      from {formatNaira(Math.min(...item.sizes.map((s) => s.price)))}
-                    </span>
+                <div key={item.id} className="bg-card border border-border rounded-2xl overflow-hidden flex flex-col">
+                  {/* Photo */}
+                  <div className="aspect-video w-full overflow-hidden bg-muted">
+                    {item.imageUrl ? (
+                      <img
+                        src={asset(item.imageUrl)}
+                        alt={item.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground/40 text-xs">
+                        Photo coming soon
+                      </div>
+                    )}
                   </div>
-                  {item.description && (
-                    <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{item.description}</p>
-                  )}
-                  <div className="flex flex-wrap gap-1.5">
-                    {item.sizes.map((s) => (
-                      <span key={s.label} className="text-xs bg-muted px-2.5 py-1 rounded-full text-muted-foreground">
-                        {s.label} · {formatNaira(s.price)}
+                  {/* Body */}
+                  <div className="p-5 flex flex-col flex-1">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-bold font-display text-lg">{item.name}</h3>
+                      <span className="text-primary font-bold text-sm whitespace-nowrap ml-2">
+                        {formatNaira(Math.min(...item.sizes.map((s) => s.price)))}
                       </span>
-                    ))}
+                    </div>
+                    {item.description && (
+                      <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{item.description}</p>
+                    )}
+                    <div className="flex flex-wrap gap-1.5 mt-auto">
+                      {item.sizes.map((s) => (
+                        <span key={s.label} className="text-xs bg-muted px-2.5 py-1 rounded-full text-muted-foreground">
+                          {s.label} · {formatNaira(s.price)}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ))}
