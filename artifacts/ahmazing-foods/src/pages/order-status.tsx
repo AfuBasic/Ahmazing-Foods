@@ -10,19 +10,23 @@
 
 import { useEffect, useState, useRef } from "react";
 
-const WAIT_MS = 15 * 60 * 1000; // 15 minutes
-
 type Stage = "not-started" | "preparing" | "dispatched" | "counting" | "delivered" | "expired";
 
 function getUrlParams() {
   const p = new URLSearchParams(window.location.search);
   const start = p.get("start");
   const stage = p.get("stage");
-  const startTs = start ? parseInt(start, 10) : null;
-  return { startTs: startTs && !isNaN(startTs) ? startTs : null, stage };
+  const wait  = p.get("wait");
+  const startTs   = start ? parseInt(start, 10) : null;
+  const waitMins  = wait && !isNaN(Number(wait)) ? Number(wait) : 15;
+  return {
+    startTs: startTs && !isNaN(startTs) ? startTs : null,
+    stage,
+    waitMs: waitMins * 60 * 1000,
+  };
 }
 
-function fmt(ms: number): string {
+function fmtMs(ms: number): string {
   const secs = Math.max(0, Math.ceil(ms / 1000));
   const m = Math.floor(secs / 60);
   const s = secs % 60;
@@ -36,22 +40,22 @@ export default function OrderStatusPage() {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    const { startTs, stage: stageParam } = getUrlParams();
+    const { startTs, stage: stageParam, waitMs } = getUrlParams();
 
     if (startTs !== null) {
-      // Arrived — live countdown
+      // Arrived — live countdown (duration configurable via ?wait=N minutes)
       let intervalId: ReturnType<typeof setInterval>;
 
       function tick() {
         const elapsed = Date.now() - startTs!;
-        const remaining = WAIT_MS - elapsed;
+        const remaining = waitMs - elapsed;
         if (remaining <= 0) {
           setStage("expired");
           if (intervalId) clearInterval(intervalId);
           return;
         }
         setStage("counting");
-        setCountdown(fmt(remaining));
+        setCountdown(fmtMs(remaining));
         setUrgent(remaining <= 3 * 60 * 1000);
       }
 

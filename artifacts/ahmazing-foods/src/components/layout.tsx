@@ -15,6 +15,7 @@ const MEAL_LINKS = [
   { href: "/stews",            label: "Stews",              desc: "Classic stews for families and events" },
   { href: "/healthy-meals",    label: "Healthy Meals",      desc: "Lower sugar, lower sodium — full Nigerian flavour" },
   { href: "/trays-platters",   label: "Trays & Platters",   desc: "Styled food trays for events and gifting" },
+  { href: "/drink-crates",     label: "Wellness Crates",    desc: "Drinks ordered by health goal, by the crate" },
   { href: "/weekend-specials", label: "Weekend Specials",   desc: "Vote for the dish you want this weekend" },
 ];
 
@@ -280,7 +281,8 @@ function SiteFooter() {
               <li><Link href="/soups"            className="hover:text-primary transition-colors">Rich Soups</Link></li>
               <li><Link href="/stews"            className="hover:text-primary transition-colors">Hearty Stews</Link></li>
               <li><Link href="/products"         className="hover:text-primary transition-colors">Products</Link></li>
-              <li><Link href="/trays-platters"  className="hover:text-primary transition-colors">Trays & Platters</Link></li>
+              <li><Link href="/trays-platters"   className="hover:text-primary transition-colors">Trays & Platters</Link></li>
+              <li><Link href="/drink-crates"     className="hover:text-primary transition-colors">Wellness Crates</Link></li>
               <li><Link href="/healthy-meals"    className="hover:text-primary transition-colors">Healthy Meals</Link></li>
               <li><Link href="/blog"             className="hover:text-primary transition-colors">Blog</Link></li>
               <li><Link href="/catering"         className="hover:text-primary transition-colors">Catering</Link></li>
@@ -303,6 +305,9 @@ function SiteFooter() {
               </li>
               <li className="pt-4">
                 <Link href="/admin" className="text-xs opacity-50 hover:opacity-100 transition-opacity">Admin Login</Link>
+              </li>
+              <li>
+                <Link href="/partners" className="text-xs opacity-50 hover:opacity-100 transition-opacity">Partners & Investors</Link>
               </li>
             </ul>
           </div>

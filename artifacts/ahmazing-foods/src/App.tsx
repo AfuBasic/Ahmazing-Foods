@@ -24,6 +24,8 @@ import AdminOrdersList from './pages/admin/orders';
 import AdminOrderDetail from './pages/admin/order-detail';
 import OrderStatusPage from './pages/order-status';
 import StaffOrderLinksPage from './pages/staff-order-links';
+import DrinkCratesPage from './pages/drink-crates';
+import PartnersPage from './pages/partners';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -90,6 +92,8 @@ function Router() {
               <Route path="/blog/nigerian-soups-less-oil" component={SoupLessOilPage} />
               <Route path="/blog/heart-healthy-nigerian-kitchen" component={HeartHealthyPage} />
               <Route path="/trays-platters" component={TraysAndPlattersPage} />
+              <Route path="/drink-crates" component={DrinkCratesPage} />
+              <Route path="/partners" component={PartnersPage} />
               <Route path="/catering" component={CateringPage} />
               <Route path="/book" component={BookPage} />
               <Route path="/booking-confirmed/:id" component={BookingConfirmedPage} />
