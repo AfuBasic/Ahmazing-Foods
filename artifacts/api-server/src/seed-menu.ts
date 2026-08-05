@@ -143,25 +143,25 @@ const items = [
   {
     category: "breakfast",
     name: "Classic Nigerian",
-    description: "Serves ~2. Akara (10pcs), Pap (1L bowl), 2 Boiled Eggs, Fried Plantain.",
+    description: "Serves 2–3. Akara, pap, boiled eggs, fried plantain, and more.",
     sizes: single(22000), proteins: [], imageUrl: "assets/breakfast/classic-nigerian.png",
   },
   {
     category: "breakfast",
     name: "Hearty Plate",
-    description: "Serves ~2. Yam (5 slices), Plantain (5 slices), Egg Stew (1L container), Sausages, Side Salad, choice of Orange Juice or Carrot Juice.",
+    description: "Serves 2–3. Yam, plantain, egg stew, sausages, side salad, and more.",
     sizes: single(22000), proteins: [], imageUrl: "assets/breakfast/hearty-plate.png",
   },
   {
     category: "breakfast",
     name: "Sweet Start",
-    description: "Serves ~2. Oats (1L bowl), Fresh Fruit Bowl, 1 Boiled Egg, choice of Orange Juice or Carrot Juice.",
+    description: "Serves 2–3. Oats, fresh fruit bowl, boiled egg, and more.",
     sizes: single(25000), proteins: [], imageUrl: "assets/breakfast/sweet-start.png",
   },
   {
     category: "breakfast",
     name: "Protein Power",
-    description: "Serves ~2. Moin-moin (2pcs), Akara (10pcs), Pap (1L bowl), 2 Boiled Eggs, Fried Plantain.",
+    description: "Serves 2–3. Moin-moin, akara, pap, boiled eggs, fried plantain, and more.",
     sizes: single(25000), proteins: [], imageUrl: "assets/breakfast/protein-power.png",
   },
 
