@@ -17,16 +17,42 @@ const groups: { heading: string; sub: string; products: Product[] }[] = [
     heading: "Drinks & Wellness",
     sub: "Cold-pressed and brewed in small batches. All 500ml.",
     products: [
-      { name: "Zobo Drink",              size: "Hibiscus infusion · 500ml",        price: "₦2,000", img: "zobo.jpg" },
-      { name: "Yogurt Drink",            size: "Probiotic · 500ml",                price: "₦2,800", img: "yoghurt.jpg" },
-      { name: "Ginger Immune Booster",   size: "Ginger · Lemon · Honey · 500ml",  price: "₦2,000", img: "ginger_immune_booster.jpg" },
-      { name: "Turmeric Immune Booster", size: "Turmeric · Ginger · 500ml",       price: "₦2,000", img: "Turmeric.jpg" },
-      { name: "Pineapple Ginger Drink",  size: "500ml",                            price: "₦2,500", img: "pineapple_ginger_lemon.jpg" },
-      { name: "Tiger Nut Milk",          size: "Plant-based · 500ml",              price: "₦2,500", img: "tigernut.jpg" },
-      { name: "Kale Cleanser",           size: "Kale · Cucumber · Apple · 500ml", price: "₦2,200", img: "kale.jpg" },
-      { name: "Lemon Honey Cleanser",    size: "Lemon · Honey · Cayenne · 500ml", price: "₦3,000", img: "lemon__honey.jpg" },
-      { name: "Orange Juice",            size: "100% natural · 500ml",            price: "₦3,000", img: "orange.jpg" },
-      { name: "Carrot Juice",            size: "100% carrot juice · 500ml",       price: "₦3,000", img: "carrot.jpg" },
+      { name: "Zobo Drink",              size: "Hibiscus infusion · 500ml",        price: "₦2,900", img: "products/zobo.jpg" },
+      { name: "Yogurt Drink",            size: "Probiotic · 500ml",                price: "₦3,300", img: "products/yoghurt.jpg" },
+      { name: "Ginger Immune Booster",   size: "Ginger · Lemon · Honey · 500ml",  price: "₦3,200", img: "products/ginger_immune_booster.jpg" },
+      { name: "Turmeric Immune Booster", size: "Turmeric · Ginger · 500ml",       price: "₦3,200", img: "products/Turmeric.jpg" },
+      { name: "Pineapple Ginger Drink",  size: "500ml",                            price: "₦2,900", img: "products/pineapple_ginger_lemon.jpg" },
+      { name: "Tiger Nut Milk",          size: "Plant-based · 500ml",              price: "₦3,300", img: "products/tigernut.jpg" },
+      { name: "Kale Cleanser",           size: "Kale · Cucumber · Apple · 500ml", price: "₦3,700", img: "products/kale.jpg" },
+      { name: "Lemon Honey Cleanser",    size: "Lemon · Honey · Cayenne · 500ml", price: "₦3,100", img: "products/lemon__honey.jpg" },
+      { name: "Orange Juice",            size: "100% natural · 500ml",            price: "₦2,900", img: "products/orange.jpg" },
+      { name: "Carrot Juice",            size: "100% carrot juice · 500ml",       price: "₦3,300", img: "products/carrot.jpg" },
+    ],
+  },
+  {
+    heading: "Seeds & Spices",
+    sub: "Sourced fresh and packed in small quantities. Great for home cooking.",
+    products: [
+      { name: "Chili Pepper",       size: "Dried · ground fine",              price: "₦2,000", img: "" },
+      { name: "Cameroon Pepper",    size: "Bold heat · coarsely ground",      price: "₦2,500", img: "" },
+      { name: "Suya Mix",           size: "Spice blend for suya & grilling",  price: "₦2,500", img: "" },
+      { name: "Cinnamon Powder",    size: "Ground cinnamon · warming spice",  price: "₦2,000", img: "" },
+      { name: "Chia Seeds",         size: "High-fibre · packed with omega-3", price: "₦3,500", img: "" },
+      { name: "Melon Seed",         size: "Egusi · sun-dried whole",          price: "₦3,000", img: "" },
+    ],
+  },
+  {
+    heading: "Snacks",
+    sub: "Made in-house or sourced locally. Nothing artificial.",
+    products: [
+      { name: "Cashew Nuts",                       size: "Roasted · lightly salted",             price: "₦2,800", img: "" },
+      { name: "Roasted Peanuts",                   size: "Classic roasted groundnuts",            price: "₦1,800", img: "" },
+      { name: "Coated Peanuts",                    size: "Crunchy peanut coating",                price: "₦2,000", img: "" },
+      { name: "Chin Chin",                         size: "Classic Nigerian biscuit snack",        price: "₦2,800", img: "" },
+      { name: "Corn Sticks",                       size: "Light & crunchy corn puffs",            price: "₦4,000", img: "" },
+      { name: "Plantain Chips — Toasted & Crunchy", size: "Unripe plantain · lightly salted",    price: "₦2,200", img: "" },
+      { name: "Plantain Chips — Ripe & Spicy",     size: "Ripe plantain · spiced",               price: "₦2,200", img: "" },
+      { name: "Yogurt Mix — Seed & Nut Blend",     size: "Mix-in for yogurt · nuts & seeds",     price: "₦2,800", img: "" },
     ],
   },
 ];
@@ -45,7 +71,7 @@ export default function ProductsPage() {
             Take a piece of<br />AHmazing home
           </h1>
           <p className="text-xl text-background/75 max-w-2xl leading-relaxed">
-            Cold-pressed drinks and wellness shots — brewed fresh in small batches, no MSG, no preservatives.
+            Cold-pressed drinks, seeds, spices, and homemade snacks — no MSG, no preservatives.
             Tap <strong className="text-background">Order →</strong> on any item to go straight to the booking cart.
           </p>
         </div>
@@ -70,7 +96,7 @@ export default function ProductsPage() {
                   <div className="aspect-square bg-muted overflow-hidden">
                     {p.img ? (
                       <WatermarkedImage
-                        src={asset(`products/${p.img}`)}
+                        src={asset(p.img)}
                         alt={p.name}
                         imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />

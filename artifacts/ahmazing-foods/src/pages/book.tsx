@@ -226,9 +226,13 @@ export default function BookPage() {
     () => new Set(cart.filter((i) => isFoodCat(i.category)).map((i) => i.menuItemId)),
     [cart]
   );
-  // Rush fee = same-day delivery only. Next-day (tomorrow+) is never a rush,
-  // regardless of how many hours away it is.
-  const todayStr = format(new Date(), "yyyy-MM-dd");
+  // Same-day delivery is ONLY available when ordering between 6 AM and 9 AM.
+  // After 9 AM, today's date is removed from the date picker entirely.
+  const now = new Date();
+  const todayStr = format(now, "yyyy-MM-dd");
+  const currentHour = now.getHours();
+  const sameDayAvailable = currentHour >= 6 && currentHour < 9;
+
   const isRushDay = useMemo(
     () => !!deliveryDate && deliveryDate === todayStr,
     [deliveryDate, todayStr]
@@ -261,10 +265,12 @@ export default function BookPage() {
     return true;
   }, [configItem, configSize, configItemId, isFood, distinctFoodIds]);
 
-  const availableDates = useMemo(
-    () => Array.from({ length: 14 }).map((_, i) => format(addDays(new Date(), i), "yyyy-MM-dd")),
-    []
-  );
+  const availableDates = useMemo(() => {
+    // Same-day (index 0 = today) only available when ordering 6–9 AM.
+    // Outside that window, start from tomorrow.
+    const startOffset = sameDayAvailable ? 0 : 1;
+    return Array.from({ length: 14 }).map((_, i) => format(addDays(new Date(), startOffset + i), "yyyy-MM-dd"));
+  }, [sameDayAvailable]);
 
   // ── RESET configurator when dish changes ─────────────────────────────────
   useEffect(() => {

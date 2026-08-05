@@ -10,18 +10,19 @@ const LOGO_SRC = `${import.meta.env.BASE_URL}assets/logo.png`;
 
 // Meal sub-pages grouped under "Our Meals" dropdown
 const MEAL_LINKS = [
-  { href: "/breakfast",       label: "Breakfast",        desc: "Combo plates cooked fresh to order" },
-  { href: "/soups",           label: "Soups",            desc: "Nigerian soups by the litre or cooler" },
-  { href: "/stews",           label: "Stews",            desc: "Classic stews for families and events" },
-  { href: "/healthy-meals",   label: "Healthy Meals",    desc: "Lower sugar, lower sodium — full Nigerian flavour" },
-  { href: "/trays-platters",  label: "Trays & Platters", desc: "Styled food trays for events and gifting" },
+  { href: "/breakfast",        label: "Breakfast",          desc: "Combo plates cooked fresh to order" },
+  { href: "/soups",            label: "Soups",              desc: "Nigerian soups by the litre or cooler" },
+  { href: "/stews",            label: "Stews",              desc: "Classic stews for families and events" },
+  { href: "/healthy-meals",    label: "Healthy Meals",      desc: "Lower sugar, lower sodium — full Nigerian flavour" },
+  { href: "/trays-platters",   label: "Trays & Platters",   desc: "Styled food trays for events and gifting" },
+  { href: "/weekend-specials", label: "Weekend Specials",   desc: "Vote for the dish you want this weekend" },
 ];
 
 const MEAL_PATHS = MEAL_LINKS.map((l) => l.href);
 
 // Top-level nav links (beside Our Meals)
 const TOP_LINKS = [
-  { href: "/products",  label: "Drinks" },
+  { href: "/products",  label: "Products" },
   { href: "/blog",      label: "Blog" },
   { href: "/catering",  label: "Catering" },
 ];
@@ -278,7 +279,7 @@ function SiteFooter() {
               <li><Link href="/breakfast"         className="hover:text-primary transition-colors">Breakfast</Link></li>
               <li><Link href="/soups"            className="hover:text-primary transition-colors">Rich Soups</Link></li>
               <li><Link href="/stews"            className="hover:text-primary transition-colors">Hearty Stews</Link></li>
-              <li><Link href="/products"         className="hover:text-primary transition-colors">Drinks</Link></li>
+              <li><Link href="/products"         className="hover:text-primary transition-colors">Products</Link></li>
               <li><Link href="/trays-platters"  className="hover:text-primary transition-colors">Trays & Platters</Link></li>
               <li><Link href="/healthy-meals"    className="hover:text-primary transition-colors">Healthy Meals</Link></li>
               <li><Link href="/blog"             className="hover:text-primary transition-colors">Blog</Link></li>

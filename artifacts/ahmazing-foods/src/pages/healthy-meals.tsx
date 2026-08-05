@@ -195,19 +195,11 @@ export default function HealthyMealsPage() {
   const planTotal      = selectedPlan.rate * mealsPerDay * daysCount;
   const firstDropValue = selectedPlan.rate * mealsPerDay * Math.min(3, daysCount);
 
-  const rushInfo = useMemo(() => {
-    if (!firstDate || !firstTime) return { isRush: false, blocked: false };
-    const deliveryDt = new Date(`${firstDate}T${firstTime}`);
-    const now        = new Date();
-    const hoursOut   = (deliveryDt.getTime() - now.getTime()) / 3600000;
-    if (hoursOut < 12) return { isRush: false, blocked: true };
-    if (hoursOut < 24) return { isRush: true,  blocked: false };
-    return { isRush: false, blocked: false };
-  }, [firstDate, firstTime]);
-
-  const rushFee   = rushInfo.isRush ? Math.min(20000, Math.round(firstDropValue * 0.5)) : 0;
-  const grandTotal = planTotal + rushFee;
-  const todayStr   = new Date().toISOString().split("T")[0];
+  // Healthy Meals require a minimum of 24 hours' notice — no same-day or rush options.
+  // The date picker starts from tomorrow; the time picker is informational only (for scheduling).
+  const now         = new Date();
+  const grandTotal  = planTotal;
+  const tomorrowStr = new Date(now.getTime() + 86400000).toISOString().split("T")[0];
 
   const waHref = useMemo(() => {
     const lines: string[] = [
@@ -216,14 +208,12 @@ export default function HealthyMealsPage() {
       `Meals per day: ${mealsPerDay}`,
       `Plan duration: ${daysCount} day${daysCount > 1 ? "s" : ""}`,
       `Rate: ₦${selectedPlan.rate.toLocaleString()}/meal`,
-      `Plan subtotal: ₦${planTotal.toLocaleString()}`,
+      `Total: ₦${grandTotal.toLocaleString()}`,
     ];
     if (firstDate) lines.push(`First delivery: ${firstDate}${firstTime ? " at " + firstTime : ""}`);
-    if (rushFee > 0) lines.push(`Rush fee (first drop only): ₦${rushFee.toLocaleString()}`);
-    lines.push(`Grand total: ₦${grandTotal.toLocaleString()}`);
     lines.push("", "Payment details:", "Account Name: Ahmazing Cuisine", "Bank: FCMB", "Account Number: 1009414545");
     return `https://wa.me/2348105506052?text=${encodeURIComponent(lines.join("\n"))}`;
-  }, [selectedPlan, mealsPerDay, daysCount, planTotal, firstDate, firstTime, rushFee, grandTotal]);
+  }, [selectedPlan, mealsPerDay, daysCount, planTotal, firstDate, firstTime, grandTotal]);
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -373,7 +363,7 @@ export default function HealthyMealsPage() {
                   <input
                     type="date"
                     value={firstDate}
-                    min={todayStr}
+                    min={tomorrowStr}
                     onChange={(e) => setFirstDate(e.target.value)}
                     className="h-11 rounded-xl border-2 border-border px-3 focus:border-primary focus:outline-none text-sm w-full"
                   />
@@ -386,21 +376,12 @@ export default function HealthyMealsPage() {
                     className="h-11 rounded-xl border-2 border-border px-3 focus:border-primary focus:outline-none text-sm w-full"
                   />
                 </div>
-                {rushInfo.blocked && (
-                  <p className="text-xs font-bold text-red-600 mt-1.5">
-                    ⚠ Less than 12 hours' notice — please choose a later time or date.
-                  </p>
+                {firstDate && firstTime && (
+                  <p className="text-xs text-emerald-700 font-medium mt-1.5">✓ First delivery scheduled — we'll confirm within 24 hours.</p>
                 )}
-                {rushInfo.isRush && (
-                  <p className="text-xs font-bold mt-1.5" style={{ color: "#D9A441" }}>
-                    Rush fee applies to first drop (12–24 hrs notice): ₦{rushFee.toLocaleString()}
-                    {rushFee < 20000 ? " (capped at 50% of first-drop value)" : " flat"}.
-                    Rest of plan unaffected.
-                  </p>
-                )}
-                {!rushInfo.blocked && !rushInfo.isRush && firstDate && firstTime && (
-                  <p className="text-xs text-emerald-700 font-medium mt-1.5">✓ No rush fee — more than 24 hours' notice.</p>
-                )}
+                <p className="text-[11px] text-muted-foreground mt-1.5">
+                  Healthy Meals require at least 24 hours' notice — no same-day option.
+                </p>
               </div>
             </div>
 
@@ -422,12 +403,6 @@ export default function HealthyMealsPage() {
                     </span>
                     <span className="font-medium text-foreground">₦{planTotal.toLocaleString()}</span>
                   </div>
-                  {rushFee > 0 && (
-                    <div className="flex justify-between text-amber-700">
-                      <span>Rush fee (first drop only)</span>
-                      <span className="font-bold">₦{rushFee.toLocaleString()}</span>
-                    </div>
-                  )}
                 </div>
                 <div className="flex justify-between items-center pt-4 border-t border-dashed border-border">
                   <span className="font-bold">Total</span>
@@ -441,7 +416,7 @@ export default function HealthyMealsPage() {
                 href={waHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`flex items-center justify-center w-full py-3.5 rounded-2xl font-bold text-base text-white transition-opacity hover:opacity-90 ${rushInfo.blocked ? "opacity-40 pointer-events-none" : ""}`}
+                className="flex items-center justify-center w-full py-3.5 rounded-2xl font-bold text-base text-white transition-opacity hover:opacity-90"
                 style={{ background: BRAND_GREEN }}
               >
                 Order This Plan via WhatsApp
