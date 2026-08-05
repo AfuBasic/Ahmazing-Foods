@@ -27,7 +27,7 @@ const STATIC_PRODUCTS: Record<string, number> = {
   // Seeds & Spices
   "Chili Pepper": 2000,
   "Cameroon Pepper": 2500,
-  "Suya Mix": 2500,
+  "Soya Mix": 2500,
   "Cinnamon Powder": 2000,
   "Chia Seeds": 3500,
   "Melon Seed": 3000,
@@ -58,7 +58,8 @@ const MAX_FOOD_MEALS  = 5;          // soups / stews / breakfast limit
 const MAX_PROTEIN_QTY = 10;
 const MAX_ITEM_QTY    = 20;
 
-const DELIVERY_SLOTS = ["10am–12pm", "12–2pm", "2–4pm", "4–6pm"];
+const DELIVERY_SLOTS = ["9am–11am", "11am–1pm", "1pm–3pm", "3pm–5pm", "5pm–7pm", "7pm–9pm"];
+const SAME_DAY_SLOTS = ["4:00–6:00 PM", "6:00–8:00 PM"];
 const PEPPER_LABELS  = ["Low 🌶️", "Medium 🌶️🌶️", "Really Peppery 🌶️🌶️🌶️"] as const;
 const PEPPER_COLORS  = ["text-emerald-600", "text-amber-600", "text-red-600"] as const;
 
@@ -933,16 +934,40 @@ export default function BookPage() {
                       <FormField control={form.control} name="deliverySlot" render={({ field }) => (
                         <FormItem>
                           <FormLabel>Delivery Window</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
+                          {isRushDay ? (
+                            // Same-day orders: 2 fixed windows only
                             <FormControl>
-                              <SelectTrigger className="h-11"><SelectValue placeholder="Pick a time" /></SelectTrigger>
+                              <div className="flex gap-3">
+                                {SAME_DAY_SLOTS.map((s) => (
+                                  <button
+                                    key={s}
+                                    type="button"
+                                    onClick={() => field.onChange(s)}
+                                    className="flex-1 rounded-xl border-2 py-3 text-sm font-bold transition-colors"
+                                    style={{
+                                      borderColor: field.value === s ? "#0F9E0F" : "#e5e7eb",
+                                      background:  field.value === s ? "#EFF7EC" : "#fff",
+                                      color:       field.value === s ? "#0F9E0F" : "#221F1F",
+                                    }}
+                                  >
+                                    {s}
+                                  </button>
+                                ))}
+                              </div>
                             </FormControl>
-                            <SelectContent>
-                              {DELIVERY_SLOTS.map((s) => (
-                                <SelectItem key={s} value={s}>{s}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          ) : (
+                            // Normal future-date slot picker
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="h-11"><SelectValue placeholder="Pick a time" /></SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {DELIVERY_SLOTS.map((s) => (
+                                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          )}
                           <FormMessage />
                         </FormItem>
                       )} />

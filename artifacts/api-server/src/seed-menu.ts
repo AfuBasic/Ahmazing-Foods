@@ -23,21 +23,20 @@ const soupProteins = [
 // ── SIZE HELPERS ─────────────────────────────────────────────────────────────
 // price: 0 = "Contact Us" sentinel — rendered as a quote-request link in the UI
 const standardSoupSizes = [
-  { label: "2 Litres",        price: 37000 },
-  { label: "3 Litres",        price: 41000 },
-  { label: "5 Litres",        price: 49000 },
-  { label: "Cooler — Small",  price: 0 },
-  { label: "Cooler — Medium", price: 0 },
+  { label: "2 Litres (Serves ~3)", price: 32000 },
+  { label: "3 Litres (Serves ~5)", price: 36000 },
+  { label: "5 Litres (Serves ~7)", price: 43000 },
+  { label: "Cooler — Small",       price: 0 },
+  { label: "Cooler — Medium",      price: 0 },
 ];
 const seafoodOkroSizes = [
-  { label: "5 Litres",        price: 64000 },
+  { label: "5 Litres",        price: 56000 },
   { label: "Cooler — Small",  price: 0 },
   { label: "Cooler — Medium", price: 0 },
 ];
 const stewSizes = (m: number, l: number) => [
-  { label: "3 Litres — Medium (serves 4–6)",   price: m     },
-  { label: "5 Litres — Large (serves 8–10)",   price: l     },
-  { label: "Extra Large (serves 12–20)",        price: 85000 },
+  { label: "3 Litres (Serves ~5)", price: m },
+  { label: "5 Litres (Serves ~8)", price: l },
 ];
 const single = (price: number) => [{ label: "Standard", price }];
 
@@ -111,31 +110,31 @@ const items = [
     category: "stews",
     name: "Classic Tomato Stew",
     description: "A rich, slow-cooked tomato base stew — the backbone of Nigerian cooking.",
-    sizes: stewSizes(47000, 54000), proteins: [], imageUrl: "assets/stews/classic-tomato-stew.webp",
+    sizes: stewSizes(37000, 45000), proteins: [], imageUrl: "assets/stews/classic-tomato-stew.webp",
   },
   {
     category: "stews",
     name: "Ayamase (Ofada Stew)",
     description: "Spicy green pepper stew with assorted offals — pairs perfectly with ofada rice.",
-    sizes: stewSizes(49000, 59000), proteins: [], imageUrl: "assets/stews/ayamase-stew.jpg",
+    sizes: stewSizes(40000, 49000), proteins: [], imageUrl: "assets/stews/ayamase-stew.jpg",
   },
   {
     category: "stews",
     name: "Peppered Beef Stew",
     description: "Tender chunks of beef in a bold pepper stew with caramelised onions.",
-    sizes: stewSizes(47000, 54000), proteins: [], imageUrl: "assets/stews/peppered-beef-stew.jpg",
+    sizes: stewSizes(37000, 45000), proteins: [], imageUrl: "assets/stews/peppered-beef-stew.jpg",
   },
   {
     category: "stews",
     name: "Peppered Chicken Stew",
     description: "Succulent chicken pieces simmered in a spiced tomato and pepper stew.",
-    sizes: stewSizes(47000, 54000), proteins: [], imageUrl: "assets/stews/peppered-chicken-stew.jpg",
+    sizes: stewSizes(37000, 45000), proteins: [], imageUrl: "assets/stews/peppered-chicken-stew.jpg",
   },
   {
     category: "stews",
     name: "Peppered Turkey Stew",
     description: "Juicy turkey pieces slow-cooked in a bold, well-spiced pepper stew.",
-    sizes: stewSizes(49000, 59000), proteins: [], imageUrl: "assets/stews/peppered-turkey-stew.jpg",
+    sizes: stewSizes(40000, 49000), proteins: [], imageUrl: "assets/stews/peppered-turkey-stew.jpg",
   },
 
   // ════════════════════════════════════════════════════════════════════════════
@@ -144,26 +143,26 @@ const items = [
   {
     category: "breakfast",
     name: "Classic Nigerian",
-    description: "Serves ~2. Akara (10pcs), Pap (1L), 2 Boiled Eggs, Fried Plantain, Grilled Shrimp (6–8pcs), Smoked Fish Flakes, Avocado Slices (2–3), Pineapple Ginger Drink & Zobo Drink, Nestle Pure Life Water (2), Pepper (Shombo & Ata Rodo), Honey. Contains fish.",
-    sizes: single(27000), proteins: [], imageUrl: "assets/breakfast/classic-nigerian.png",
+    description: "Serves ~2. Akara (10pcs), Pap (1L bowl), 2 Boiled Eggs, Fried Plantain.",
+    sizes: single(22000), proteins: [], imageUrl: "assets/breakfast/classic-nigerian.png",
   },
   {
     category: "breakfast",
     name: "Hearty Plate",
-    description: "Serves ~2. Yam (8 slices), Plantain (5 slices), Egg Stew (1L), Sausages (8pcs), Grilled Shrimp Skewer (1), Smoked Turkey Slices (7pcs), Avocado Slices (2–3), Orange Juice & Carrot Juice, Nestle Pure Life Water (2).",
-    sizes: single(28000), proteins: [], imageUrl: "assets/breakfast/hearty-plate.png",
+    description: "Serves ~2. Yam (5 slices), Plantain (5 slices), Egg Stew (1L container), Sausages, Side Salad, choice of Orange Juice or Carrot Juice.",
+    sizes: single(22000), proteins: [], imageUrl: "assets/breakfast/hearty-plate.png",
   },
   {
     category: "breakfast",
     name: "Sweet Start",
-    description: "Serves ~2. Fresh Fruit Bowl (Pineapple, Watermelon, Grapes, Mango, Blueberries, Strawberries), Oats with Milk (500ml), Berry Blast Smoothie, Kale Drink (500ml), Greek Yogurt Parfait with Granola & Honey, Toasted Coconut Flakes or Mixed Nuts, Peak Milk (170g). Contains nuts.",
+    description: "Serves ~2. Oats (1L bowl), Fresh Fruit Bowl, 1 Boiled Egg, choice of Orange Juice or Carrot Juice.",
     sizes: single(25000), proteins: [], imageUrl: "assets/breakfast/sweet-start.png",
   },
   {
     category: "breakfast",
     name: "Protein Power",
-    description: "Serves 3–4. Eggs (2pcs), Turkey Bacon (6 slices), Chicken Sausages (6pcs), Boiled Plantain (8pcs), Roasted Potatoes, Baked Beans (150g), Sliced Avocado (2–3), Grilled Shrimp Skewer (1), Smoked Turkey Slices (7pcs), Whole Wheat Bread (1 loaf), Carrot Juice & Lemon Honey Cleanser, Nestle Pure Life Water (2), Pepper (Shombo) (2), Honey. Contains nuts.",
-    sizes: single(32000), proteins: [], imageUrl: "assets/breakfast/protein-power.png",
+    description: "Serves ~2. Moin-moin (2pcs), Akara (10pcs), Pap (1L bowl), 2 Boiled Eggs, Fried Plantain.",
+    sizes: single(25000), proteins: [], imageUrl: "assets/breakfast/protein-power.png",
   },
 
   // ════════════════════════════════════════════════════════════════════════════
