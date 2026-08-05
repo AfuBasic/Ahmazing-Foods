@@ -85,6 +85,17 @@ function calcRushFee(isRush: boolean, n: number) {
   return (RUSH_FEE_RATES[c] ?? 10000) * c;
 }
 
+// ── DELIVERY ZONES ────────────────────────────────────────────────────────────
+const DELIVERY_ZONES = [
+  { id: "t1", tier: 1, label: "Tier 1 — Lekki, Ajah, VGC, Chevron, Igbo-Efon, VI & Ikoyi",          fee: 4500,  quote: false, confirmed: true  },
+  { id: "t2", tier: 2, label: "Tier 2 — Yaba, Surulere, Lagos Island, Marina & Apapa",                fee: 8900,  quote: false, confirmed: false },
+  { id: "t3", tier: 3, label: "Tier 3 — Ikeja, Maryland, Gbagada, Anthony & Ojota",                   fee: 14900, quote: false, confirmed: true  },
+  { id: "t4", tier: 4, label: "Tier 4 — Festac, Oshodi, Isolo, Mushin, Amuwo-Odofin, Alimosho & Agege", fee: 15500, quote: false, confirmed: true  },
+  { id: "t5", tier: 5, label: "Tier 5 — Ogombo, Abraham Adesanya Estate & Lakowe",                    fee: 8900,  quote: false, confirmed: true  },
+  { id: "t6", tier: 6, label: "Tier 6 — Ikorodu, Badagry, Epe & far Ibeju-Lekki",                   fee: null,  quote: true,  confirmed: true  },
+] as const;
+type DeliveryZoneId = typeof DELIVERY_ZONES[number]["id"];
+
 // ── TYPES ────────────────────────────────────────────────────────────────────
 interface SelProtein { name: string; qty: number; extraCost: number; }
 
@@ -179,6 +190,7 @@ export default function BookPage() {
   );
   const createOrder = useCreateOrder();
   const [hasAltRecipient, setHasAltRecipient] = useState(false);
+  const [deliveryZone,    setDeliveryZone]    = useState<DeliveryZoneId | "">("");
 
   // ── CART ────────────────────────────────────────────────────────────────────
   const [cart, setCart]                   = useState<CartItem[]>([]);
@@ -245,8 +257,10 @@ export default function BookPage() {
 
   // Sunday = no orders (rest day). Deliveries can still happen on Sunday.
   const isSundayToday = new Date().getDay() === 0;
-  const cartTotal  = useMemo(() => cart.reduce((s, i) => s + i.price, 0), [cart]);
-  const grandTotal = cartTotal + rushFee;
+  const cartTotal    = useMemo(() => cart.reduce((s, i) => s + i.price, 0), [cart]);
+  const selectedZone = DELIVERY_ZONES.find((z) => z.id === deliveryZone);
+  const deliveryFee  = selectedZone && !selectedZone.quote ? (selectedZone.fee ?? 0) : 0;
+  const grandTotal   = cartTotal + rushFee + deliveryFee;
 
   // Live price for the item being configured
   const proteinSubtotal = useMemo(
@@ -416,6 +430,10 @@ export default function BookPage() {
       scrollTo(pepperRef.current, 0);
       return;
     }
+    if (!deliveryZone) {
+      toast({ variant: "destructive", title: "Delivery zone required", description: "Please select your delivery zone in Step 3." });
+      return;
+    }
     const primary    = cart[0];
     const cartSummary = cart.map((ci, i) => `${i + 1}. ${ci.menuItemName} — ${cartLineDesc(ci)} (${formatNaira(ci.price)})`).join("\n");
     const notesStr   = [
@@ -427,6 +445,9 @@ export default function BookPage() {
         : `Total: ${formatNaira(grandTotal)}`,
       `Customer: ${values.customerName} | ${values.customerPhone}${values.customerEmail ? ` | ${values.customerEmail}` : ""}`,
       `Delivery address: ${values.deliveryAddress}`,
+      selectedZone
+        ? `Delivery zone: ${selectedZone.label}${!selectedZone.quote ? ` — Fee: ${formatNaira(selectedZone.fee ?? 0)}${!selectedZone.confirmed ? " (price unconfirmed — to be verified on WhatsApp)" : ""}` : " — Fee: to be quoted via WhatsApp"}`
+        : "",
       hasAltRecipient && values.recipientName
         ? `Recipient (receiving order): ${values.recipientName}${values.recipientPhone ? ` | ${values.recipientPhone}` : ""}`
         : "",
@@ -464,7 +485,7 @@ export default function BookPage() {
   }
 
   const isSubmitting = createOrder.isPending;
-  const canSubmit    = cart.length > 0 && pepperTouched && !isSubmitting && !isSundayToday;
+  const canSubmit    = cart.length > 0 && pepperTouched && deliveryZone !== "" && !isSubmitting && !isSundayToday;
 
   // ── RENDER ────────────────────────────────────────────────────────────────
   return (
@@ -914,6 +935,68 @@ export default function BookPage() {
                         <FormMessage />
                       </FormItem>
                     )} />
+
+                    {/* ── Delivery Zone Picker ──────────────────────── */}
+                    <div className="space-y-2.5">
+                      <div>
+                        <p className="text-sm font-semibold mb-0.5">Delivery Zone <span className="text-destructive">*</span></p>
+                        <p className="text-xs text-muted-foreground">Choose the zone closest to your delivery address. Fee is added to your total.</p>
+                      </div>
+                      <div className="space-y-2">
+                        {DELIVERY_ZONES.map((zone) => {
+                          const selected = deliveryZone === zone.id;
+                          const [tierPart, areaPart] = zone.label.split(" — ");
+                          return (
+                            <button
+                              key={zone.id}
+                              type="button"
+                              onClick={() => setDeliveryZone(zone.id as DeliveryZoneId)}
+                              className={[
+                                "w-full flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl border-2 text-left transition-all",
+                                selected
+                                  ? "border-primary bg-primary/5"
+                                  : "border-border hover:border-primary/40 bg-background",
+                              ].join(" ")}
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <span className={[
+                                  "w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
+                                  selected ? "border-primary bg-primary" : "border-muted-foreground/30 bg-background",
+                                ].join(" ")}>
+                                  {selected && <Check className="w-3 h-3 text-white" />}
+                                </span>
+                                <span className="text-sm leading-snug min-w-0">
+                                  <span className="font-semibold">{tierPart}</span>
+                                  <span className="text-muted-foreground font-normal"> — {areaPart}</span>
+                                </span>
+                              </div>
+                              {zone.quote ? (
+                                <span className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2.5 py-1 shrink-0 whitespace-nowrap">
+                                  Quote
+                                </span>
+                              ) : (
+                                <span className={[
+                                  "text-sm font-bold shrink-0 tabular-nums whitespace-nowrap",
+                                  selected ? "text-primary" : "text-foreground",
+                                ].join(" ")}>
+                                  {formatNaira(zone.fee ?? 0)}
+                                  {!zone.confirmed && <span className="text-amber-500 font-normal text-xs ml-0.5">*</span>}
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {deliveryZone === "t6" && (
+                        <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-xs text-amber-700 leading-relaxed">
+                          <strong>Quote-only zone.</strong> After confirming your booking, share it with us on WhatsApp and we'll confirm the exact delivery fee for your area before cooking starts.
+                        </div>
+                      )}
+                      {deliveryZone === "t2" && (
+                        <p className="text-xs text-amber-600">* Tier 2 price is subject to re-confirmation via WhatsApp before cooking begins.</p>
+                      )}
+                    </div>
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <FormField control={form.control} name="deliveryDate" render={({ field }) => (
                         <FormItem>
@@ -1079,6 +1162,28 @@ export default function BookPage() {
                         {distinctFoodIds.size} meal{distinctFoodIds.size !== 1 ? "s" : ""} × {formatNaira(RUSH_FEE_RATES[Math.min(distinctFoodIds.size, 5)] ?? 10000)} each.
                         Booking for tomorrow? Switch the date to remove this fee.
                       </p>
+                    </div>
+                  )}
+
+                  {deliveryFee > 0 && (
+                    <div className="flex justify-between items-center text-sm border-t border-dashed border-border pt-3">
+                      <span className="text-muted-foreground">
+                        Delivery fee
+                        {selectedZone && !selectedZone.confirmed && <span className="text-amber-500 ml-0.5">*</span>}
+                      </span>
+                      <span className="font-semibold tabular-nums">{formatNaira(deliveryFee)}</span>
+                    </div>
+                  )}
+                  {deliveryZone === "t6" && (
+                    <div className="flex justify-between items-center text-sm border-t border-dashed border-border pt-3">
+                      <span className="text-muted-foreground">Delivery fee</span>
+                      <span className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">Quoted via WhatsApp</span>
+                    </div>
+                  )}
+                  {!deliveryZone && (
+                    <div className="flex justify-between items-center text-sm border-t border-dashed border-border pt-3">
+                      <span className="text-muted-foreground">Delivery fee</span>
+                      <span className="text-xs text-muted-foreground italic">Select zone →</span>
                     </div>
                   )}
 
