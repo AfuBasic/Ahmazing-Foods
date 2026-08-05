@@ -530,67 +530,102 @@ export default function HealthyMealsPage() {
           ))}
         </section>
 
-        {/* ── HEALTHY PICKS ───────────────────────────────────────────────── */}
+        {/* ── WELLNESS DRINKS ─────────────────────────────────────────────── */}
         <section>
           <div className="mb-8">
-            <h2 className="text-3xl font-bold font-display mb-2">Breakfast picks</h2>
-            <p className="text-muted-foreground">A good morning starts before you're hungry. These fill you up without the crash.</p>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full text-white" style={{ background: BRAND_GREEN }}>
+                Wellness Drinks
+              </span>
+            </div>
+            <h2 className="text-3xl font-bold font-display mb-2">Drinks ordered by what they do</h2>
+            <p className="text-muted-foreground max-w-2xl leading-relaxed">
+              Each category below is built around a specific, science-backed health goal. Choose the one that matches what your body needs — then order by the crate.
+            </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {breakfastPicks.map((p) => (
-              <div key={p.name} className="bg-card rounded-2xl border border-border p-6 flex flex-col gap-4">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "#0F9E0F22" }}>
-                  <Leaf className="w-5 h-5" style={{ color: BRAND_GREEN }} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[
+              {
+                title: "Heart & Blood Pressure Support",
+                goal: "Cardiovascular health",
+                img: `${BASE}assets/products/zobo.jpg`,
+                science: "Hibiscus (Zobo) anthocyanins shown to reduce systolic blood pressure by up to 7 mmHg in peer-reviewed clinical trials.",
+                drinks: "Zobo Drink",
+              },
+              {
+                title: "Digestive Comfort & Gut Health",
+                goal: "Gut support",
+                img: `${BASE}assets/products/yoghurt.jpg`,
+                science: "Probiotic Lactobacillus strains restore gut microbiome balance. Ginger's gingerols reduce intestinal inflammation and nausea.",
+                drinks: "Yogurt Drink · Pineapple Ginger Drink",
+              },
+              {
+                title: "Immunity & Defense",
+                goal: "Immune support",
+                img: `${BASE}assets/products/ginger_immune_booster.jpg`,
+                science: "Curcumin (turmeric) and gingerols activate immune cell production. Black pepper in our Turmeric Booster increases curcumin absorption by up to 2000%.",
+                drinks: "Ginger Immune Booster · Turmeric Immune Booster",
+              },
+              {
+                title: "Detox & Cleanse",
+                goal: "Liver & gut cleanse",
+                img: `${BASE}assets/products/kale.jpg`,
+                science: "Kale's sulforaphane activates liver phase II detox enzymes. Lemon flavonoids support phase I — a complementary, evidence-based cleansing pairing.",
+                drinks: "Kale Cleanser · Lemon Honey Cleanser",
+              },
+              {
+                title: "Weight Management & Fullness",
+                goal: "Appetite management",
+                img: `${BASE}assets/products/tigernut.jpg`,
+                science: "Tiger nut's resistant starch slows digestion and acts as a prebiotic — clinically linked to reduced appetite and lower glucose spikes after meals.",
+                drinks: "Tiger Nut Milk",
+              },
+              {
+                title: "Skin, Eyes & Antioxidant Glow",
+                goal: "Skin & eye health",
+                img: `${BASE}assets/products/carrot.jpg`,
+                science: "Carrot beta-carotene converts to vitamin A — essential for skin renewal and eye health. Orange vitamin C drives collagen synthesis and antioxidant defence.",
+                drinks: "Carrot Juice · Orange Juice",
+              },
+            ].map((cat) => (
+              <div key={cat.title} className="bg-card border border-border rounded-2xl overflow-hidden flex flex-col">
+                {/* Photo */}
+                <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                  <img src={cat.img} alt={cat.title} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-3">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide text-white" style={{ background: BRAND_GREEN }}>
+                      {cat.goal}
+                    </span>
+                    <h3 className="font-display font-bold text-white text-base mt-1.5 leading-tight drop-shadow">{cat.title}</h3>
+                  </div>
                 </div>
-                <h3 className="font-display font-bold text-lg">{p.name}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed flex-1">{p.why}</p>
-                <Link href={p.href} className="text-sm font-bold hover:underline" style={{ color: BRAND_GREEN }}>
-                  Order {p.order} →
-                </Link>
+                {/* Body */}
+                <div className="p-4 flex flex-col flex-1">
+                  <div className="bg-primary/6 border border-primary/20 rounded-xl px-3 py-2.5 mb-3">
+                    <p className="text-[11px] font-bold text-primary uppercase tracking-wide mb-1">What the science says</p>
+                    <p className="text-xs text-foreground leading-relaxed">{cat.science}</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-4 flex-1">
+                    <span className="font-semibold text-foreground">Drinks: </span>{cat.drinks}
+                  </p>
+                  <Link
+                    href="/drink-crates"
+                    className="flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90"
+                    style={{ background: BRAND_GREEN }}
+                  >
+                    Explore & Order →
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
-        </section>
-
-        <section>
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold font-display mb-2">Lunch picks</h2>
-            <p className="text-muted-foreground">The midday meal matters. These keep energy steady without the afternoon slump.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {lunchPicks.map((p) => (
-              <div key={p.name} className="bg-card rounded-2xl border border-border p-6 flex flex-col gap-4">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "#0F9E0F22" }}>
-                  <Leaf className="w-5 h-5" style={{ color: BRAND_GREEN }} />
-                </div>
-                <h3 className="font-display font-bold text-lg">{p.name}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed flex-1">{p.why}</p>
-                <Link href={p.href} className="text-sm font-bold hover:underline" style={{ color: BRAND_GREEN }}>
-                  See soups →
-                </Link>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section>
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold font-display mb-2">Dinner picks</h2>
-            <p className="text-muted-foreground">Lighter in the evening — your body processes food differently at night.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {dinnerPicks.map((p) => (
-              <div key={p.name} className="bg-card rounded-2xl border border-border p-6 flex flex-col gap-4">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "#0F9E0F22" }}>
-                  <Leaf className="w-5 h-5" style={{ color: BRAND_GREEN }} />
-                </div>
-                <h3 className="font-display font-bold text-lg">{p.name}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed flex-1">{p.why}</p>
-                <Link href={p.href} className="text-sm font-bold hover:underline" style={{ color: BRAND_GREEN }}>
-                  See soups →
-                </Link>
-              </div>
-            ))}
+          <div className="mt-6 text-center">
+            <Link href="/drink-crates"
+              className="inline-flex items-center gap-2 px-8 py-3 rounded-full text-sm font-bold text-white transition-opacity hover:opacity-90"
+              style={{ background: "#221F1F" }}>
+              View all Wellness Drink Crates →
+            </Link>
           </div>
         </section>
 
