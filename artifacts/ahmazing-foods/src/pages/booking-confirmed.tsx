@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   CheckCircle2, Copy, ChefHat, Calendar, Clock,
   AlertCircle, ArrowLeft, MessageCircle, ArrowRight,
-  ChevronDown, ChevronUp, ShieldAlert,
+  ChevronDown, ChevronUp, ShieldAlert, MapPin, Users,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -230,19 +230,42 @@ export default function BookingConfirmedPage() {
             </div>
 
             {/* Delivery */}
-            <div className="grid grid-cols-2 gap-4 py-6 border-y border-border mb-6">
-              <div className="flex flex-col gap-1">
-                <span className="flex items-center text-xs text-muted-foreground">
-                  <Calendar className="w-3 h-3 mr-1" /> Delivery Date
-                </span>
-                <span className="font-medium">{formatDate(order.deliveryDate)}</span>
+            <div className="py-6 border-y border-border mb-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1">
+                  <span className="flex items-center text-xs text-muted-foreground">
+                    <Calendar className="w-3 h-3 mr-1" /> Delivery Date
+                  </span>
+                  <span className="font-medium">{formatDate(order.deliveryDate)}</span>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="flex items-center text-xs text-muted-foreground">
+                    <Clock className="w-3 h-3 mr-1" /> Time Slot
+                  </span>
+                  <span className="font-medium">{order.deliverySlot}</span>
+                </div>
               </div>
-              <div className="flex flex-col gap-1">
-                <span className="flex items-center text-xs text-muted-foreground">
-                  <Clock className="w-3 h-3 mr-1" /> Time Slot
-                </span>
-                <span className="font-medium">{order.deliverySlot}</span>
-              </div>
+              {order.deliveryAddress && (
+                <div className="flex flex-col gap-1">
+                  <span className="flex items-center text-xs text-muted-foreground">
+                    <MapPin className="w-3 h-3 mr-1" /> Delivery Address
+                  </span>
+                  <span className="font-medium text-sm leading-snug">{order.deliveryAddress}</span>
+                </div>
+              )}
+              {(() => {
+                const recipientLine = order.notes?.split("\n").find((l) => l.startsWith("Recipient (receiving order):"));
+                if (!recipientLine) return null;
+                const detail = recipientLine.replace("Recipient (receiving order):", "").trim();
+                return (
+                  <div className="flex flex-col gap-1">
+                    <span className="flex items-center text-xs text-muted-foreground">
+                      <Users className="w-3 h-3 mr-1" /> Recipient
+                    </span>
+                    <span className="font-medium text-sm">{detail}</span>
+                  </div>
+                );
+              })()}
             </div>
 
             {/* Totals */}
