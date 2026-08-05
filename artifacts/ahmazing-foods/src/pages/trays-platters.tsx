@@ -4,6 +4,8 @@ import { Link } from "wouter";
 import { GlassWater, MessageCircle, AlertCircle, CheckCircle2, Plus, Minus, CalendarDays } from "lucide-react";
 
 const WA_NUMBER = "2348105506052";
+const BASE = import.meta.env.BASE_URL;
+const asset = (p: string) => `${BASE}${p}`;
 const BRAND_GREEN = "#0F9E0F";
 const RUSH_FLAT_FEE = 20000;
 const RUSH_CAP_PCT = 0.5;
@@ -50,47 +52,62 @@ const RUSH_WINDOWS = [
   { val: "6pm-8pm", label: "6:00 – 8:00 PM" },
 ] as const;
 
-interface PlattersItem { name: string; priceNum: number; priceStr: string; contains: string; serves?: string; }
-interface TrayItem     { name: string; priceNum: number; priceStr: string; contains: string; }
+interface PlattersItem { name: string; priceNum: number; priceStr: string; contains: string; serves?: string; img: string; }
+interface TrayItem     { name: string; priceNum: number; priceStr: string; contains: string; img: string; }
 type DrinkMode = "none" | "pick2" | "pick4" | "fixed";
-interface PackageItem  { name: string; priceNum: number; priceStr: string; contains: string; drinkMode: DrinkMode; fixedDrinks?: string; }
+interface PackageItem  { name: string; priceNum: number; priceStr: string; contains: string; drinkMode: DrinkMode; fixedDrinks?: string; img: string; }
 
 const PLATTERS: PlattersItem[] = [
   { name: "Breakfast Platter",               priceNum: 190000, priceStr: "₦190,000", serves: "Serves 6–8",
+    img: "assets/platters/breakfast-platter.jpg",
     contains: "Pancakes, akara, sausage rolls, sandwiches, mixed fruit, sauce cups, a dessert cup (chin chin & yogurt mix)" },
   { name: "Dinner Platter",                  priceNum: 190000, priceStr: "₦190,000", serves: "Serves 6–8",
+    img: "assets/platters/dinner-platter.jpg",
     contains: "Jollof & fried rice, 8 pieces peppered chicken, 8 pieces peppered beef, coleslaw, plantain, small chops, a dessert cup (chin chin & yogurt mix), dinner candles" },
   { name: "Anniversary Platter",             priceNum: 190000, priceStr: "₦190,000", serves: "Serves 6–8",
+    img: "assets/platters/anniversary-platter.jpg",
     contains: "Jollof & fried rice, 8 pieces peppered chicken, 8 pieces peppered beef, coleslaw, plantain, small chops, a dessert cup (chin chin & yogurt mix), an anniversary card" },
   { name: "Birthday Platter",                priceNum: 190000, priceStr: "₦190,000", serves: "Serves 6–8",
+    img: "assets/platters/birthday-platter.jpg",
     contains: "Jollof & fried rice, 8 pieces peppered chicken, 8 pieces peppered beef, coleslaw, plantain, small chops, a dessert cup (chin chin & yogurt mix), a birthday card & candles" },
   { name: "Party Starter Platter — Feeds 15", priceNum: 350000,  priceStr: "₦350,000",
+    img: "assets/platters/party-starter-platter.jpg",
     contains: "Mixed jollof & fried rice, assorted proteins (chicken, beef, fish), grilled corn, coleslaw, small chops, plantain" },
   { name: "Party Starter Platter — Feeds 30", priceNum: 550000,  priceStr: "₦550,000",
+    img: "assets/platters/party-starter-platter.jpg",
     contains: "Mixed jollof & fried rice, assorted proteins (chicken, beef, fish), grilled corn, coleslaw, small chops, plantain" },
   { name: "Party Starter Platter — Feeds 50", priceNum: 1000000, priceStr: "₦1,000,000",
+    img: "assets/platters/party-starter-platter.jpg",
     contains: "Mixed jollof & fried rice, assorted proteins (chicken, beef, fish), grilled corn, coleslaw, small chops, plantain" },
 ];
 
 const TRAYS: TrayItem[] = [
   { name: "Classic Tray",  priceNum: 120000, priceStr: "₦120,000",
+    img: "assets/trays/classic-tray.jpg",
     contains: "Fruit salad, coleslaw, peppered fried fish (2 pcs), jollof rice, chocolates, water (1 bottle)" },
   { name: "Deluxe Tray",   priceNum: 145000, priceStr: "₦145,000",
+    img: "assets/trays/deluxe-tray.jpg",
     contains: "Fruit salad, coleslaw, jollof rice, small chops, 2 chicken thighs (peppered), Pringles & chocolates, biscuits, water (1 bottle)" },
   { name: "Grand Tray",    priceNum: 170000, priceStr: "₦170,000",
+    img: "assets/trays/grand-tray.jpg",
     contains: "Coleslaw, fruit salad, 10 inch cake, jollof rice, fried rice, fried plantain, half chicken (peppered), water (2 bottles)" },
   { name: "Ultimate Tray", priceNum: 190000, priceStr: "₦190,000",
+    img: "assets/trays/ultimate-tray.jpg",
     contains: "Coleslaw, fruit salad, 10 inch cake, jollof rice, fried rice, spaghetti, small chops, chocolate/chips/biscuits, half chicken (peppered), pancakes, water (2 bottles)" },
 ];
 
 const PACKAGES: PackageItem[] = [
   { name: "Small Chops — Starter", priceNum: 23000,  priceStr: "₦23,000",  drinkMode: "none",
+    img: "assets/small-chops/starter.png",
     contains: "10 samosas, 10 spring rolls, 30 puff puff, 20 mosa, 5 peppered beef bites, 5 peppered gizzard, 5 sausages, 5 mini corn dogs" },
   { name: "Small Chops — Mini",    priceNum: 37000,  priceStr: "₦37,000",  drinkMode: "none",
+    img: "assets/small-chops/mini.png",
     contains: "30 samosas, 30 spring rolls, 80 puff puff, 40 mosa, 50 peppered beef bites" },
   { name: "Small Chops — Full",    priceNum: 69000,  priceStr: "₦69,000",  drinkMode: "pick2",
+    img: "assets/small-chops/full.png",
     contains: "45 samosas, 40 spring rolls, 5 spring rolls with prawns & mayo, 80 puff puff, 30 mosa, 40 peppered beef bites, 10 peppered chicken, 15 peppered gizzard, 5 grilled snail, 5 sausages, 5 mini corn dogs" },
   { name: "Small Chops — Premium", priceNum: 178000, priceStr: "₦178,000", drinkMode: "fixed",
+    img: "assets/small-chops/premium.png",
     fixedDrinks: "Carrot Juice, Zobo Drink, Yogurt Drink, Pineapple Ginger Drink, Ginger Immune Booster, plus 2 bottles of still water",
     contains: "60 samosas, 50 spring rolls, 10 spring rolls with prawns & mayo, 60 puff puff, 20 peppered beef bites, 20 peppered chicken, 10 peppered turkey, 15 peppered gizzard, 10 grilled snail, 8 sausages, 10 mini corn dogs" },
 ];
@@ -406,15 +423,13 @@ function PlatterCard({ item, wine, blends, drinks, delivInfo, deliveryOk, onWine
 
   return (
     <div className="bg-card rounded-2xl border border-border overflow-hidden flex flex-col hover:shadow-lg transition-shadow">
-      <div className="aspect-video bg-muted overflow-hidden">
-        {item.serves ? (
-          <div className="relative w-full h-full">
-            <NoPhoto />
-            <span className="absolute bottom-2 right-2 bg-foreground/80 text-background text-[10px] font-semibold rounded-full px-2 py-0.5">
-              {item.serves}
-            </span>
-          </div>
-        ) : <NoPhoto />}
+      <div className="aspect-video bg-muted overflow-hidden relative">
+        <img src={asset(item.img)} alt={item.name} className="w-full h-full object-cover" />
+        {item.serves && (
+          <span className="absolute bottom-2 right-2 bg-foreground/80 text-background text-[10px] font-semibold rounded-full px-2 py-0.5">
+            {item.serves}
+          </span>
+        )}
       </div>
 
       <div className="p-5 flex flex-col flex-1 gap-4">
@@ -501,7 +516,9 @@ function TrayCard({ item, drinks, delivInfo, deliveryOk, onDrink }: {
 
   return (
     <div className="bg-card rounded-2xl border border-border overflow-hidden flex flex-col hover:shadow-lg transition-shadow">
-      <div className="aspect-video bg-muted overflow-hidden"><NoPhoto /></div>
+      <div className="aspect-video bg-muted overflow-hidden">
+        <img src={asset(item.img)} alt={item.name} className="w-full h-full object-cover" />
+      </div>
 
       <div className="p-5 flex flex-col flex-1 gap-4">
         <div>
@@ -556,7 +573,9 @@ function PackageCard({ item, drinks, delivInfo, isToday, sameDayEligible, rushWi
 
   return (
     <div className="bg-card rounded-2xl border border-border overflow-hidden flex flex-col hover:shadow-lg transition-shadow">
-      <div className="aspect-video bg-muted overflow-hidden"><NoPhoto /></div>
+      <div className="aspect-video bg-muted overflow-hidden">
+        <img src={asset(item.img)} alt={item.name} className="w-full h-full object-cover" />
+      </div>
 
       <div className="p-5 flex flex-col flex-1 gap-4">
         <div>
