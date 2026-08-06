@@ -193,6 +193,234 @@ const DRINK_ITEMS = Object.entries(STATIC_PRODUCTS).map(([name, price], idx) => 
   available: true,
 }));
 
+const FALLBACK_MENU_ITEMS = [
+  // SOUPS
+  {
+    id: 1,
+    category: "soups",
+    name: "Onugbu Soup (Bitterleaf)",
+    description: "Rich bitterleaf soup garnished with dried fish, stockfish and cowhide.",
+    sizes: [
+      { label: "2 Litres (Serves ~3)", price: 32000 },
+      { label: "3 Litres (Serves ~5)", price: 36000 },
+      { label: "5 Litres (Serves ~7)", price: 43000 },
+    ],
+    proteins: [
+      { name: "Beef", extraCost: 4000 },
+      { name: "Chicken", extraCost: 4700 },
+      { name: "Turkey", extraCost: 5700 },
+      { name: "Fish", extraCost: 5700 },
+    ],
+    available: true,
+  },
+  {
+    id: 2,
+    category: "soups",
+    name: "Oha Soup",
+    description: "Traditional Igbo oha leaf soup, hearty and deeply flavoured.",
+    sizes: [
+      { label: "2 Litres (Serves ~3)", price: 32000 },
+      { label: "3 Litres (Serves ~5)", price: 36000 },
+      { label: "5 Litres (Serves ~7)", price: 43000 },
+    ],
+    proteins: [
+      { name: "Beef", extraCost: 4000 },
+      { name: "Chicken", extraCost: 4700 },
+      { name: "Turkey", extraCost: 5700 },
+    ],
+    available: true,
+  },
+  {
+    id: 3,
+    category: "soups",
+    name: "Okro Soup",
+    description: "Freshly made okro soup, silky and well-seasoned with your choice of protein.",
+    sizes: [
+      { label: "2 Litres (Serves ~3)", price: 32000 },
+      { label: "3 Litres (Serves ~5)", price: 36000 },
+      { label: "5 Litres (Serves ~7)", price: 43000 },
+    ],
+    proteins: [
+      { name: "Beef", extraCost: 4000 },
+      { name: "Chicken", extraCost: 4700 },
+      { name: "Seafood", extraCost: 11700 },
+    ],
+    available: true,
+  },
+  {
+    id: 4,
+    category: "soups",
+    name: "Egusi Soup",
+    description: "Thick, golden egusi soup cooked low and slow with ground melon seeds.",
+    sizes: [
+      { label: "2 Litres (Serves ~3)", price: 32000 },
+      { label: "3 Litres (Serves ~5)", price: 36000 },
+      { label: "5 Litres (Serves ~7)", price: 43000 },
+    ],
+    proteins: [
+      { name: "Beef", extraCost: 4000 },
+      { name: "Assorted Meat", extraCost: 5700 },
+    ],
+    available: true,
+  },
+  {
+    id: 5,
+    category: "soups",
+    name: "Afang Soup",
+    description: "Rich Efik/Ibibio Afang soup with wild spinach and waterleaf.",
+    sizes: [
+      { label: "2 Litres (Serves ~3)", price: 34000 },
+      { label: "3 Litres (Serves ~5)", price: 38000 },
+      { label: "5 Litres (Serves ~7)", price: 46000 },
+    ],
+    proteins: [
+      { name: "Beef", extraCost: 4000 },
+      { name: "Chicken", extraCost: 4700 },
+      { name: "Goat Meat", extraCost: 6500 },
+    ],
+    available: true,
+  },
+  {
+    id: 6,
+    category: "soups",
+    name: "Nsala Soup (White Soup)",
+    description: "Peppery soup thickened with yam paste, cooked with fresh catfish or chicken.",
+    sizes: [
+      { label: "2 Litres (Serves ~3)", price: 35000 },
+      { label: "3 Litres (Serves ~5)", price: 40000 },
+      { label: "5 Litres (Serves ~7)", price: 48000 },
+    ],
+    proteins: [
+      { name: "Chicken", extraCost: 4700 },
+      { name: "Fresh Catfish", extraCost: 7500 },
+    ],
+    available: true,
+  },
+  {
+    id: 7,
+    category: "soups",
+    name: "Banga Soup (Ofe Akwu)",
+    description: "Palm fruit extract soup cooked with local spices, dried fish and aromatic herbs.",
+    sizes: [
+      { label: "2 Litres (Serves ~3)", price: 33000 },
+      { label: "3 Litres (Serves ~5)", price: 37000 },
+      { label: "5 Litres (Serves ~7)", price: 45000 },
+    ],
+    proteins: [
+      { name: "Beef", extraCost: 4000 },
+      { name: "Chicken", extraCost: 4700 },
+      { name: "Fresh Fish", extraCost: 6000 },
+    ],
+    available: true,
+  },
+  // STEWS
+  {
+    id: 8,
+    category: "stews",
+    name: "Classic Tomato Stew",
+    description: "A rich, slow-cooked tomato base stew — the backbone of Nigerian cooking.",
+    sizes: [
+      { label: "3 Litres (Serves ~5)", price: 37000 },
+      { label: "5 Litres (Serves ~8)", price: 45000 },
+    ],
+    proteins: [
+      { name: "Chicken", extraCost: 4700 },
+      { name: "Beef", extraCost: 4000 },
+    ],
+    available: true,
+  },
+  {
+    id: 9,
+    category: "stews",
+    name: "Ayamase (Ofada Stew)",
+    description: "Spicy green pepper stew with assorted offals — pairs perfectly with ofada rice.",
+    sizes: [
+      { label: "3 Litres (Serves ~5)", price: 40000 },
+      { label: "5 Litres (Serves ~8)", price: 49000 },
+    ],
+    proteins: [
+      { name: "Assorted Offal", extraCost: 5000 },
+      { name: "Beef & Boiled Egg", extraCost: 4500 },
+    ],
+    available: true,
+  },
+  {
+    id: 10,
+    category: "stews",
+    name: "Native Red Pepper Stew (Buka Stew)",
+    description: "Deep red bleached palm oil stew with roasted habanero peppers and iru.",
+    sizes: [
+      { label: "3 Litres (Serves ~5)", price: 38000 },
+      { label: "5 Litres (Serves ~8)", price: 46000 },
+    ],
+    proteins: [
+      { name: "Fried Beef", extraCost: 4000 },
+      { name: "Hard Chicken", extraCost: 4700 },
+    ],
+    available: true,
+  },
+  // BREAKFAST
+  {
+    id: 11,
+    category: "breakfast",
+    name: "Akara & Ogi (Pap)",
+    description: "Freshly fried golden akara balls served with warm, smooth pap.",
+    sizes: [
+      { label: "Standard Portion", price: 5500 },
+    ],
+    proteins: [] as Array<{ name: string; extraCost: number }>,
+    available: true,
+  },
+  {
+    id: 12,
+    category: "breakfast",
+    name: "Boiled Yam & Egg Sauce",
+    description: "Soft boiled yam slices served with rich tomato egg sauce.",
+    sizes: [
+      { label: "Standard Portion", price: 6500 },
+      { label: "Large Portion (Serves 2)", price: 11000 },
+    ],
+    proteins: [] as Array<{ name: string; extraCost: number }>,
+    available: true,
+  },
+  {
+    id: 13,
+    category: "breakfast",
+    name: "Plantain & Egg Frittata",
+    description: "Baked ripe plantain slices and seasoned vegetable egg frittata.",
+    sizes: [
+      { label: "Standard Portion", price: 7000 },
+    ],
+    proteins: [] as Array<{ name: string; extraCost: number }>,
+    available: true,
+  },
+  // PLATTERS
+  {
+    id: 14,
+    category: "platters",
+    name: "Small Chops Platter",
+    description: "Samosa, spring rolls, puff puff, and gizzard kebabs.",
+    sizes: [
+      { label: "Medium Platter (Serves 5-8)", price: 25000 },
+      { label: "Large Platter (Serves 10-15)", price: 45000 },
+    ],
+    proteins: [] as Array<{ name: string; extraCost: number }>,
+    available: true,
+  },
+  {
+    id: 15,
+    category: "platters",
+    name: "BBQ Chicken & Fries Platter",
+    description: "Smokey BBQ chicken wings served with yam fries or plantain chips.",
+    sizes: [
+      { label: "Medium Platter", price: 28000 },
+      { label: "Large Platter", price: 48000 },
+    ],
+    proteins: [] as Array<{ name: string; extraCost: number }>,
+    available: true,
+  },
+];
+
 function SearchableDishSelect({
   items,
   value,
@@ -305,7 +533,7 @@ export default function BookPage() {
   );
 
   const allMenuItems = useMemo(() => {
-    const dbItems = menuItems ?? [];
+    const dbItems = (menuItems && menuItems.length > 0) ? menuItems : FALLBACK_MENU_ITEMS;
     return [...dbItems, ...DRINK_ITEMS];
   }, [menuItems]);
 
