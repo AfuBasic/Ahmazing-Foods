@@ -99,6 +99,19 @@ try {
             (new App\Controllers\MenuController())->create();
             break;
 
+        // Payment Routes (Paystack)
+        case ($uri === '/api/payment/initialize' || $uri === '/payment/initialize') && $method === 'POST':
+            (new App\Controllers\PaymentController())->initialize();
+            break;
+
+        case ($uri === '/api/payment/verify' || $uri === '/payment/verify') && ($method === 'POST' || $method === 'GET'):
+            (new App\Controllers\PaymentController())->verify();
+            break;
+
+        case ($uri === '/api/payment/webhook' || $uri === '/payment/webhook') && $method === 'POST':
+            (new App\Controllers\PaymentController())->webhook();
+            break;
+
         case preg_match('#^/(?:api/)?admin/menu-items/(\d+)$#', $uri, $m) && ($method === 'PUT' || $method === 'PATCH'):
             (new App\Controllers\MenuController())->update((int)$m[1]);
             break;

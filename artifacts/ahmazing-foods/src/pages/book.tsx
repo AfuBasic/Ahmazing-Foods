@@ -823,6 +823,9 @@ export default function BookPage() {
     globalRemoveFromCart(id);
   }
 
+  const [payMethod, setPayMethod] = useState<"paystack" | "bank_transfer">("paystack");
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
   function onSubmit(values: z.infer<typeof customerSchema>) {
     if (cart.length === 0) {
       toast({ variant: "destructive", title: "Cart is empty", description: "Add at least one item before booking." });
@@ -843,6 +846,7 @@ export default function BookPage() {
       `CART (${cart.length} item${cart.length === 1 ? "" : "s"}):\n${cartSummary}`,
       `Pepper: ${PEPPER_LABELS[pepperLevel]}`,
       `Delivery: ${values.deliveryDate} · ${values.deliverySlot}`,
+      `Payment Method: ${payMethod === "paystack" ? "Paystack (Online Card/Transfer)" : "Direct Bank Transfer"}`,
       rushFee > 0
         ? `Subtotal: ${formatNaira(cartTotal)} + Rush fee: ${formatNaira(rushFee)} = Total: ${formatNaira(grandTotal)}`
         : `Total: ${formatNaira(grandTotal)}`,
@@ -877,8 +881,78 @@ export default function BookPage() {
         },
       },
       {
-        onSuccess: (order) => setLocation(`/booking-confirmed/${order.id}`),
-        onError:   (err)   => {
+        onSuccess: async (order) => {
+          if (payMethod === "paystack") {
+            setIsProcessingPayment(true);
+            try {
+              // 1. Initialize Paystack Transaction
+              const initRes = await fetch("/api/payment/initialize", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  order_id: order.id,
+                  amount: grandTotal,
+                  email: values.customerEmail || "orders@ahmazingfoods.com",
+                  callback_url: `${window.location.origin}/booking-confirmed/${order.id}`,
+                }),
+              });
+
+              const initData = await initRes.json();
+
+              if (!initRes.ok || !initData.reference) {
+                throw new Error(initData.error || "Failed to initialize Paystack payment");
+              }
+
+              // 2. Open Paystack Inline Popup
+              const PaystackPop = (window as any).PaystackPop;
+              if (PaystackPop) {
+                const handler = PaystackPop.setup({
+                  key: initData.public_key || "pk_test_5ea45ba389e8fa8ee4fcf3d95cbcbef4e1d0d47f",
+                  email: values.customerEmail || "orders@ahmazingfoods.com",
+                  amount: Math.round(grandTotal * 100),
+                  ref: initData.reference,
+                  onClose: () => {
+                    setIsProcessingPayment(false);
+                    toast({ title: "Payment Window Closed", description: "Your order is created as pending." });
+                    setLocation(`/booking-confirmed/${order.id}`);
+                  },
+                  callback: (response: { reference: string }) => {
+                    // 3. Atomically verify payment with backend
+                    fetch("/api/payment/verify", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ reference: response.reference }),
+                    })
+                      .then((r) => r.json())
+                      .then((verifyResult) => {
+                        setIsProcessingPayment(false);
+                        if (verifyResult.status === "success") {
+                          toast({ title: "Payment Successful!", description: "Your payment has been verified." });
+                        }
+                        setLocation(`/booking-confirmed/${order.id}`);
+                      })
+                      .catch(() => {
+                        setIsProcessingPayment(false);
+                        setLocation(`/booking-confirmed/${order.id}`);
+                      });
+                  },
+                });
+                handler.openIframe();
+              } else if (initData.authorization_url) {
+                window.location.href = initData.authorization_url;
+              } else {
+                setLocation(`/booking-confirmed/${order.id}`);
+              }
+            } catch (payErr: any) {
+              setIsProcessingPayment(false);
+              toast({ variant: "destructive", title: "Payment Error", description: payErr.message || "Failed to launch Paystack" });
+              setLocation(`/booking-confirmed/${order.id}`);
+            }
+          } else {
+            setLocation(`/booking-confirmed/${order.id}`);
+          }
+        },
+        onError: (err) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const msg = (err as any)?.data?.error || (err as any)?.message || "Failed to create booking";
           toast({ variant: "destructive", title: "Booking Error", description: msg });
@@ -1580,16 +1654,55 @@ export default function BookPage() {
               )}
             </div>
 
-            <Button type="submit" form="booking-form" disabled={!canSubmit}
+            {/* Payment Method Selector */}
+            <div className="space-y-3 bg-card rounded-2xl border border-border p-5">
+              <label className="text-sm font-bold text-foreground block">Select Payment Method</label>
+              <div className="grid grid-cols-1 gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setPayMethod("paystack")}
+                  className={`p-3.5 rounded-xl border-2 text-left transition-all flex items-start justify-between ${
+                    payMethod === "paystack" ? "border-primary bg-primary/5 shadow-sm" : "border-border hover:border-primary/40"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center gap-2 font-bold text-sm">
+                      💳 Paystack Online Payment
+                      <span className="text-[10px] uppercase font-bold text-emerald-700 bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded">Instant</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">Pay securely via Debit Card, Bank Transfer, or USSD</p>
+                  </div>
+                  {payMethod === "paystack" && <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setPayMethod("bank_transfer")}
+                  className={`p-3.5 rounded-xl border-2 text-left transition-all flex items-start justify-between ${
+                    payMethod === "bank_transfer" ? "border-primary bg-primary/5 shadow-sm" : "border-border hover:border-primary/40"
+                  }`}
+                >
+                  <div>
+                    <div className="font-bold text-sm">🏦 Direct Bank Transfer</div>
+                    <p className="text-xs text-muted-foreground mt-0.5">FCMB · 1009414545 (Ahmazing Cuisine)</p>
+                  </div>
+                  {payMethod === "bank_transfer" && <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />}
+                </button>
+              </div>
+            </div>
+
+            <Button type="submit" form="booking-form" disabled={!canSubmit || isProcessingPayment}
               className="w-full h-14 text-lg font-bold gap-2 rounded-xl"
               style={{ background: canSubmit ? "#0F9E0F" : undefined }}>
-              {isSubmitting
-                ? <><Loader2 className="w-5 h-5 animate-spin" /> Booking…</>
+              {isSubmitting || isProcessingPayment
+                ? <><Loader2 className="w-5 h-5 animate-spin" /> Processing…</>
+                : payMethod === "paystack"
+                ? <>Pay with Paystack ({formatNaira(grandTotal)}) <ChevronRight className="w-5 h-5" /></>
                 : <>Confirm Booking <ChevronRight className="w-5 h-5" /></>
               }
             </Button>
 
-            {!canSubmit && !isSubmitting && (
+            {!canSubmit && !isSubmitting && !isProcessingPayment && (
               <div className="space-y-1.5">
                 {isSundayToday && (
                   <p className="text-xs text-red-600 flex items-center gap-1.5 font-medium">
@@ -1612,7 +1725,7 @@ export default function BookPage() {
             <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
               <p className="text-sm font-bold text-amber-900 dark:text-amber-500 mb-1">Payment required before cooking</p>
               <p className="text-xs text-amber-700 dark:text-amber-600 leading-relaxed">
-                After confirming, we'll send bank details via WhatsApp and email. Cooking starts once payment is received.
+                Cooking starts once payment is verified online or proof of transfer is confirmed.
               </p>
             </div>
 
