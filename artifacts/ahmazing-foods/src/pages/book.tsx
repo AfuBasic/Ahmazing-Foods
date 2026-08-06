@@ -236,7 +236,7 @@ function SearchableDishSelect({
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-popover border border-border rounded-2xl shadow-2xl p-2 z-50 max-h-96 flex flex-col animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-popover border border-border rounded-2xl shadow-2xl p-2 z-[100] max-h-96 flex flex-col animate-in fade-in zoom-in-95 duration-150">
           <div className="relative p-2 border-b border-border mb-1">
             <Search className="w-4 h-4 absolute left-4 top-4 text-muted-foreground" />
             <input
@@ -658,7 +658,7 @@ export default function BookPage() {
           <div className="lg:col-span-2 space-y-8">
 
             {/* ── STEP 1: ITEM BUILDER ─────────────────────────────────── */}
-            <div ref={step1Ref} className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+            <div ref={step1Ref} className="bg-card rounded-2xl border border-border shadow-sm relative">
 
               <div className="flex items-start gap-3 px-6 md:px-8 py-5 border-b border-border bg-muted/40">
                 <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shrink-0 mt-0.5">1</div>
