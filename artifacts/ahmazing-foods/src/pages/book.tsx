@@ -18,7 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { formatNaira } from "@/lib/format";
 import {
   Loader2, Trash2, PlusCircle, AlertCircle, ShoppingCart,
-  ChevronRight, Check, Minus, Plus, Users, ChevronDown, ChevronUp, Search,
+  ChevronRight, Check, Minus, Plus, Users, ChevronDown, ChevronUp, Search, X,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/context/cart-context";
@@ -434,8 +434,34 @@ function SearchableDishSelect({
 }) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const selectedItem = items.find((i) => i.id.toString() === value);
+
+  // Close on outside click or Escape key
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    }
+
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
 
   const filteredItems = useMemo(() => {
     if (!search.trim()) return items;
@@ -448,7 +474,7 @@ function SearchableDishSelect({
   }, [items, search]);
 
   return (
-    <div className="relative">
+    <div ref={containerRef} className="relative">
       <button
         type="button"
         disabled={disabled}
@@ -463,16 +489,35 @@ function SearchableDishSelect({
 
       {open && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-popover border border-border rounded-2xl shadow-2xl p-2 z-[100] max-h-96 flex flex-col animate-in fade-in zoom-in-95 duration-150">
-          <div className="relative p-2 border-b border-border mb-1">
-            <Search className="w-4 h-4 absolute left-4 top-4 text-muted-foreground" />
-            <input
-              type="text"
-              autoFocus
-              placeholder="Search meals, drinks, platters..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm bg-muted/60 rounded-lg border-0 focus:ring-2 focus:ring-primary focus:outline-none"
-            />
+          <div className="relative p-2 border-b border-border mb-1 flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
+              <input
+                type="text"
+                autoFocus
+                placeholder="Search meals, drinks, platters..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-9 pr-8 py-2 text-sm bg-muted/60 rounded-lg border-0 focus:ring-2 focus:ring-primary focus:outline-none"
+              />
+              {search && (
+                <button
+                  type="button"
+                  onClick={() => setSearch("")}
+                  className="absolute right-2 top-2.5 text-muted-foreground hover:text-foreground"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
+              title="Close dropdown"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
 
           <div className="overflow-y-auto flex-1 space-y-3 p-1">
