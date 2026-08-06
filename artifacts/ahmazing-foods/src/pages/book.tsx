@@ -18,9 +18,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { formatNaira } from "@/lib/format";
 import {
   Loader2, Trash2, PlusCircle, AlertCircle, ShoppingCart,
-  ChevronRight, Check, Minus, Plus, Users, ChevronDown, ChevronUp,
+  ChevronRight, Check, Minus, Plus, Users, ChevronDown, ChevronUp, Search,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useCart } from "@/context/cart-context";
 
 // ── STATIC PRODUCTS (not in DB — used for deep-link auto-add) ───────────────
 const STATIC_PRODUCTS: Record<string, number> = {
@@ -180,20 +181,141 @@ function cartLineDesc(item: CartItem): string {
   return `${item.selectedSize}${qty}${prots ? ` + ${prots}` : ""}`;
 }
 
+const DRINK_ITEMS = Object.entries(STATIC_PRODUCTS).map(([name, price], idx) => ({
+  id: 9000 + idx,
+  category: "drinks",
+  name,
+  description: "Refreshing natural wellness beverage",
+  sizes: [
+    { label: "500ml Bottle", price },
+    { label: "1 Litre Bottle", price: Math.round(price * 1.8) },
+    { label: "Crate of 12 (500ml)", price: price * 12 },
+  ],
+  proteins: [] as Array<{ name: string; extraCost: number }>,
+  available: true,
+}));
+
+function SearchableDishSelect({
+  items,
+  value,
+  onChange,
+  disabled,
+}: {
+  items: Array<{ id: number; category: string; name: string; available: boolean }>;
+  value: string;
+  onChange: (val: string) => void;
+  disabled?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const selectedItem = items.find((i) => i.id.toString() === value);
+
+  const filteredItems = useMemo(() => {
+    if (!search.trim()) return items;
+    const term = search.toLowerCase();
+    return items.filter(
+      (i) =>
+        i.name.toLowerCase().includes(term) ||
+        (CAT_LABELS[i.category] && CAT_LABELS[i.category].toLowerCase().includes(term))
+    );
+  }, [items, search]);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setOpen((o) => !o)}
+        className="w-full h-12 px-4 rounded-xl border border-input bg-background flex items-center justify-between text-base shadow-sm hover:bg-accent/5 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+      >
+        <span className={selectedItem ? "text-foreground font-medium" : "text-muted-foreground"}>
+          {selectedItem ? selectedItem.name : disabled ? "Loading…" : "Search or choose a dish, drink, snack or platter"}
+        </span>
+        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+      </button>
+
+      {open && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-popover border border-border rounded-2xl shadow-2xl p-2 z-50 max-h-96 flex flex-col animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative p-2 border-b border-border mb-1">
+            <Search className="w-4 h-4 absolute left-4 top-4 text-muted-foreground" />
+            <input
+              type="text"
+              autoFocus
+              placeholder="Search meals, drinks, platters..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 text-sm bg-muted/60 rounded-lg border-0 focus:ring-2 focus:ring-primary focus:outline-none"
+            />
+          </div>
+
+          <div className="overflow-y-auto flex-1 space-y-3 p-1">
+            {filteredItems.length === 0 ? (
+              <div className="py-6 text-center text-sm text-muted-foreground">
+                No items matching "{search}"
+              </div>
+            ) : (
+              CAT_ORDER.map((cat) => {
+                const catItems = filteredItems.filter((i) => i.available && i.category === cat);
+                if (!catItems.length) return null;
+                return (
+                  <div key={cat} className="space-y-1">
+                    <div className="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground bg-muted/40 rounded-md flex justify-between items-center">
+                      <span>{CAT_LABELS[cat] ?? cat}</span>
+                      {isFoodCat(cat) && (
+                        <span className="font-normal text-[10px] normal-case text-muted-foreground">
+                          (max {MAX_FOOD_MEALS} meals)
+                        </span>
+                      )}
+                    </div>
+                    {catItems.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => {
+                          onChange(item.id.toString());
+                          setOpen(false);
+                          setSearch("");
+                        }}
+                        className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between hover:bg-primary/10 hover:text-primary ${
+                          value === item.id.toString() ? "bg-primary/10 text-primary font-bold" : "text-foreground"
+                        }`}
+                      >
+                        <span>{item.name}</span>
+                        {value === item.id.toString() && <Check className="w-4 h-4 text-primary" />}
+                      </button>
+                    ))}
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ═════════════════════════════════════════════════════════════════════════════
 export default function BookPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { cart, addToCart: globalAddToCart, removeFromCart: globalRemoveFromCart, setCartItems } = useCart();
 
   const { data: menuItems, isLoading: loadingMenu } = useListMenuItems(
     {}, { query: { queryKey: ["menuItems"] } }
   );
+
+  const allMenuItems = useMemo(() => {
+    const dbItems = menuItems ?? [];
+    return [...dbItems, ...DRINK_ITEMS];
+  }, [menuItems]);
+
   const createOrder = useCreateOrder();
   const [hasAltRecipient, setHasAltRecipient] = useState(false);
   const [deliveryZone,    setDeliveryZone]    = useState<DeliveryZoneId | "">("");
 
   // ── CART ────────────────────────────────────────────────────────────────────
-  const [cart, setCart]                   = useState<CartItem[]>([]);
   const [pepperLevel, setPepperLevel]     = useState<number>(1);
   const [pepperTouched, setPepperTouched] = useState(false);
   const [justAdded, setJustAdded]         = useState<string | null>(null);
@@ -213,13 +335,16 @@ export default function BookPage() {
   const pepperRef  = useRef<HTMLDivElement>(null);
   const step1Ref   = useRef<HTMLDivElement>(null);
 
-  // ── DEEP-LINK: pre-fill cart from URL params ──────────────────────────────
-  const deepLinkDone   = useRef(false);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // ── DEEP-LINK PARAMS ───────────────────────────────────────────────────────
   const deepLinkParams = useMemo(() => {
-    const p = new URLSearchParams(window.location.search);
-    return { cat: p.get("cat") ?? "", item: p.get("item") ?? "", size: p.get("size") ?? "" };
+    const params = new URLSearchParams(window.location.search);
+    return {
+      cat:  params.get("cat")  ?? "",
+      item: params.get("item") ?? "",
+      size: params.get("size") ?? "",
+    };
   }, []);
+  const deepLinkDone = useRef(false);
 
   // ── FORM ───────────────────────────────────────────────────────────────────
   const form = useForm<z.infer<typeof customerSchema>>({
@@ -231,23 +356,25 @@ export default function BookPage() {
   });
   const deliveryDate = form.watch("deliveryDate");
 
-  // ── DERIVED ────────────────────────────────────────────────────────────────
+  // ── DERIVED: selected item object ──────────────────────────────────────────
   const configItem = useMemo(
-    () => menuItems?.find((m) => m.id === configItemId),
-    [menuItems, configItemId]
+    () => allMenuItems.find((i) => i.id === configItemId) ?? null,
+    [allMenuItems, configItemId]
   );
-  const hasProteins      = !!(configItem && configItem.proteins.length > 0);
-  const isFood           = !!(configItem && isFoodCat(configItem.category));
-  const distinctFoodIds  = useMemo(
+
+  const isFood = configItem ? isFoodCat(configItem.category) : false;
+  const hasProteins = (configItem?.proteins.length ?? 0) > 0;
+
+  // distinct food meal count in cart (max 5)
+  const distinctFoodIds = useMemo(
     () => new Set(cart.filter((i) => isFoodCat(i.category)).map((i) => i.menuItemId)),
     [cart]
   );
-  // Same-day delivery is ONLY available when ordering between 6 AM and 9 AM.
-  // After 9 AM, today's date is removed from the date picker entirely.
-  const now = new Date();
-  const todayStr = format(now, "yyyy-MM-dd");
-  const currentHour = now.getHours();
+
+  const isSundayToday = new Date().getDay() === 0;
+  const currentHour = new Date().getHours();
   const sameDayAvailable = currentHour >= 6 && currentHour < 9;
+  const todayStr = format(new Date(), "yyyy-MM-dd");
 
   const isRushDay = useMemo(
     () => !!deliveryDate && deliveryDate === todayStr,
@@ -255,21 +382,20 @@ export default function BookPage() {
   );
   const rushFee    = useMemo(() => calcRushFee(isRushDay, distinctFoodIds.size), [isRushDay, distinctFoodIds.size]);
 
-  // Sunday = no orders (rest day). Deliveries can still happen on Sunday.
-  const isSundayToday = new Date().getDay() === 0;
   const cartTotal    = useMemo(() => cart.reduce((s, i) => s + i.price, 0), [cart]);
   const selectedZone = DELIVERY_ZONES.find((z) => z.id === deliveryZone);
   const deliveryFee  = selectedZone && !selectedZone.quote ? (selectedZone.fee ?? 0) : 0;
   const grandTotal   = cartTotal + rushFee + deliveryFee;
 
-  // Live price for the item being configured
-  const proteinSubtotal = useMemo(
-    () => Object.entries(proteins).reduce((sum, [name, qty]) => {
-      const p = configItem?.proteins.find((p) => p.name === name);
-      return sum + (p?.extraCost ?? 0) * qty;
-    }, 0),
-    [proteins, configItem]
-  );
+  // ── PRICE CALCULATIONS ────────────────────────────────────────────────────
+  const proteinSubtotal = useMemo(() => {
+    if (!configItem) return 0;
+    return Object.entries(proteins).reduce((sum, [pName, pQty]) => {
+      const found = configItem.proteins.find((p) => p.name === pName);
+      return sum + (found?.extraCost ?? 0) * pQty;
+    }, 0);
+  }, [configItem, proteins]);
+
   const configUnitPrice = useMemo(() => {
     if (!configItem || !configSize) return 0;
     const base = configItem.sizes.find((s) => s.label === configSize)?.price ?? 0;
@@ -330,19 +456,21 @@ export default function BookPage() {
       const price = STATIC_PRODUCTS[deepLinkParams.item];
       if (!price) return;
       deepLinkDone.current = true;
-      setCart((prev) => {
-        if (prev.some((i) => i.category === "products" && i.menuItemName === deepLinkParams.item)) return prev;
-        return [{
-          id:               `dl-prod-${Date.now()}`,
-          menuItemId:       0,
-          menuItemName:     deepLinkParams.item,
-          category:         "products",
-          selectedSize:     "Standard",
-          itemQty:          1,
-          selectedProteins: [],
-          price,
-        }];
-      });
+      if (!cart.some((i) => i.category === "products" && i.menuItemName === deepLinkParams.item)) {
+        setCartItems([
+          ...cart,
+          {
+            id:               `dl-prod-${Date.now()}`,
+            menuItemId:       0,
+            menuItemName:     deepLinkParams.item,
+            category:         "products",
+            selectedSize:     "Standard",
+            itemQty:          1,
+            selectedProteins: [],
+            price,
+          }
+        ]);
+      }
       setJustAdded(deepLinkParams.item);
       setTimeout(() => setJustAdded(null), 6000);
       return;
@@ -360,19 +488,21 @@ export default function BookPage() {
       : found.sizes[0];
     if (!sizeObj) return;
     deepLinkDone.current = true;
-    setCart((prev) => {
-      if (prev.some((i) => i.menuItemId === found.id && i.selectedSize === sizeObj.label)) return prev;
-      return [{
-        id:               `dl-${found.id}-${Date.now()}`,
-        menuItemId:       found.id,
-        menuItemName:     found.name,
-        category:         found.category,
-        selectedSize:     sizeObj.label,
-        itemQty:          1,
-        selectedProteins: [],
-        price:            sizeObj.price,
-      }];
-    });
+    if (!cart.some((i) => i.menuItemId === found.id && i.selectedSize === sizeObj.label)) {
+      setCartItems([
+        ...cart,
+        {
+          id:               `dl-${found.id}-${Date.now()}`,
+          menuItemId:       found.id,
+          menuItemName:     found.name,
+          category:         found.category,
+          selectedSize:     sizeObj.label,
+          itemQty:          1,
+          selectedProteins: [],
+          price:            sizeObj.price,
+        }
+      ]);
+    }
     setJustAdded(found.name);
     setTimeout(() => setJustAdded(null), 6000);
   }, [menuItems, deepLinkParams]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -401,7 +531,7 @@ export default function BookPage() {
       return { name, qty, extraCost: p?.extraCost ?? 0 };
     });
     const name = configItem.name;
-    setCart((prev) => [...prev, {
+    globalAddToCart({
       id: crypto.randomUUID(),
       menuItemId:      configItem.id,
       menuItemName:    name,
@@ -410,7 +540,7 @@ export default function BookPage() {
       itemQty,
       selectedProteins: selProteins,
       price:           configPrice,
-    }]);
+    });
     setConfigItemId(0);
     setJustAdded(name);
     setTimeout(() => setJustAdded(null), 4000);
@@ -418,7 +548,9 @@ export default function BookPage() {
     scrollTo(step1Ref.current, 240);
   }
 
-  function removeFromCart(id: string) { setCart((prev) => prev.filter((i) => i.id !== id)); }
+  function removeFromCart(id: string) {
+    globalRemoveFromCart(id);
+  }
 
   function onSubmit(values: z.infer<typeof customerSchema>) {
     if (cart.length === 0) {
@@ -574,36 +706,12 @@ export default function BookPage() {
                 {/* ── A: Select item ─────────────────────────────────── */}
                 <div className="space-y-2.5">
                   <SubStepLabel letter="A" done={!!configItem}>Choose an Item</SubStepLabel>
-                  <Select
-                    disabled={loadingMenu}
-                    onValueChange={selectDish}
+                  <SearchableDishSelect
+                    items={allMenuItems}
                     value={configItemId ? configItemId.toString() : ""}
-                  >
-                    <SelectTrigger className="h-12 text-base">
-                      <SelectValue placeholder={loadingMenu ? "Loading…" : "Choose a dish, drink, snack or platter"} />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-80 overflow-y-auto">
-                      {CAT_ORDER.map((cat) => {
-                        const catItems = menuItems?.filter((i) => i.available && i.category === cat) ?? [];
-                        if (!catItems.length) return null;
-                        return (
-                          <div key={cat}>
-                            <div className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border/50 sticky top-0 bg-popover z-10">
-                              {CAT_LABELS[cat]}
-                              {cat === "soups" || cat === "stews" || cat === "breakfast"
-                                ? <span className="ml-1 font-normal normal-case text-muted-foreground/60">(max {MAX_FOOD_MEALS} meals)</span>
-                                : null}
-                            </div>
-                            {catItems.map((item) => (
-                              <SelectItem key={item.id} value={item.id.toString()}>
-                                {item.name}
-                              </SelectItem>
-                            ))}
-                          </div>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
+                    onChange={selectDish}
+                    disabled={loadingMenu}
+                  />
                 </div>
 
                 {/* ── B: Size ────────────────────────────────────────── */}

@@ -1,8 +1,9 @@
 import { useLocation } from "wouter";
 import { Link } from "wouter";
-import { Menu, X, ArrowRight, Phone, Mail, MapPin, ChevronDown, UtensilsCrossed } from "lucide-react";
+import { Menu, X, ArrowRight, Phone, Mail, MapPin, ChevronDown, UtensilsCrossed, ShoppingBag } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useCart } from "@/context/cart-context";
 
 const BRAND_RED = "#C81212";
 const BRAND_GREEN = "#0F9E0F";
@@ -117,6 +118,7 @@ function MealsDropdown({ location }: { location: string }) {
 function SiteHeader({ location }: { location: string }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileMealsOpen, setMobileMealsOpen] = useState(false);
+  const { cartCount } = useCart();
   const closeMenu = () => setMobileMenuOpen(false);
 
   return (
@@ -164,6 +166,21 @@ function SiteHeader({ location }: { location: string }) {
               </Link>
             ))}
 
+            {/* Cart Icon & Button */}
+            <Link
+              href="/cart"
+              className="relative p-2 text-foreground hover:text-primary transition-colors flex items-center gap-1 bg-muted/50 rounded-full px-3.5 py-2 hover:bg-muted"
+              title="View Cart"
+            >
+              <ShoppingBag className="w-5 h-5 text-foreground" />
+              <span className="text-xs font-bold font-mono">Cart</span>
+              {cartCount > 0 && (
+                <span className="ml-1 bg-primary text-white text-[11px] font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+
             {/* Book CTA */}
             <Link
               href="/book"
@@ -174,15 +191,30 @@ function SiteHeader({ location }: { location: string }) {
             </Link>
           </nav>
 
-          {/* Mobile Toggle */}
-          <button
-            className="md:hidden p-2 text-foreground relative z-[60]"
-            onClick={() => setMobileMenuOpen((o) => !o)}
-            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileMenuOpen}
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          {/* Mobile Cart & Toggle */}
+          <div className="flex items-center gap-3 md:hidden">
+            <Link
+              href="/cart"
+              className="relative p-2 text-foreground hover:text-primary transition-colors"
+              title="View Cart"
+            >
+              <ShoppingBag className="w-6 h-6 text-foreground" />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+
+            <button
+              className="p-2 text-foreground relative z-[60]"
+              onClick={() => setMobileMenuOpen((o) => !o)}
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Nav */}

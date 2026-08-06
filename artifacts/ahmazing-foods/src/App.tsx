@@ -29,6 +29,9 @@ import StaffOrderLinksPage from './pages/staff-order-links';
 import DrinkCratesPage from './pages/drink-crates';
 import PartnersPage from './pages/partners';
 
+import CartPage from './pages/cart';
+import { CartProvider } from './context/cart-context';
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -95,6 +98,7 @@ function Router() {
               <Route path="/partners" component={PartnersPage} />
               <Route path="/catering" component={CateringPage} />
               <Route path="/book" component={BookPage} />
+              <Route path="/cart" component={CartPage} />
               <Route path="/booking-confirmed/:id" component={BookingConfirmedPage} />
               <Route path="/admin/login" component={AdminLogin} />
               <Route path="/admin">
@@ -124,12 +128,14 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-          <Router />
-        </WouterRouter>
-        <Toaster />
-      </TooltipProvider>
+      <CartProvider>
+        <TooltipProvider>
+          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+            <Router />
+          </WouterRouter>
+          <Toaster />
+        </TooltipProvider>
+      </CartProvider>
     </QueryClientProvider>
   );
 }
