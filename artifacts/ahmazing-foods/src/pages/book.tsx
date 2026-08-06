@@ -187,9 +187,7 @@ const DRINK_ITEMS = Object.entries(STATIC_PRODUCTS).map(([name, price], idx) => 
   name,
   description: "Refreshing natural wellness beverage",
   sizes: [
-    { label: "500ml Bottle", price },
-    { label: "1 Litre Bottle", price: Math.round(price * 1.8) },
-    { label: "Crate of 12 (500ml)", price: price * 12 },
+    { label: "Standard", price },
   ],
   proteins: [] as Array<{ name: string; extraCost: number }>,
   available: true,
