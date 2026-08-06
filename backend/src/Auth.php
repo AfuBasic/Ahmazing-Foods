@@ -39,12 +39,27 @@ class Auth {
         self::startSession();
         $db = Database::getConnection();
 
-        $stmt = $db->prepare("SELECT * FROM admin_users WHERE username = :username LIMIT 1");
-        $stmt->execute(['username' => $username]);
-        $user = $stmt->fetch();
+        if (empty($username)) {
+            $stmt = $db->query("SELECT * FROM admin_users");
+            $users = $stmt->fetchAll();
+            $user = null;
+            foreach ($users as $u) {
+                if (password_verify($password, $u['password_hash'])) {
+                    $user = $u;
+                    break;
+                }
+            }
+            if (!$user) {
+                Response::error('Invalid password', 401);
+            }
+        } else {
+            $stmt = $db->prepare("SELECT * FROM admin_users WHERE username = :username LIMIT 1");
+            $stmt->execute(['username' => $username]);
+            $user = $stmt->fetch();
 
-        if (!$user || !password_verify($password, $user['password_hash'])) {
-            Response::error('Invalid username or password', 401);
+            if (!$user || !password_verify($password, $user['password_hash'])) {
+                Response::error('Invalid username or password', 401);
+            }
         }
 
         $token = bin2hex(random_bytes(32));

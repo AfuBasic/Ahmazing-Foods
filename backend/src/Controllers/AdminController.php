@@ -12,8 +12,8 @@ class AdminController {
         $username = trim($input['username'] ?? '');
         $password = trim($input['password'] ?? '');
 
-        if (empty($username) || empty($password)) {
-            Response::error('Username and password are required', 400);
+        if (empty($password)) {
+            Response::error('Password is required', 400);
         }
 
         $result = Auth::login($username, $password);
