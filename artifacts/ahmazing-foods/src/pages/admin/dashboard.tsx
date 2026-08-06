@@ -11,6 +11,12 @@ export default function AdminDashboard() {
     query: { queryKey: ["orderSummary"] }
   });
 
+  const handleLogout = () => {
+    localStorage.removeItem('admin_token');
+    localStorage.removeItem('admin_user');
+    window.location.href = '/admin/login';
+  };
+
   return (
     <div className="p-6 md:p-10 max-w-7xl mx-auto space-y-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -18,9 +24,14 @@ export default function AdminDashboard() {
           <h1 className="text-3xl font-bold font-display tracking-tight text-foreground">Dashboard Overview</h1>
           <p className="text-muted-foreground">Welcome back. Here's what's happening today.</p>
         </div>
-        <Button asChild>
-          <Link href="/admin/orders">View All Orders</Link>
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button asChild>
+            <Link href="/admin/orders">View All Orders</Link>
+          </Button>
+          <Button variant="outline" onClick={handleLogout}>
+            Log Out
+          </Button>
+        </div>
       </div>
 
       {isLoading || !summary ? (

@@ -22,6 +22,8 @@ import TraysAndPlattersPage from './pages/trays-platters';
 import AdminDashboard from './pages/admin/dashboard';
 import AdminOrdersList from './pages/admin/orders';
 import AdminOrderDetail from './pages/admin/order-detail';
+import AdminLogin from './pages/admin/login';
+import { AdminGuard } from './components/admin-guard';
 import OrderStatusPage from './pages/order-status';
 import StaffOrderLinksPage from './pages/staff-order-links';
 import DrinkCratesPage from './pages/drink-crates';
@@ -41,9 +43,6 @@ function ScrollToTop() {
   useEffect(() => {
     const hash = window.location.hash;
     if (hash) {
-      // Cross-page link with a hash anchor (e.g. /catering#catering-form).
-      // Give React two animation frames to finish painting the new page,
-      // then scroll to the element. Fall back to top if not found.
       const id = hash.slice(1);
       let raf1: number, raf2: number;
       raf1 = requestAnimationFrame(() => {
@@ -97,9 +96,22 @@ function Router() {
               <Route path="/catering" component={CateringPage} />
               <Route path="/book" component={BookPage} />
               <Route path="/booking-confirmed/:id" component={BookingConfirmedPage} />
-              <Route path="/admin" component={AdminDashboard} />
-              <Route path="/admin/orders" component={AdminOrdersList} />
-              <Route path="/admin/orders/:id" component={AdminOrderDetail} />
+              <Route path="/admin/login" component={AdminLogin} />
+              <Route path="/admin">
+                <AdminGuard>
+                  <AdminDashboard />
+                </AdminGuard>
+              </Route>
+              <Route path="/admin/orders">
+                <AdminGuard>
+                  <AdminOrdersList />
+                </AdminGuard>
+              </Route>
+              <Route path="/admin/orders/:id">
+                <AdminGuard>
+                  <AdminOrderDetail />
+                </AdminGuard>
+              </Route>
               <Route component={NotFound} />
             </Switch>
           </Layout>
