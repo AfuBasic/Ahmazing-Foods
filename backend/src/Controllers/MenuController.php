@@ -60,7 +60,6 @@ class MenuController {
         $stmt = $db->prepare("
             INSERT INTO menu_items (category, name, description, sizes, proteins, available, image_url)
             VALUES (:category, :name, :description, :sizes, :proteins, :available, :image_url)
-            RETURNING *
         ");
 
         $stmt->execute([
@@ -69,11 +68,17 @@ class MenuController {
             'description' => $input['description'],
             'sizes' => json_encode($input['sizes'] ?? []),
             'proteins' => json_encode($input['proteins'] ?? []),
-            'available' => isset($input['available']) ? (bool)$input['available'] : true,
+            'available' => isset($input['available']) ? (int)(bool)$input['available'] : 1,
             'image_url' => $input['image_url'] ?? null,
         ]);
 
-        $newItem = $stmt->fetch();
+        $newId = (int)$db->lastInsertId();
+        $fetchStmt = $db->prepare("SELECT * FROM menu_items WHERE id = :id LIMIT 1");
+        $fetchStmt->execute(['id' => $newId]);
+        $newItem = $fetchStmt->fetch();
+
+        $newItem['id'] = (int)$newItem['id'];
+        $newItem['available'] = (bool)$newItem['available'];
         $newItem['sizes'] = json_decode($newItem['sizes'], true);
         $newItem['proteins'] = json_decode($newItem['proteins'], true);
 
@@ -103,7 +108,6 @@ class MenuController {
                 available = :available,
                 image_url = :image_url
             WHERE id = :id
-            RETURNING *
         ");
 
         $updateStmt->execute([
@@ -113,11 +117,16 @@ class MenuController {
             'description' => $input['description'] ?? $item['description'],
             'sizes' => isset($input['sizes']) ? json_encode($input['sizes']) : $item['sizes'],
             'proteins' => isset($input['proteins']) ? json_encode($input['proteins']) : $item['proteins'],
-            'available' => isset($input['available']) ? (bool)$input['available'] : (bool)$item['available'],
+            'available' => isset($input['available']) ? (int)(bool)$input['available'] : (int)$item['available'],
             'image_url' => $input['image_url'] ?? $item['image_url'],
         ]);
 
-        $updated = $updateStmt->fetch();
+        $fetchStmt = $db->prepare("SELECT * FROM menu_items WHERE id = :id LIMIT 1");
+        $fetchStmt->execute(['id' => $id]);
+        $updated = $fetchStmt->fetch();
+
+        $updated['id'] = (int)$updated['id'];
+        $updated['available'] = (bool)$updated['available'];
         $updated['sizes'] = json_decode($updated['sizes'], true);
         $updated['proteins'] = json_decode($updated['proteins'], true);
 
@@ -128,9 +137,12 @@ class MenuController {
         Auth::requireAdmin();
         $db = Database::getConnection();
 
-        $stmt = $db->prepare("UPDATE menu_items SET available = NOT available WHERE id = :id RETURNING *");
+        $stmt = $db->prepare("UPDATE menu_items SET available = NOT available WHERE id = :id");
         $stmt->execute(['id' => $id]);
-        $item = $stmt->fetch();
+
+        $fetchStmt = $db->prepare("SELECT * FROM menu_items WHERE id = :id LIMIT 1");
+        $fetchStmt->execute(['id' => $id]);
+        $item = $fetchStmt->fetch();
 
         if (!$item) {
             Response::error('Menu item not found', 404);

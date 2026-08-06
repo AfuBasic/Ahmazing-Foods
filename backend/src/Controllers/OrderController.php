@@ -139,7 +139,7 @@ class OrderController {
                 :menu_item_id, :menu_item_name, :category, :selected_size, :selected_protein,
                 :customer_name, :customer_phone, :customer_email, :delivery_address, :delivery_date,
                 :delivery_slot, :item_price, :rush_fee, :total, 'pending', :paystack_ref, :pepper_level, :cart_items, :notes
-            ) RETURNING *
+            )
         ");
 
         $insertStmt->execute([
@@ -163,7 +163,11 @@ class OrderController {
             'notes' => $input['notes'] ?? null,
         ]);
 
-        $order = $insertStmt->fetch();
+        $orderId = (int)$db->lastInsertId();
+        $fetchStmt = $db->prepare("SELECT * FROM orders WHERE id = :id LIMIT 1");
+        $fetchStmt->execute(['id' => $orderId]);
+        $order = $fetchStmt->fetch();
+
         $order['id'] = (int)$order['id'];
         $order['itemPrice'] = (int)$order['item_price'];
         $order['rushFee'] = (int)$order['rush_fee'];
@@ -269,9 +273,12 @@ class OrderController {
         }
 
         $db = Database::getConnection();
-        $stmt = $db->prepare("UPDATE orders SET status = :status WHERE id = :id RETURNING *");
+        $stmt = $db->prepare("UPDATE orders SET status = :status WHERE id = :id");
         $stmt->execute(['status' => $input['status'], 'id' => $id]);
-        $order = $stmt->fetch();
+
+        $fetchStmt = $db->prepare("SELECT * FROM orders WHERE id = :id LIMIT 1");
+        $fetchStmt->execute(['id' => $id]);
+        $order = $fetchStmt->fetch();
 
         if (!$order) {
             Response::error('Order not found', 404);
