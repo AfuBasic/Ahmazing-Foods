@@ -60,6 +60,132 @@ const FALLBACK_BREAKFAST_ITEMS = [
   },
 ];
 
+const FALLBACK_SOUP_ITEMS = [
+  {
+    id: 201,
+    category: "soups",
+    name: "Onugbu Soup (Bitterleaf)",
+    description: "Rich bitterleaf soup garnished with dried fish, stockfish and cowhide.",
+    sizes: [
+      { label: "2 Litres (Serves ~3)", price: 37000 },
+      { label: "3 Litres (Serves ~5)", price: 41000 },
+      { label: "5 Litres (Serves ~8)", price: 49000 },
+    ],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/soups/onugbu-soup.jpg",
+  },
+  {
+    id: 202,
+    category: "soups",
+    name: "Oha Soup",
+    description: "Traditional Igbo oha leaf soup, hearty and deeply flavoured.",
+    sizes: [
+      { label: "2 Litres (Serves ~3)", price: 37000 },
+      { label: "3 Litres (Serves ~5)", price: 41000 },
+      { label: "5 Litres (Serves ~8)", price: 49000 },
+    ],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/soups/oha-soup.jpg",
+  },
+  {
+    id: 203,
+    category: "soups",
+    name: "Okro Soup",
+    description: "Freshly made okro soup, silky and well-seasoned with your choice of protein.",
+    sizes: [
+      { label: "2 Litres (Serves ~3)", price: 37000 },
+      { label: "3 Litres (Serves ~5)", price: 41000 },
+      { label: "5 Litres (Serves ~8)", price: 49000 },
+    ],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/soups/okro-soup.jpg",
+  },
+  {
+    id: 204,
+    category: "soups",
+    name: "Edikang Ikong (Vegetable Soup)",
+    description: "Nutrient-dense ugu and waterleaf soup with dried fish and stockfish.",
+    sizes: [
+      { label: "2 Litres (Serves ~3)", price: 37000 },
+      { label: "3 Litres (Serves ~5)", price: 41000 },
+      { label: "5 Litres (Serves ~8)", price: 49000 },
+    ],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/soups/edikang-ikong.jpg",
+  },
+  {
+    id: 205,
+    category: "soups",
+    name: "Egusi Soup",
+    description: "Thick, golden egusi soup cooked low and slow with ground melon seeds.",
+    sizes: [
+      { label: "2 Litres (Serves ~3)", price: 37000 },
+      { label: "3 Litres (Serves ~5)", price: 41000 },
+      { label: "5 Litres (Serves ~8)", price: 49000 },
+    ],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/soups/egusi-soup.jpg",
+  },
+  {
+    id: 206,
+    category: "soups",
+    name: "Banga Soup (Ofe Akwu)",
+    description: "Traditional palm fruit soup enriched with scent leaf and local spices.",
+    sizes: [
+      { label: "2 Litres (Serves ~3)", price: 37000 },
+      { label: "3 Litres (Serves ~5)", price: 41000 },
+      { label: "5 Litres (Serves ~8)", price: 49000 },
+    ],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/soups/banga-soup.jpg",
+  },
+  {
+    id: 207,
+    category: "soups",
+    name: "Efo-Riro",
+    description: "Rich Yoruba spinach soup with locust beans and red bell peppers.",
+    sizes: [
+      { label: "2 Litres (Serves ~3)", price: 37000 },
+      { label: "3 Litres (Serves ~5)", price: 41000 },
+      { label: "5 Litres (Serves ~8)", price: 49000 },
+    ],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/soups/efo-riro.jpg",
+  },
+  {
+    id: 208,
+    category: "soups",
+    name: "Seafood Okro (Fish, Shrimp, Prawns & Calamari)",
+    description: "Premium seafood okro loaded with fresh fish, prawns, and calamari.",
+    sizes: [
+      { label: "5 Litres (Serves ~8)", price: 64000 },
+    ],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/soups/seafood-okro.jpg",
+  },
+];
+
+const SOUP_ADDON_PROTEINS = [
+  { name: "Beef", price: 4000 },
+  { name: "Chicken", price: 4700 },
+  { name: "Turkey", price: 5700 },
+  { name: "Croaker", price: 5700 },
+  { name: "Tilapia", price: 4700 },
+  { name: "Catfish", price: 5700 },
+  { name: "Snail", price: 6700 },
+  { name: "Mixed Seafood", price: 11700 },
+  { name: "Gizzard", price: 5700 },
+  { name: "Sausages", price: 4700 },
+];
+
 const healthyPicks: Record<string, Array<{ name: string; why: string }>> = {
   soups: [
     { name: "Edikang Ikong (Vegetable Soup)", why: "Nigeria's most vegetable-dense soup — loaded with ugu and waterleaf. Ask us to reduce the oil and use fish protein for the lightest version." },
@@ -94,6 +220,10 @@ export default function MenuPage() {
     if (category === "breakfast") {
       if (menuItems && menuItems.length >= 4) return menuItems;
       return FALLBACK_BREAKFAST_ITEMS;
+    }
+    if (category === "soups") {
+      if (menuItems && menuItems.length >= 8) return menuItems;
+      return FALLBACK_SOUP_ITEMS;
     }
     return menuItems ?? [];
   }, [menuItems, category]);
@@ -296,6 +426,34 @@ export default function MenuPage() {
               );
             })}
           </div>
+        )}
+
+        {/* ── EXTRA PROTEIN ADD-ONS (soups only) ────────────────────── */}
+        {category === "soups" && (
+          <section className="mt-16 pt-12 border-t border-border">
+            <div className="mb-6">
+              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block mb-1">Add-ons</span>
+              <h2 className="text-2xl font-bold font-display">Extra protein pricing</h2>
+            </div>
+            <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm max-w-2xl mb-8">
+              <div className="divide-y divide-border">
+                <div className="grid grid-cols-2 px-6 py-3 bg-muted/50 font-bold text-xs uppercase tracking-wider text-muted-foreground">
+                  <span>Protein</span>
+                  <span className="text-right">Price</span>
+                </div>
+                {SOUP_ADDON_PROTEINS.map((item) => (
+                  <div key={item.name} className="grid grid-cols-2 px-6 py-3 text-sm flex items-center">
+                    <span className="font-medium text-foreground">{item.name}</span>
+                    <span className="text-right font-bold text-foreground">{formatNaira(item.price)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-5 text-sm text-amber-900 dark:text-amber-400 leading-relaxed max-w-3xl">
+              <strong>Good to know:</strong> 2 litres includes 10 pieces of protein, 3 litres 15 pieces, 5 litres 20 pieces. Small coolers feed 20–25 people with 25 pieces of protein; medium coolers feed 30–35 people with 35 pieces. Every meal is cooked to your spice, salt and oil preference.
+            </div>
+          </section>
         )}
 
         {/* ── HEALTHY PICKS SECTION ───────────────────────────────────── */}
