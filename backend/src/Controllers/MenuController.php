@@ -13,13 +13,67 @@ class MenuController {
         $category = $_GET['category'] ?? null;
 
         if ($category) {
-            $stmt = $db->prepare("SELECT * FROM menu_items WHERE category = :category ORDER BY name ASC");
+            $stmt = $db->prepare("SELECT * FROM menu_items WHERE category = :category ORDER BY id ASC");
             $stmt->execute(['category' => $category]);
+            $items = $stmt->fetchAll();
+
+            // Auto-seed 4 Breakfast Combos if breakfast items are missing or outdated
+            if ($category === 'breakfast' && count($items) < 4) {
+                $combos = [
+                    [
+                        'name' => 'Classic Nigerian',
+                        'description' => 'Serves 2–3. Akara, pap, boiled eggs, fried plantain, and more.',
+                        'sizes' => json_encode([['label' => 'Standard Portion', 'price' => 22000]]),
+                        'proteins' => '[]',
+                        'image_url' => 'assets/breakfast/classic-nigerian.png'
+                    ],
+                    [
+                        'name' => 'Hearty Plate',
+                        'description' => 'Serves 2–3. Yam, plantain, egg stew, sausages, side salad, and more.',
+                        'sizes' => json_encode([['label' => 'Standard Portion', 'price' => 22000]]),
+                        'proteins' => '[]',
+                        'image_url' => 'assets/breakfast/hearty-plate.png'
+                    ],
+                    [
+                        'name' => 'Sweet Start',
+                        'description' => 'Serves 2–3. Oats, fresh fruit bowl, boiled egg, and more.',
+                        'sizes' => json_encode([['label' => 'Standard Portion', 'price' => 25000]]),
+                        'proteins' => '[]',
+                        'image_url' => 'assets/breakfast/sweet-start.png'
+                    ],
+                    [
+                        'name' => 'Protein Power',
+                        'description' => 'Serves 2–3. Moin-moin, akara, pap, boiled eggs, fried plantain, and more.',
+                        'sizes' => json_encode([['label' => 'Standard Portion', 'price' => 25000]]),
+                        'proteins' => '[]',
+                        'image_url' => 'assets/breakfast/protein-power.png'
+                    ]
+                ];
+
+                foreach ($combos as $combo) {
+                    $check = $db->prepare("SELECT id FROM menu_items WHERE category = 'breakfast' AND name = :name");
+                    $check->execute(['name' => $combo['name']]);
+                    if (!$check->fetch()) {
+                        $ins = $db->prepare("INSERT INTO menu_items (category, name, description, sizes, proteins, available, image_url) VALUES ('breakfast', :name, :description, :sizes, :proteins, 1, :image_url)");
+                        $ins->execute([
+                            'name' => $combo['name'],
+                            'description' => $combo['description'],
+                            'sizes' => $combo['sizes'],
+                            'proteins' => $combo['proteins'],
+                            'image_url' => $combo['image_url']
+                        ]);
+                    }
+                }
+
+                $stmt = $db->prepare("SELECT * FROM menu_items WHERE category = :category ORDER BY id ASC");
+                $stmt->execute(['category' => $category]);
+                $items = $stmt->fetchAll();
+            }
         } else {
-            $stmt = $db->query("SELECT * FROM menu_items ORDER BY name ASC");
+            $stmt = $db->query("SELECT * FROM menu_items ORDER BY id ASC");
+            $items = $stmt->fetchAll();
         }
 
-        $items = $stmt->fetchAll();
         foreach ($items as &$item) {
             $item['id'] = (int)$item['id'];
             $item['available'] = (bool)$item['available'];

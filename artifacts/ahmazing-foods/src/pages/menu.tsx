@@ -91,8 +91,10 @@ export default function MenuPage() {
   );
 
   const displayItems = useMemo(() => {
-    if (menuItems && menuItems.length > 0) return menuItems;
-    if (category === "breakfast") return FALLBACK_BREAKFAST_ITEMS;
+    if (category === "breakfast") {
+      if (menuItems && menuItems.length >= 4) return menuItems;
+      return FALLBACK_BREAKFAST_ITEMS;
+    }
     return menuItems ?? [];
   }, [menuItems, category]);
 
@@ -186,15 +188,13 @@ export default function MenuPage() {
                 return (
                   <div key={item.id} className="bg-card rounded-3xl border border-border overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group">
                     <div className="aspect-[4/3] bg-muted relative overflow-hidden">
-                      {/* Top-left combo badge */}
-                      <div className="absolute top-4 left-4 z-10 bg-white/95 dark:bg-card/95 backdrop-blur-md border border-border/50 rounded-xl px-3 py-1.5 shadow-md flex flex-col">
-                        <span className="font-bold text-xs uppercase text-foreground">{idx + 1}. {item.name}</span>
-                        <span className="text-[10px] font-extrabold text-muted-foreground tracking-wider uppercase">BREAKFAST COMBO</span>
-                      </div>
-
-                      {/* Red tag overlay badge */}
-                      <div className="absolute top-4 right-4 z-10 bg-[#C81212] text-white font-bold text-xs px-3 py-1 rounded-full shadow-md tracking-tight">
-                        {formatNaira(priceVal)}
+                      {/* Top-left combo badge with price tag */}
+                      <div className="absolute top-4 left-4 z-10 bg-white/95 dark:bg-card/95 backdrop-blur-md border border-border/60 rounded-2xl p-3 shadow-lg flex flex-col gap-0.5 max-w-[85%]">
+                        <span className="font-extrabold text-sm uppercase text-foreground tracking-tight leading-none">{idx + 1}. {item.name}</span>
+                        <span className="text-[9px] font-black text-muted-foreground tracking-widest uppercase bg-muted/80 px-2 py-0.5 rounded w-fit mt-0.5">BREAKFAST COMBO</span>
+                        <span className="text-xs font-black text-white bg-[#C81212] px-2.5 py-0.5 rounded-md w-fit mt-1 shadow-sm">
+                          {formatNaira(priceVal)}
+                        </span>
                       </div>
 
                       {item.imageUrl ? (
