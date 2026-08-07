@@ -129,6 +129,99 @@ class MenuController {
                     }
                 }
 
+            // Auto-seed Stews if missing or updated
+            if ($category === 'stews') {
+                $stews = [
+                    [
+                        'name' => 'Classic Tomato Stew',
+                        'desc' => 'A rich, slow-cooked tomato base stew — the backbone of Nigerian cooking.',
+                        'img' => 'assets/stews/classic-tomato-stew.webp',
+                        'sizes' => json_encode([
+                            ['label' => '3 Litres (Serves ~5)', 'price' => 37000],
+                            ['label' => '5 Litres (Serves ~8)', 'price' => 45000],
+                            ['label' => 'Cooler — Small', 'price' => 0],
+                            ['label' => 'Cooler — Medium', 'price' => 0],
+                        ])
+                    ],
+                    [
+                        'name' => 'Ayamase (Ofada Stew)',
+                        'desc' => 'Spicy green pepper stew with assorted offals — pairs perfectly with ofada rice.',
+                        'img' => 'assets/stews/ayamase-stew.jpg',
+                        'sizes' => json_encode([
+                            ['label' => '3 Litres (Serves ~5)', 'price' => 40000],
+                            ['label' => '5 Litres (Serves ~8)', 'price' => 49000],
+                            ['label' => 'Cooler — Small', 'price' => 0],
+                            ['label' => 'Cooler — Medium', 'price' => 0],
+                        ])
+                    ],
+                    [
+                        'name' => 'Native Red Pepper Stew (Buka Stew)',
+                        'desc' => 'Deep red bleached palm oil stew with roasted habanero peppers and iru.',
+                        'img' => 'assets/stews/buka-stew.jpg',
+                        'sizes' => json_encode([
+                            ['label' => '3 Litres (Serves ~5)', 'price' => 38000],
+                            ['label' => '5 Litres (Serves ~8)', 'price' => 46000],
+                            ['label' => 'Cooler — Small', 'price' => 0],
+                            ['label' => 'Cooler — Medium', 'price' => 0],
+                        ])
+                    ],
+                    [
+                        'name' => 'Peppered Beef Stew',
+                        'desc' => 'Fried beef simmered in spicy pepper sauce.',
+                        'img' => 'assets/stews/peppered-beef-stew.jpg',
+                        'sizes' => json_encode([
+                            ['label' => '3 Litres (Serves ~5)', 'price' => 47000],
+                            ['label' => '5 Litres (Serves ~8)', 'price' => 54000],
+                            ['label' => 'Cooler — Small', 'price' => 0],
+                            ['label' => 'Cooler — Medium', 'price' => 0],
+                        ])
+                    ],
+                    [
+                        'name' => 'Peppered Chicken Stew',
+                        'desc' => 'Hard chicken pieces toss-fried in vibrant habanero pepper sauce.',
+                        'img' => 'assets/stews/peppered-chicken-stew.jpg',
+                        'sizes' => json_encode([
+                            ['label' => '3 Litres (Serves ~5)', 'price' => 47000],
+                            ['label' => '5 Litres (Serves ~8)', 'price' => 54000],
+                            ['label' => 'Cooler — Small', 'price' => 0],
+                            ['label' => 'Cooler — Medium', 'price' => 0],
+                        ])
+                    ],
+                    [
+                        'name' => 'Peppered Turkey Stew',
+                        'desc' => 'Succulent turkey pieces fried and simmered in spicy pepper sauce.',
+                        'img' => 'assets/stews/peppered-turkey-stew.jpg',
+                        'sizes' => json_encode([
+                            ['label' => '3 Litres (Serves ~5)', 'price' => 49000],
+                            ['label' => '5 Litres (Serves ~8)', 'price' => 59000],
+                            ['label' => 'Cooler — Small', 'price' => 0],
+                            ['label' => 'Cooler — Medium', 'price' => 0],
+                        ])
+                    ]
+                ];
+
+                foreach ($stews as $stew) {
+                    $check = $db->prepare("SELECT id FROM menu_items WHERE category = 'stews' AND name = :name");
+                    $check->execute(['name' => $stew['name']]);
+                    $existing = $check->fetch();
+                    if (!$existing) {
+                        $ins = $db->prepare("INSERT INTO menu_items (category, name, description, sizes, proteins, available, image_url) VALUES ('stews', :name, :desc, :sizes, '[]', 1, :img)");
+                        $ins->execute([
+                            'name' => $stew['name'],
+                            'desc' => $stew['desc'],
+                            'sizes' => $stew['sizes'],
+                            'img' => $stew['img']
+                        ]);
+                    } else {
+                        $upd = $db->prepare("UPDATE menu_items SET sizes = :sizes, description = :desc WHERE id = :id");
+                        $upd->execute([
+                            'sizes' => $stew['sizes'],
+                            'desc' => $stew['desc'],
+                            'id' => $existing['id']
+                        ]);
+                    }
+                }
+
                 $stmt = $db->prepare("SELECT * FROM menu_items WHERE category = :category ORDER BY id ASC");
                 $stmt->execute(['category' => $category]);
                 $items = $stmt->fetchAll();

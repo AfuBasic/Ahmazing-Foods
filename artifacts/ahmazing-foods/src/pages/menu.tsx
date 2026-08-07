@@ -199,6 +199,99 @@ const healthyPicks: Record<string, Array<{ name: string; why: string }>> = {
   ],
 };
 
+const FALLBACK_STEW_ITEMS = [
+  {
+    id: 301,
+    category: "stews",
+    name: "Classic Tomato Stew",
+    description: "A rich, slow-cooked tomato base stew — the backbone of Nigerian cooking.",
+    sizes: [
+      { label: "3 Litres (Serves ~5)", price: 37000 },
+      { label: "5 Litres (Serves ~8)", price: 45000 },
+      { label: "Cooler — Small", price: 0 },
+      { label: "Cooler — Medium", price: 0 },
+    ],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/stews/classic-tomato-stew.webp",
+  },
+  {
+    id: 302,
+    category: "stews",
+    name: "Ayamase (Ofada Stew)",
+    description: "Spicy green pepper stew with assorted offals — pairs perfectly with ofada rice.",
+    sizes: [
+      { label: "3 Litres (Serves ~5)", price: 40000 },
+      { label: "5 Litres (Serves ~8)", price: 49000 },
+      { label: "Cooler — Small", price: 0 },
+      { label: "Cooler — Medium", price: 0 },
+    ],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/stews/ayamase-stew.jpg",
+  },
+  {
+    id: 303,
+    category: "stews",
+    name: "Native Red Pepper Stew (Buka Stew)",
+    description: "Deep red bleached palm oil stew with roasted habanero peppers and iru.",
+    sizes: [
+      { label: "3 Litres (Serves ~5)", price: 38000 },
+      { label: "5 Litres (Serves ~8)", price: 46000 },
+      { label: "Cooler — Small", price: 0 },
+      { label: "Cooler — Medium", price: 0 },
+    ],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/stews/buka-stew.jpg",
+  },
+  {
+    id: 304,
+    category: "stews",
+    name: "Peppered Beef Stew",
+    description: "Fried beef simmered in spicy pepper sauce.",
+    sizes: [
+      { label: "3 Litres (Serves ~5)", price: 47000 },
+      { label: "5 Litres (Serves ~8)", price: 54000 },
+      { label: "Cooler — Small", price: 0 },
+      { label: "Cooler — Medium", price: 0 },
+    ],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/stews/peppered-beef-stew.jpg",
+  },
+  {
+    id: 305,
+    category: "stews",
+    name: "Peppered Chicken Stew",
+    description: "Hard chicken pieces toss-fried in vibrant habanero pepper sauce.",
+    sizes: [
+      { label: "3 Litres (Serves ~5)", price: 47000 },
+      { label: "5 Litres (Serves ~8)", price: 54000 },
+      { label: "Cooler — Small", price: 0 },
+      { label: "Cooler — Medium", price: 0 },
+    ],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/stews/peppered-chicken-stew.jpg",
+  },
+  {
+    id: 306,
+    category: "stews",
+    name: "Peppered Turkey Stew",
+    description: "Succulent turkey pieces fried and simmered in spicy pepper sauce.",
+    sizes: [
+      { label: "3 Litres (Serves ~5)", price: 49000 },
+      { label: "5 Litres (Serves ~8)", price: 59000 },
+      { label: "Cooler — Small", price: 0 },
+      { label: "Cooler — Medium", price: 0 },
+    ],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/stews/peppered-turkey-stew.jpg",
+  },
+];
+
 export default function MenuPage() {
   const [location] = useLocation();
   
@@ -219,6 +312,10 @@ export default function MenuPage() {
     if (category === "soups") {
       if (menuItems && menuItems.length >= 8) return menuItems;
       return FALLBACK_SOUP_ITEMS;
+    }
+    if (category === "stews") {
+      if (menuItems && menuItems.length >= 6) return menuItems;
+      return FALLBACK_STEW_ITEMS;
     }
     return menuItems ?? [];
   }, [menuItems, category]);
