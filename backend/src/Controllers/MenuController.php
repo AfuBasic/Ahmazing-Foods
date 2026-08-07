@@ -133,15 +133,6 @@ class MenuController {
             if ($category === 'stews') {
                 $stews = [
                     [
-                        'name' => 'Classic Tomato Stew',
-                        'desc' => 'A rich, slow-cooked tomato base stew — the backbone of Nigerian cooking.',
-                        'img' => 'assets/stews/classic-tomato-stew.webp',
-                        'sizes' => json_encode([
-                            ['label' => '3 Litres (Serves ~5)', 'price' => 37000],
-                            ['label' => '5 Litres (Serves ~8)', 'price' => 45000],
-                        ])
-                    ],
-                    [
                         'name' => 'Ayamase (Ofada Stew)',
                         'desc' => 'Spicy green pepper stew with assorted offals — pairs perfectly with ofada rice.',
                         'img' => 'assets/stews/ayamase-stew.jpg',
@@ -151,21 +142,21 @@ class MenuController {
                         ])
                     ],
                     [
-                        'name' => 'Native Red Pepper Stew (Buka Stew)',
-                        'desc' => 'Deep red bleached palm oil stew with roasted habanero peppers and iru.',
-                        'img' => 'assets/stews/buka-stew.jpg',
+                        'name' => 'Classic Tomato Stew',
+                        'desc' => 'A rich, slow-cooked tomato base stew — the backbone of Nigerian cooking.',
+                        'img' => 'assets/stews/classic-tomato-stew.webp',
                         'sizes' => json_encode([
-                            ['label' => '3 Litres (Serves ~5)', 'price' => 38000],
-                            ['label' => '5 Litres (Serves ~8)', 'price' => 46000],
+                            ['label' => '3 Litres (Serves ~5)', 'price' => 37000],
+                            ['label' => '5 Litres (Serves ~8)', 'price' => 45000],
                         ])
                     ],
                     [
                         'name' => 'Peppered Beef Stew',
-                        'desc' => 'Fried beef simmered in spicy pepper sauce.',
+                        'desc' => 'Tender chunks of beef in a bold pepper stew with caramelised onions.',
                         'img' => 'assets/stews/peppered-beef-stew.jpg',
                         'sizes' => json_encode([
-                            ['label' => '3 Litres (Serves ~5)', 'price' => 47000],
-                            ['label' => '5 Litres (Serves ~8)', 'price' => 54000],
+                            ['label' => '3 Litres (Serves ~5)', 'price' => 37000],
+                            ['label' => '5 Litres (Serves ~8)', 'price' => 45000],
                         ])
                     ],
                     [
@@ -173,8 +164,8 @@ class MenuController {
                         'desc' => 'Hard chicken pieces toss-fried in vibrant habanero pepper sauce.',
                         'img' => 'assets/stews/peppered-chicken-stew.jpg',
                         'sizes' => json_encode([
-                            ['label' => '3 Litres (Serves ~5)', 'price' => 47000],
-                            ['label' => '5 Litres (Serves ~8)', 'price' => 54000],
+                            ['label' => '3 Litres (Serves ~5)', 'price' => 37000],
+                            ['label' => '5 Litres (Serves ~8)', 'price' => 45000],
                         ])
                     ],
                     [
