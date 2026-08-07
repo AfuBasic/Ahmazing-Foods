@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Link } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useListMenuItems } from "@workspace/api-client-react";
@@ -11,7 +11,43 @@ import { Input } from "@/components/ui/input";
 import { formatNaira } from "@/lib/format";
 
 const BASE = import.meta.env.BASE_URL;
-const asset = (p: string) => `${BASE}${p}`;
+function getImageUrl(url?: string): string {
+  if (!url) return "";
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  if (url.startsWith("assets/")) return `${BASE}${url}`;
+  return `${BASE}assets/${url}`;
+}
+
+const FALLBACK_BREAKFAST_ITEMS = [
+  {
+    id: 101,
+    name: "Classic Nigerian",
+    description: "Serves 2–3. Akara, pap, boiled eggs, fried plantain, and more.",
+    sizes: [{ label: "Standard Portion", price: 22000 }],
+    imageUrl: "assets/breakfast/classic-nigerian.png",
+  },
+  {
+    id: 102,
+    name: "Hearty Plate",
+    description: "Serves 2–3. Yam, plantain, egg stew, sausages, side salad, and more.",
+    sizes: [{ label: "Standard Portion", price: 22000 }],
+    imageUrl: "assets/breakfast/hearty-plate.png",
+  },
+  {
+    id: 103,
+    name: "Sweet Start",
+    description: "Serves 2–3. Oats, fresh fruit bowl, boiled egg, and more.",
+    sizes: [{ label: "Standard Portion", price: 25000 }],
+    imageUrl: "assets/breakfast/sweet-start.png",
+  },
+  {
+    id: 104,
+    name: "Protein Power",
+    description: "Serves 2–3. Moin-moin, akara, pap, boiled eggs, fried plantain, and more.",
+    sizes: [{ label: "Standard Portion", price: 25000 }],
+    imageUrl: "assets/breakfast/protein-power.png",
+  },
+];
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -98,7 +134,10 @@ export default function WeekendSpecials() {
 
   // Fetch always-available breakfast plates
   const { data: menuData } = useListMenuItems({ category: "breakfast" });
-  const breakfastPlates = menuData ?? [];
+  const displayBreakfastPlates = useMemo(() => {
+    if (menuData && menuData.length >= 4) return menuData;
+    return FALLBACK_BREAKFAST_ITEMS;
+  }, [menuData]);
 
   // Countdown ticker
   useEffect(() => {
@@ -472,43 +511,36 @@ export default function WeekendSpecials() {
             While you wait for the weekly special, these combo plates are available every weekend — book by Friday night to secure yours.
           </p>
 
-          {breakfastPlates.length === 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-36 rounded-2xl bg-muted animate-pulse" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {breakfastPlates.map((item) => (
-                <div key={item.id} className="bg-card border border-border rounded-2xl overflow-hidden flex flex-col">
-                  {/* Photo */}
-                  <div className="aspect-video w-full overflow-hidden bg-muted">
-                    {item.imageUrl ? (
-                      <img
-                        src={asset(item.imageUrl)}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted-foreground/40 text-xs">
-                        Photo coming soon
-                      </div>
-                    )}
-                  </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {displayBreakfastPlates.map((item: any) => (
+              <div key={item.id} className="bg-card border border-border rounded-2xl overflow-hidden flex flex-col">
+                {/* Photo */}
+                <div className="aspect-video w-full overflow-hidden bg-muted">
+                  {item.imageUrl ? (
+                    <img
+                      src={getImageUrl(item.imageUrl)}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground/40 text-xs">
+                      Photo coming soon
+                    </div>
+                  )}
+                </div>
                   {/* Body */}
                   <div className="p-5 flex flex-col flex-1">
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="font-bold font-display text-lg">{item.name}</h3>
                       <span className="text-primary font-bold text-sm whitespace-nowrap ml-2">
-                        {formatNaira(Math.min(...item.sizes.map((s) => s.price)))}
+                        {formatNaira(Math.min(...item.sizes.map((s: any) => s.price)))}
                       </span>
                     </div>
                     {item.description && (
                       <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{item.description}</p>
                     )}
                     <div className="flex flex-wrap gap-1.5 mb-4">
-                      {item.sizes.map((s) => (
+                      {item.sizes.map((s: any) => (
                         <span key={s.label} className="text-xs bg-muted px-2.5 py-1 rounded-full text-muted-foreground">
                           {s.label} · {formatNaira(s.price)}
                         </span>
@@ -525,7 +557,6 @@ export default function WeekendSpecials() {
                 </div>
               ))}
             </div>
-          )}
         </div>
       </section>
 
