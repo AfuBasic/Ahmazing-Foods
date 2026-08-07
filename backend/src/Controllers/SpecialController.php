@@ -12,28 +12,24 @@ use PDOException;
 class SpecialController {
     private array $specials = [
         [
+            'name' => 'Ukwa (African Breadfruit)',
+            'description' => 'Slow-cooked African breadfruit, a Southeast Nigerian favourite.'
+        ],
+        [
+            'name' => 'Isi Ewu (Goat Head Delicacy)',
+            'description' => 'A traditional Igbo goat head dish, richly spiced.'
+        ],
+        [
             'name' => 'Nkwobi',
-            'description' => 'Spiced cow foot slow-cooked in a palm oil and utazi sauce. Rich, warming and deeply satisfying.'
-        ],
-        [
-            'name' => 'Isi Ewu',
-            'description' => 'Goat head pepper soup — tender meat, aromatic spices. Not for the faint-hearted, but deeply rewarding.'
-        ],
-        [
-            'name' => 'Abacha (African Salad)',
-            'description' => 'Shredded cassava with ugba (oil bean seeds), dried fish, garden eggs and a bold palm oil dressing.'
-        ],
-        [
-            'name' => 'Ukwa (Breadfruit Porridge)',
-            'description' => 'A forgotten treasure. Breadfruit cooked with palm oil, crayfish and seasonings — earthy, filling, unique.'
+            'description' => 'Spicy cow foot delicacy, cooked in a rich palm oil sauce.'
         ],
         [
             'name' => 'Assorted Meat Pepper Soup',
-            'description' => 'Goat, cow foot, tripe and offal in a light, aromatic pepper soup broth. Warming and deeply flavoured.'
+            'description' => 'A warming mix of assorted meats in a peppery, spiced broth.'
         ],
         [
             'name' => 'Roasted Plantain with Pepper & Fish',
-            'description' => 'Whole plantain roasted over open flame, served with a spiced pepper sauce and your choice of fish — Tilapia or Croaker.'
+            'description' => 'Fire-roasted plantain with a pepper sauce and your choice of Tilapia or Croaker.'
         ]
     ];
 

@@ -529,6 +529,16 @@ export default function WeekendSpecials() {
         </div>
       </section>
 
+      {/* ── What's next advice block ───────────────────────────────────── */}
+      <section className="max-w-4xl mx-auto px-6 py-6">
+        <div className="bg-muted/50 rounded-2xl p-6 border border-border">
+          <h3 className="font-bold font-display text-base mb-2">What's next for this feature</h3>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Right now, voting confirms your own pick and gives you something to share — it doesn't yet show a live count everyone can see updating together. That needs a small shared backend to work properly across every visitor at once. This page is built so that piece can be added later without changing anything else here.
+          </p>
+        </div>
+      </section>
+
       {/* ── CTA ──────────────────────────────────────────────────────────────── */}
       <section className="max-w-4xl mx-auto px-6 py-16 text-center">
         <h2 className="text-3xl font-display font-black mb-4">Ready to book?</h2>
