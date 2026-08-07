@@ -179,14 +179,14 @@ export default function MenuPage() {
             <p className="text-muted-foreground">This category is coming soon — check back shortly.</p>
           </div>
         ) : (
-          <div className={`grid grid-cols-1 ${category === "breakfast" ? "md:grid-cols-2" : "md:grid-cols-2 lg:grid-cols-3"} gap-8`}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {displayItems.filter(item => item.available).map((item, idx) => {
               if (category === "breakfast") {
                 const priceVal = item.sizes[0]?.price ?? 22000;
                 const sizeLabel = item.sizes[0]?.label ?? "Standard Portion";
 
                 return (
-                  <div key={item.id} className="bg-card rounded-3xl border border-border overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group">
+                  <div key={item.id} className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group">
                     <div className="aspect-[4/3] bg-muted relative overflow-hidden">
                       {item.imageUrl ? (
                         <WatermarkedImage
@@ -198,18 +198,18 @@ export default function MenuPage() {
                       )}
                     </div>
 
-                    <div className="p-6 md:p-8 flex flex-col flex-1 gap-3">
-                      <h3 className="text-2xl font-bold font-display leading-tight text-foreground">{item.name}</h3>
+                    <div className="p-6 flex flex-col flex-1 gap-3">
+                      <h3 className="text-xl font-bold font-display leading-tight text-foreground">{item.name}</h3>
                       <p className="text-sm text-muted-foreground leading-relaxed flex-1">{item.description}</p>
 
-                      <div className="mt-4 pt-4 border-t border-border/70 flex items-center justify-between">
+                      <div className="mt-2 pt-3 border-t border-border/60 flex items-center justify-between">
                         <div>
                           <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-0.5">PRICE</p>
-                          <p className="text-xl font-bold text-foreground">{formatNaira(priceVal)}</p>
+                          <p className="text-lg font-bold text-foreground">{formatNaira(priceVal)}</p>
                         </div>
                         <Link
                           href={`/book?cat=breakfast&item=${encodeURIComponent(item.name)}&size=${encodeURIComponent(sizeLabel)}`}
-                          className="rounded-full px-6 py-2.5 font-bold text-white text-sm shadow-md hover:shadow-lg transition-all hover:opacity-90 flex items-center gap-1"
+                          className="rounded-full px-4 py-2 font-bold text-white text-xs shadow hover:opacity-90 transition-opacity flex items-center gap-1 shrink-0"
                           style={{ background: BRAND_GREEN }}
                         >
                           Book →
