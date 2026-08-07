@@ -18,7 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { formatNaira } from "@/lib/format";
 import {
   Loader2, Trash2, PlusCircle, AlertCircle, ShoppingCart,
-  ChevronRight, Check, Minus, Plus, Users, ChevronDown, ChevronUp, Search, X,
+  ChevronRight, Check, Minus, Plus, Users, ChevronDown, ChevronUp, Search, X, MessageCircle,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/context/cart-context";
@@ -581,7 +581,7 @@ function SearchableDishSelect({
 export default function BookPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const { cart, addToCart: globalAddToCart, removeFromCart: globalRemoveFromCart, setCartItems } = useCart();
+  const { cart, addToCart: globalAddToCart, removeFromCart: globalRemoveFromCart, setCartItems, clearCart } = useCart();
 
   const { data: menuItems, isLoading: loadingMenu } = useListMenuItems(
     {}, { query: { queryKey: ["menuItems"] } }
@@ -833,9 +833,6 @@ export default function BookPage() {
     globalRemoveFromCart(id);
   }
 
-  const [payMethod, setPayMethod] = useState<"paystack" | "bank_transfer">("paystack");
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-
   function onSubmit(values: z.infer<typeof customerSchema>) {
     if (cart.length === 0) {
       toast({ variant: "destructive", title: "Cart is empty", description: "Add at least one item before booking." });
@@ -856,7 +853,7 @@ export default function BookPage() {
       `CART (${cart.length} item${cart.length === 1 ? "" : "s"}):\n${cartSummary}`,
       `Pepper: ${PEPPER_LABELS[pepperLevel]}`,
       `Delivery: ${values.deliveryDate} · ${values.deliverySlot}`,
-      `Payment Method: ${payMethod === "paystack" ? "Paystack (Online Card/Transfer)" : "Direct Bank Transfer"}`,
+      `Order Confirmation: Direct WhatsApp Deeplink`,
       rushFee > 0
         ? `Subtotal: ${formatNaira(cartTotal)} + Rush fee: ${formatNaira(rushFee)} = Total: ${formatNaira(grandTotal)}`
         : `Total: ${formatNaira(grandTotal)}`,
@@ -891,76 +888,49 @@ export default function BookPage() {
         },
       },
       {
-        onSuccess: async (order) => {
-          if (payMethod === "paystack") {
-            setIsProcessingPayment(true);
-            try {
-              // 1. Initialize Paystack Transaction
-              const initRes = await fetch("/api/payment/initialize", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  order_id: order.id,
-                  amount: grandTotal,
-                  email: values.customerEmail || "orders@ahmazingfoods.com",
-                  callback_url: `${window.location.origin}/booking-confirmed/${order.id}`,
-                }),
-              });
+        onSuccess: (order) => {
+          const cartSummary = cart
+            .map(
+              (ci, i) =>
+                `${i + 1}. *${ci.menuItemName}* (${ci.selectedSize}) — ${formatNaira(ci.price)}${
+                  ci.selectedProteins.length > 0
+                    ? `\n   Proteins: ${ci.selectedProteins.map((p) => `${p.name} ×${p.qty}`).join(", ")}`
+                    : ""
+                }`
+            )
+            .join("\n\n");
 
-              const initData = await initRes.json();
+          const waMessage = [
+            `*NEW ORDER REQ — #${order.id}*`,
+            `-----------------------------`,
+            `*Customer:* ${values.customerName}`,
+            `*Phone:* ${values.customerPhone}`,
+            values.customerEmail ? `*Email:* ${values.customerEmail}` : null,
+            `\n*ITEMS ORDERED:*`,
+            cartSummary,
+            `\n*Pepper Preference:* ${PEPPER_LABELS[pepperLevel]}`,
+            `*Delivery Date:* ${values.deliveryDate}`,
+            `*Delivery Slot:* ${values.deliverySlot}`,
+            `*Delivery Address:* ${values.deliveryAddress}`,
+            selectedZone ? `*Delivery Zone:* ${selectedZone.label}` : null,
+            hasAltRecipient && values.recipientName
+              ? `*Recipient:* ${values.recipientName} (${values.recipientPhone ?? ""})`
+              : null,
+            values.notes ? `\n*Notes:* ${values.notes}` : null,
+            `-----------------------------`,
+            rushFee > 0
+              ? `Subtotal: ${formatNaira(cartTotal)}\nRush Fee: ${formatNaira(rushFee)}\n*TOTAL:* ${formatNaira(grandTotal)}`
+              : `*TOTAL:* ${formatNaira(grandTotal)}`,
+            `\nHi AHmazing Foods! I just placed this order on your website and would like to confirm my booking.`,
+          ]
+            .filter(Boolean)
+            .join("\n");
 
-              if (!initRes.ok || !initData.reference) {
-                throw new Error(initData.error || "Failed to initialize Paystack payment");
-              }
-
-              // 2. Open Paystack Inline Popup
-              const PaystackPop = (window as any).PaystackPop;
-              if (PaystackPop) {
-                const handler = PaystackPop.setup({
-                  key: initData.public_key || "pk_test_5ea45ba389e8fa8ee4fcf3d95cbcbef4e1d0d47f",
-                  email: values.customerEmail || "orders@ahmazingfoods.com",
-                  amount: Math.round(grandTotal * 100),
-                  ref: initData.reference,
-                  onClose: () => {
-                    setIsProcessingPayment(false);
-                    toast({ title: "Payment Window Closed", description: "Your order is created as pending." });
-                    setLocation(`/booking-confirmed/${order.id}`);
-                  },
-                  callback: (response: { reference: string }) => {
-                    // 3. Atomically verify payment with backend
-                    fetch("/api/payment/verify", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ reference: response.reference }),
-                    })
-                      .then((r) => r.json())
-                      .then((verifyResult) => {
-                        setIsProcessingPayment(false);
-                        if (verifyResult.status === "success") {
-                          toast({ title: "Payment Successful!", description: "Your payment has been verified." });
-                        }
-                        setLocation(`/booking-confirmed/${order.id}`);
-                      })
-                      .catch(() => {
-                        setIsProcessingPayment(false);
-                        setLocation(`/booking-confirmed/${order.id}`);
-                      });
-                  },
-                });
-                handler.openIframe();
-              } else if (initData.authorization_url) {
-                window.location.href = initData.authorization_url;
-              } else {
-                setLocation(`/booking-confirmed/${order.id}`);
-              }
-            } catch (payErr: any) {
-              setIsProcessingPayment(false);
-              toast({ variant: "destructive", title: "Payment Error", description: payErr.message || "Failed to launch Paystack" });
-              setLocation(`/booking-confirmed/${order.id}`);
-            }
-          } else {
-            setLocation(`/booking-confirmed/${order.id}`);
-          }
+          const waUrl = `https://wa.me/2348105506052?text=${encodeURIComponent(waMessage)}`;
+          window.open(waUrl, "_blank");
+          clearCart();
+          toast({ title: "Order Created!", description: "Opening WhatsApp to confirm your order details..." });
+          setLocation(`/booking-confirmed/${order.id}`);
         },
         onError: (err) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -972,7 +942,7 @@ export default function BookPage() {
   }
 
   const isSubmitting = createOrder.isPending;
-  const canSubmit    = cart.length > 0 && pepperTouched && deliveryZone !== "" && !isSubmitting && !isSundayToday;
+  const canSubmit = cart.length > 0 && pepperTouched && deliveryZone !== "" && !isSubmitting && !isSundayToday;
 
   // ── RENDER ────────────────────────────────────────────────────────────────
   return (
@@ -1664,55 +1634,33 @@ export default function BookPage() {
               )}
             </div>
 
-            {/* Payment Method Selector */}
-            <div className="space-y-3 bg-card rounded-2xl border border-border p-5">
-              <label className="text-sm font-bold text-foreground block">Select Payment Method</label>
-              <div className="grid grid-cols-1 gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => setPayMethod("paystack")}
-                  className={`p-3.5 rounded-xl border-2 text-left transition-all flex items-start justify-between ${
-                    payMethod === "paystack" ? "border-primary bg-primary/5 shadow-sm" : "border-border hover:border-primary/40"
-                  }`}
-                >
-                  <div>
-                    <div className="flex items-center gap-2 font-bold text-sm">
-                      💳 Paystack Online Payment
-                      <span className="text-[10px] uppercase font-bold text-emerald-700 bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded">Instant</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-0.5">Pay securely via Debit Card, Bank Transfer, or USSD</p>
-                  </div>
-                  {payMethod === "paystack" && <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setPayMethod("bank_transfer")}
-                  className={`p-3.5 rounded-xl border-2 text-left transition-all flex items-start justify-between ${
-                    payMethod === "bank_transfer" ? "border-primary bg-primary/5 shadow-sm" : "border-border hover:border-primary/40"
-                  }`}
-                >
-                  <div>
-                    <div className="font-bold text-sm">🏦 Direct Bank Transfer</div>
-                    <p className="text-xs text-muted-foreground mt-0.5">FCMB · 1009414545 (Ahmazing Cuisine)</p>
-                  </div>
-                  {payMethod === "bank_transfer" && <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />}
-                </button>
+            {/* Order Confirmation via WhatsApp */}
+            <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-5 space-y-2">
+              <div className="flex items-center gap-2 font-bold text-emerald-900 dark:text-emerald-400 text-sm">
+                <MessageCircle className="w-4 h-4 text-emerald-600 shrink-0" /> Order via WhatsApp
               </div>
+              <p className="text-xs text-emerald-700 dark:text-emerald-500 leading-relaxed">
+                When you click below, your complete order summary will open on WhatsApp. Our team will verify your delivery details and provide instant payment instructions.
+              </p>
             </div>
 
-            <Button type="submit" form="booking-form" disabled={!canSubmit || isProcessingPayment}
-              className="w-full h-14 text-lg font-bold gap-2 rounded-xl"
-              style={{ background: canSubmit ? "#0F9E0F" : undefined }}>
-              {isSubmitting || isProcessingPayment
-                ? <><Loader2 className="w-5 h-5 animate-spin" /> Processing…</>
-                : payMethod === "paystack"
-                ? <>Pay with Paystack ({formatNaira(grandTotal)}) <ChevronRight className="w-5 h-5" /></>
-                : <>Confirm Booking <ChevronRight className="w-5 h-5" /></>
-              }
+            <Button
+              type="submit"
+              form="booking-form"
+              disabled={!canSubmit}
+              className="w-full h-14 text-lg font-bold gap-2 rounded-xl text-white shadow-lg transition-all"
+              style={{ background: canSubmit ? "#25D366" : undefined }}
+            >
+              {isSubmitting ? (
+                <><Loader2 className="w-5 h-5 animate-spin" /> Preparing Order…</>
+              ) : (
+                <>
+                  <MessageCircle className="w-5 h-5" /> Order via WhatsApp ({formatNaira(grandTotal)}) <ChevronRight className="w-5 h-5" />
+                </>
+              )}
             </Button>
 
-            {!canSubmit && !isSubmitting && !isProcessingPayment && (
+            {!canSubmit && !isSubmitting && (
               <div className="space-y-1.5">
                 {isSundayToday && (
                   <p className="text-xs text-red-600 flex items-center gap-1.5 font-medium">
