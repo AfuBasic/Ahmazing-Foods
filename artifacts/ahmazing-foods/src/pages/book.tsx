@@ -363,10 +363,10 @@ const FALLBACK_MENU_ITEMS = [
   {
     id: 11,
     category: "breakfast",
-    name: "Akara & Ogi (Pap)",
-    description: "Freshly fried golden akara balls served with warm, smooth pap.",
+    name: "Classic Nigerian",
+    description: "Serves 2–3. Akara, pap, boiled eggs, fried plantain, and more.",
     sizes: [
-      { label: "Standard Portion", price: 5500 },
+      { label: "Standard Portion", price: 22000 },
     ],
     proteins: [] as Array<{ name: string; extraCost: number }>,
     available: true,
@@ -374,11 +374,10 @@ const FALLBACK_MENU_ITEMS = [
   {
     id: 12,
     category: "breakfast",
-    name: "Boiled Yam & Egg Sauce",
-    description: "Soft boiled yam slices served with rich tomato egg sauce.",
+    name: "Hearty Plate",
+    description: "Serves 2–3. Yam, plantain, egg stew, sausages, side salad, and more.",
     sizes: [
-      { label: "Standard Portion", price: 6500 },
-      { label: "Large Portion (Serves 2)", price: 11000 },
+      { label: "Standard Portion", price: 22000 },
     ],
     proteins: [] as Array<{ name: string; extraCost: number }>,
     available: true,
@@ -386,10 +385,21 @@ const FALLBACK_MENU_ITEMS = [
   {
     id: 13,
     category: "breakfast",
-    name: "Plantain & Egg Frittata",
-    description: "Baked ripe plantain slices and seasoned vegetable egg frittata.",
+    name: "Sweet Start",
+    description: "Serves 2–3. Oats, fresh fruit bowl, boiled egg, and more.",
     sizes: [
-      { label: "Standard Portion", price: 7000 },
+      { label: "Standard Portion", price: 25000 },
+    ],
+    proteins: [] as Array<{ name: string; extraCost: number }>,
+    available: true,
+  },
+  {
+    id: 14,
+    category: "breakfast",
+    name: "Protein Power",
+    description: "Serves 2–3. Moin-moin, akara, pap, boiled eggs, fried plantain, and more.",
+    sizes: [
+      { label: "Standard Portion", price: 25000 },
     ],
     proteins: [] as Array<{ name: string; extraCost: number }>,
     available: true,

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useLocation, Link } from "wouter";
 import { useListMenuItems, ListMenuItemsCategory } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,49 @@ const bannerImages: Record<string, string> = {
   stews:     "stews/classic-tomato-stew.webp",
   breakfast: "food-akara-pap.jpg",
 };
+
+const FALLBACK_BREAKFAST_ITEMS = [
+  {
+    id: 101,
+    category: "breakfast",
+    name: "Classic Nigerian",
+    description: "Serves 2–3. Akara, pap, boiled eggs, fried plantain, and more.",
+    sizes: [{ label: "Standard Portion", price: 22000 }],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/breakfast/classic-nigerian.png",
+  },
+  {
+    id: 102,
+    category: "breakfast",
+    name: "Hearty Plate",
+    description: "Serves 2–3. Yam, plantain, egg stew, sausages, side salad, and more.",
+    sizes: [{ label: "Standard Portion", price: 22000 }],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/breakfast/hearty-plate.png",
+  },
+  {
+    id: 103,
+    category: "breakfast",
+    name: "Sweet Start",
+    description: "Serves 2–3. Oats, fresh fruit bowl, boiled egg, and more.",
+    sizes: [{ label: "Standard Portion", price: 25000 }],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/breakfast/sweet-start.png",
+  },
+  {
+    id: 104,
+    category: "breakfast",
+    name: "Protein Power",
+    description: "Serves 2–3. Moin-moin, akara, pap, boiled eggs, fried plantain, and more.",
+    sizes: [{ label: "Standard Portion", price: 25000 }],
+    proteins: [],
+    available: true,
+    imageUrl: "assets/breakfast/protein-power.png",
+  },
+];
 
 const healthyPicks: Record<string, Array<{ name: string; why: string }>> = {
   soups: [
@@ -45,6 +89,12 @@ export default function MenuPage() {
     { category },
     { query: { queryKey: ["menuItems", category] } }
   );
+
+  const displayItems = useMemo(() => {
+    if (menuItems && menuItems.length > 0) return menuItems;
+    if (category === "breakfast") return FALLBACK_BREAKFAST_ITEMS;
+    return menuItems ?? [];
+  }, [menuItems, category]);
 
   const titles = {
     soups: "Rich Soups",
@@ -121,87 +171,139 @@ export default function MenuPage() {
             <h3 className="text-2xl font-bold text-destructive mb-2">Could not load menu</h3>
             <p className="text-muted-foreground">Check your connection and try again.</p>
           </div>
-        ) : !menuItems?.length ? (
+        ) : !displayItems.length ? (
           <div className="text-center py-24 bg-card rounded-2xl border border-border">
             <h3 className="text-2xl font-bold mb-2">Nothing here yet</h3>
             <p className="text-muted-foreground">This category is coming soon — check back shortly.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {menuItems.filter(item => item.available).map((item) => (
-              <div key={item.id} className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-shadow flex flex-col">
-                <div className="aspect-video bg-muted relative overflow-hidden">
-                  {item.imageUrl ? (
-                    <WatermarkedImage
-                      src={item.imageUrl.startsWith("assets/") ? `${BASE}${item.imageUrl}` : item.imageUrl}
-                      alt={item.name}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground/30 text-5xl">🍲</div>
-                  )}
-                </div>
-                <div className="p-6 flex flex-col flex-1 gap-3">
-                  <h3 className="text-xl font-bold font-display leading-tight">{item.name}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+          <div className={`grid grid-cols-1 ${category === "breakfast" ? "md:grid-cols-2" : "md:grid-cols-2 lg:grid-cols-3"} gap-8`}>
+            {displayItems.filter(item => item.available).map((item, idx) => {
+              if (category === "breakfast") {
+                const priceVal = item.sizes[0]?.price ?? 22000;
+                const sizeLabel = item.sizes[0]?.label ?? "Standard Portion";
 
-                  {item.sizes.length > 0 && (
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
-                        {item.sizes.length === 1 ? "Price" : "Sizes & Prices"}
-                      </p>
-                      <div className="space-y-2">
-                        {item.sizes.map((size) => {
-                          const isContactUs = size.price === 0;
-                          return (
-                            <div key={size.label} className="flex items-center justify-between gap-2 text-sm">
-                              {item.sizes.length > 1 && (
-                                <span className="text-foreground min-w-0 flex-1 truncate">{size.label}</span>
-                              )}
-                              {isContactUs ? (
-                                <a
-                                  href="https://wa.me/2348105506052?text=Hi%2C%20I%27d%20like%20a%20quote%20for%20a%20cooler%20size%20soup%20order"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full text-white hover:opacity-90 transition-opacity flex items-center gap-1"
-                                  style={{ background: "#25D366" }}
-                                >
-                                  <MessageCircle className="w-3 h-3" /> Contact Us
-                                </a>
-                              ) : (
-                                <>
-                                  <span className="font-bold shrink-0">{formatNaira(size.price)}</span>
-                                  <Link
-                                    href={`/book?cat=${encodeURIComponent(category)}&item=${encodeURIComponent(item.name)}&size=${encodeURIComponent(size.label)}`}
-                                    className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full text-white hover:opacity-90 transition-opacity"
-                                    style={{ background: "#0F9E0F" }}
+                return (
+                  <div key={item.id} className="bg-card rounded-3xl border border-border overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group">
+                    <div className="aspect-[4/3] bg-muted relative overflow-hidden">
+                      {/* Top-left combo badge */}
+                      <div className="absolute top-4 left-4 z-10 bg-white/95 dark:bg-card/95 backdrop-blur-md border border-border/50 rounded-xl px-3 py-1.5 shadow-md flex flex-col">
+                        <span className="font-bold text-xs uppercase text-foreground">{idx + 1}. {item.name}</span>
+                        <span className="text-[10px] font-extrabold text-muted-foreground tracking-wider uppercase">BREAKFAST COMBO</span>
+                      </div>
+
+                      {/* Red tag overlay badge */}
+                      <div className="absolute top-4 right-4 z-10 bg-[#C81212] text-white font-bold text-xs px-3 py-1 rounded-full shadow-md tracking-tight">
+                        {formatNaira(priceVal)}
+                      </div>
+
+                      {item.imageUrl ? (
+                        <WatermarkedImage
+                          src={item.imageUrl.startsWith("assets/") ? `${BASE}${item.imageUrl}` : item.imageUrl}
+                          alt={item.name}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground/30 text-6xl">🥞</div>
+                      )}
+                    </div>
+
+                    <div className="p-6 md:p-8 flex flex-col flex-1 gap-3">
+                      <h3 className="text-2xl font-bold font-display leading-tight text-foreground">{item.name}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed flex-1">{item.description}</p>
+
+                      <div className="mt-4 pt-4 border-t border-border/70 flex items-center justify-between">
+                        <div>
+                          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-0.5">PRICE</p>
+                          <p className="text-xl font-bold text-foreground">{formatNaira(priceVal)}</p>
+                        </div>
+                        <Link
+                          href={`/book?cat=breakfast&item=${encodeURIComponent(item.name)}&size=${encodeURIComponent(sizeLabel)}`}
+                          className="rounded-full px-6 py-2.5 font-bold text-white text-sm shadow-md hover:shadow-lg transition-all hover:opacity-90 flex items-center gap-1"
+                          style={{ background: BRAND_GREEN }}
+                        >
+                          Book →
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <div key={item.id} className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-shadow flex flex-col">
+                  <div className="aspect-video bg-muted relative overflow-hidden">
+                    {item.imageUrl ? (
+                      <WatermarkedImage
+                        src={item.imageUrl.startsWith("assets/") ? `${BASE}${item.imageUrl}` : item.imageUrl}
+                        alt={item.name}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground/30 text-5xl">🍲</div>
+                    )}
+                  </div>
+                  <div className="p-6 flex flex-col flex-1 gap-3">
+                    <h3 className="text-xl font-bold font-display leading-tight">{item.name}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+
+                    {item.sizes.length > 0 && (
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                          {item.sizes.length === 1 ? "Price" : "Sizes & Prices"}
+                        </p>
+                        <div className="space-y-2">
+                          {item.sizes.map((size) => {
+                            const isContactUs = size.price === 0;
+                            return (
+                              <div key={size.label} className="flex items-center justify-between gap-2 text-sm">
+                                {item.sizes.length > 1 && (
+                                  <span className="text-foreground min-w-0 flex-1 truncate">{size.label}</span>
+                                )}
+                                {isContactUs ? (
+                                  <a
+                                    href="https://wa.me/2348105506052?text=Hi%2C%20I%27d%20like%20a%20quote%20for%20a%20cooler%20size%20soup%20order"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full text-white hover:opacity-90 transition-opacity flex items-center gap-1"
+                                    style={{ background: "#25D366" }}
                                   >
-                                    Book →
-                                  </Link>
-                                </>
-                              )}
-                            </div>
-                          );
-                        })}
+                                    <MessageCircle className="w-3 h-3" /> Contact Us
+                                  </a>
+                                ) : (
+                                  <>
+                                    <span className="font-bold shrink-0">{formatNaira(size.price)}</span>
+                                    <Link
+                                      href={`/book?cat=${encodeURIComponent(category)}&item=${encodeURIComponent(item.name)}&size=${encodeURIComponent(size.label)}`}
+                                      className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full text-white hover:opacity-90 transition-opacity"
+                                      style={{ background: "#0F9E0F" }}
+                                    >
+                                      Book →
+                                    </Link>
+                                  </>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {item.proteins.length > 0 && (
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Add Protein</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {item.proteins.map((protein) => (
-                          <span key={protein.name} className="inline-flex items-center text-xs bg-muted rounded-full px-2.5 py-1 gap-1">
-                            {protein.name}
-                            <span className="font-bold text-foreground">+{formatNaira(protein.extraCost)}</span>
-                          </span>
-                        ))}
+                    {item.proteins.length > 0 && (
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Add Protein</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {item.proteins.map((protein) => (
+                            <span key={protein.name} className="inline-flex items-center text-xs bg-muted rounded-full px-2.5 py-1 gap-1">
+                              {protein.name}
+                              <span className="font-bold text-foreground">+{formatNaira(protein.extraCost)}</span>
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 

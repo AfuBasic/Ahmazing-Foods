@@ -28,9 +28,21 @@ INSERT INTO menu_items (category, name, description, sizes, proteins, available,
  '[{"label":"3 Litres (Serves ~5)","price":40000},{"label":"5 Litres (Serves ~8)","price":49000}]', 
  '[]', 1, 'assets/stews/ayamase-stew.jpg'),
 
-('breakfast', 'Akara & Ogi (Pap)', 'Freshly fried golden akara balls served with warm, smooth pap.', 
- '[{"label":"Standard Portion","price":5500}]', 
- '[]', 1, 'assets/breakfast/akara-pap.jpg'),
+('breakfast', 'Classic Nigerian', 'Serves 2–3. Akara, pap, boiled eggs, fried plantain, and more.', 
+ '[{"label":"Standard Portion","price":22000}]', 
+ '[]', 1, 'assets/breakfast/classic-nigerian.png'),
+
+('breakfast', 'Hearty Plate', 'Serves 2–3. Yam, plantain, egg stew, sausages, side salad, and more.', 
+ '[{"label":"Standard Portion","price":22000}]', 
+ '[]', 1, 'assets/breakfast/hearty-plate.png'),
+
+('breakfast', 'Sweet Start', 'Serves 2–3. Oats, fresh fruit bowl, boiled egg, and more.', 
+ '[{"label":"Standard Portion","price":25000}]', 
+ '[]', 1, 'assets/breakfast/sweet-start.png'),
+
+('breakfast', 'Protein Power', 'Serves 2–3. Moin-moin, akara, pap, boiled eggs, fried plantain, and more.', 
+ '[{"label":"Standard Portion","price":25000}]', 
+ '[]', 1, 'assets/breakfast/protein-power.png'),
 
 ('platters', 'Small Chops Platter', 'Samosa, spring rolls, puff puff, and gizzard kebabs.', 
  '[{"label":"Medium Platter (Serves 5-8)","price":25000},{"label":"Large Platter (Serves 10-15)","price":45000}]', 
