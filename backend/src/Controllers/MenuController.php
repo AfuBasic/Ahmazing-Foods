@@ -139,8 +139,6 @@ class MenuController {
                         'sizes' => json_encode([
                             ['label' => '3 Litres (Serves ~5)', 'price' => 37000],
                             ['label' => '5 Litres (Serves ~8)', 'price' => 45000],
-                            ['label' => 'Cooler — Small', 'price' => 0],
-                            ['label' => 'Cooler — Medium', 'price' => 0],
                         ])
                     ],
                     [
@@ -150,8 +148,6 @@ class MenuController {
                         'sizes' => json_encode([
                             ['label' => '3 Litres (Serves ~5)', 'price' => 40000],
                             ['label' => '5 Litres (Serves ~8)', 'price' => 49000],
-                            ['label' => 'Cooler — Small', 'price' => 0],
-                            ['label' => 'Cooler — Medium', 'price' => 0],
                         ])
                     ],
                     [
@@ -161,8 +157,6 @@ class MenuController {
                         'sizes' => json_encode([
                             ['label' => '3 Litres (Serves ~5)', 'price' => 38000],
                             ['label' => '5 Litres (Serves ~8)', 'price' => 46000],
-                            ['label' => 'Cooler — Small', 'price' => 0],
-                            ['label' => 'Cooler — Medium', 'price' => 0],
                         ])
                     ],
                     [
@@ -172,8 +166,6 @@ class MenuController {
                         'sizes' => json_encode([
                             ['label' => '3 Litres (Serves ~5)', 'price' => 47000],
                             ['label' => '5 Litres (Serves ~8)', 'price' => 54000],
-                            ['label' => 'Cooler — Small', 'price' => 0],
-                            ['label' => 'Cooler — Medium', 'price' => 0],
                         ])
                     ],
                     [
@@ -183,8 +175,6 @@ class MenuController {
                         'sizes' => json_encode([
                             ['label' => '3 Litres (Serves ~5)', 'price' => 47000],
                             ['label' => '5 Litres (Serves ~8)', 'price' => 54000],
-                            ['label' => 'Cooler — Small', 'price' => 0],
-                            ['label' => 'Cooler — Medium', 'price' => 0],
                         ])
                     ],
                     [
@@ -194,8 +184,6 @@ class MenuController {
                         'sizes' => json_encode([
                             ['label' => '3 Litres (Serves ~5)', 'price' => 49000],
                             ['label' => '5 Litres (Serves ~8)', 'price' => 59000],
-                            ['label' => 'Cooler — Small', 'price' => 0],
-                            ['label' => 'Cooler — Medium', 'price' => 0],
                         ])
                     ]
                 ];
