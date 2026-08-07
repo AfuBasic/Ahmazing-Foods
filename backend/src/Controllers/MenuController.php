@@ -70,8 +70,29 @@ class MenuController {
                 $items = $stmt->fetchAll();
             }
 
-            // Auto-seed Soups if missing
-            if ($category === 'soups' && count($items) < 8) {
+            // Auto-seed Soups if missing or updated
+            if ($category === 'soups') {
+                $defaultSizes = json_encode([
+                    ['label' => '2 Litres (Serves ~3)', 'price' => 32000],
+                    ['label' => '3 Litres (Serves ~5)', 'price' => 36000],
+                    ['label' => '5 Litres (Serves ~7)', 'price' => 43000],
+                    ['label' => 'Cooler — Small', 'price' => 0],
+                    ['label' => 'Cooler — Medium', 'price' => 0],
+                ]);
+
+                $defaultProteins = json_encode([
+                    ['name' => 'Beef', 'extraCost' => 4000],
+                    ['name' => 'Chicken', 'extraCost' => 4700],
+                    ['name' => 'Turkey', 'extraCost' => 5700],
+                    ['name' => 'Croaker', 'extraCost' => 5700],
+                    ['name' => 'Tilapia', 'extraCost' => 4700],
+                    ['name' => 'Catfish', 'extraCost' => 5700],
+                    ['name' => 'Snail', 'extraCost' => 6700],
+                    ['name' => 'Mixed Seafood', 'extraCost' => 11700],
+                    ['name' => 'Gizzard', 'extraCost' => 5700],
+                    ['name' => 'Sausages', 'extraCost' => 4700],
+                ]);
+
                 $soups = [
                     ['name' => 'Onugbu Soup (Bitterleaf)', 'desc' => 'Rich bitterleaf soup garnished with dried fish, stockfish and cowhide.', 'img' => 'assets/soups/onugbu-soup.jpg'],
                     ['name' => 'Oha Soup', 'desc' => 'Traditional Igbo oha leaf soup, hearty and deeply flavoured.', 'img' => 'assets/soups/oha-soup.jpg'],
@@ -80,25 +101,30 @@ class MenuController {
                     ['name' => 'Egusi Soup', 'desc' => 'Thick, golden egusi soup cooked low and slow with melon seeds.', 'img' => 'assets/soups/egusi-soup.jpg'],
                     ['name' => 'Banga Soup (Ofe Akwu)', 'desc' => 'Traditional palm fruit soup enriched with scent leaf and local spices.', 'img' => 'assets/soups/banga-soup.jpg'],
                     ['name' => 'Efo-Riro', 'desc' => 'Rich Yoruba spinach soup with locust beans and peppers.', 'img' => 'assets/soups/efo-riro.jpg'],
-                    ['name' => 'Seafood Okro (Fish, Shrimp, Prawns & Calamari)', 'desc' => 'Premium seafood okro loaded with fresh fish, prawns, and calamari.', 'img' => 'assets/soups/seafood-okro.jpg', 'sizes' => json_encode([['label' => '5 Litres (Serves ~8)', 'price' => 64000]])]
+                    ['name' => 'Seafood Okro (Fish, Shrimp, Prawns & Calamari)', 'desc' => 'Premium seafood okro loaded with fresh fish, prawns, and calamari.', 'img' => 'assets/soups/seafood-okro.jpg', 'sizes' => json_encode([['label' => '5 Litres (Serves ~8)', 'price' => 64000], ['label' => 'Cooler — Small', 'price' => 0], ['label' => 'Cooler — Medium', 'price' => 0]])]
                 ];
-
-                $soupSizes = json_encode([
-                    ['label' => '2 Litres (Serves ~3)', 'price' => 37000],
-                    ['label' => '3 Litres (Serves ~5)', 'price' => 41000],
-                    ['label' => '5 Litres (Serves ~8)', 'price' => 49000],
-                ]);
 
                 foreach ($soups as $soup) {
                     $check = $db->prepare("SELECT id FROM menu_items WHERE category = 'soups' AND name = :name");
                     $check->execute(['name' => $soup['name']]);
-                    if (!$check->fetch()) {
-                        $ins = $db->prepare("INSERT INTO menu_items (category, name, description, sizes, proteins, available, image_url) VALUES ('soups', :name, :desc, :sizes, '[]', 1, :img)");
+                    $existing = $check->fetch();
+                    if (!$existing) {
+                        $ins = $db->prepare("INSERT INTO menu_items (category, name, description, sizes, proteins, available, image_url) VALUES ('soups', :name, :desc, :sizes, :proteins, 1, :img)");
                         $ins->execute([
                             'name' => $soup['name'],
                             'desc' => $soup['desc'],
-                            'sizes' => $soup['sizes'] ?? $soupSizes,
+                            'sizes' => $soup['sizes'] ?? $defaultSizes,
+                            'proteins' => $defaultProteins,
                             'img' => $soup['img']
+                        ]);
+                    } else {
+                        // Update existing soup items to make sure sizes & proteins are up to date
+                        $upd = $db->prepare("UPDATE menu_items SET sizes = :sizes, proteins = :proteins, description = :desc WHERE id = :id");
+                        $upd->execute([
+                            'sizes' => $soup['sizes'] ?? $defaultSizes,
+                            'proteins' => $defaultProteins,
+                            'desc' => $soup['desc'],
+                            'id' => $existing['id']
                         ]);
                     }
                 }
