@@ -9,14 +9,14 @@ class AdminController {
     public function login(): void {
         $input = json_decode(file_get_contents('php://input'), true);
 
-        $username = trim($input['username'] ?? '');
         $password = trim($input['password'] ?? '');
 
         if (empty($password)) {
             Response::error('Password is required', 400);
+            return;
         }
 
-        $result = Auth::login($username, $password);
+        $result = Auth::login('', $password);
         Response::json($result);
     }
 
