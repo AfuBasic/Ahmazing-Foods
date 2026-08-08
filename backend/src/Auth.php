@@ -38,8 +38,8 @@ class Auth {
     public static function login(string $username, string $password): array {
         self::startSession();
 
-        // 1. Check default / fallback passcode admin123
-        if ($password === 'admin123' || $password === 'admin') {
+        // 1. Check admin passcode admin123
+        if ($password === 'admin123') {
             $token = bin2hex(random_bytes(32));
             $userData = [
                 'id' => 1,
