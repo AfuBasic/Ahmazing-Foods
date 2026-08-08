@@ -2,346 +2,168 @@
 
 namespace App\Controllers;
 
-use App\Database;
 use App\Response;
-use App\Auth;
-use PDO;
 
 class MenuController {
+    private static function getStaticMenu(): array {
+        $defaultSoupSizes = [
+            ['label' => '2 Litres (Serves ~3)', 'price' => 32000],
+            ['label' => '3 Litres (Serves ~5)', 'price' => 36000],
+            ['label' => '5 Litres (Serves ~7)', 'price' => 43000],
+        ];
+
+        $defaultProteins = [
+            ['name' => 'Beef', 'extraCost' => 4000],
+            ['name' => 'Chicken', 'extraCost' => 4700],
+            ['name' => 'Turkey', 'extraCost' => 5700],
+            ['name' => 'Croaker', 'extraCost' => 5700],
+            ['name' => 'Tilapia', 'extraCost' => 4700],
+            ['name' => 'Catfish', 'extraCost' => 5700],
+            ['name' => 'Snail', 'extraCost' => 6700],
+            ['name' => 'Mixed Seafood', 'extraCost' => 11700],
+            ['name' => 'Gizzard', 'extraCost' => 5700],
+            ['name' => 'Sausages', 'extraCost' => 4700],
+        ];
+
+        return [
+            // SOUPS
+            [
+                'id' => 1, 'category' => 'soups', 'name' => 'Onugbu Soup (Bitterleaf)',
+                'description' => 'Rich bitterleaf soup garnished with dried fish, stockfish and cowhide.',
+                'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true, 'image_url' => 'assets/soups/onugbu-soup.jpg'
+            ],
+            [
+                'id' => 2, 'category' => 'soups', 'name' => 'Oha Soup',
+                'description' => 'Traditional Igbo oha leaf soup, hearty and deeply flavoured.',
+                'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true, 'image_url' => 'assets/soups/oha-soup.jpg'
+            ],
+            [
+                'id' => 3, 'category' => 'soups', 'name' => 'Okro Soup',
+                'description' => 'Freshly made okro soup, silky and well-seasoned.',
+                'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true, 'image_url' => 'assets/soups/okro-soup.jpg'
+            ],
+            [
+                'id' => 4, 'category' => 'soups', 'name' => 'Edikang Ikong (Vegetable Soup)',
+                'description' => 'Nutrient-dense ugu and waterleaf soup with assorted protein.',
+                'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true, 'image_url' => 'assets/soups/edikang-ikong.jpg'
+            ],
+            [
+                'id' => 5, 'category' => 'soups', 'name' => 'Afang Soup',
+                'description' => 'Efik-style afang and okazi leaf soup with rich palm oil.',
+                'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true, 'image_url' => 'assets/soups/afang-soup.jpg'
+            ],
+            [
+                'id' => 6, 'category' => 'soups', 'name' => 'Egusi Soup',
+                'description' => 'Classic melon seed soup with pumpkin leaves and smoked fish.',
+                'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true, 'image_url' => 'assets/soups/egusi-soup.jpg'
+            ],
+
+            // STEWS & MAINS
+            [
+                'id' => 7, 'category' => 'stews', 'name' => 'Buka Stew',
+                'description' => 'Smoky palm-oil buka stew with assorted meats.',
+                'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true, 'image_url' => 'assets/stews/buka-stew.jpg'
+            ],
+            [
+                'id' => 8, 'category' => 'stews', 'name' => 'Ofada Stew',
+                'description' => 'Ayamase green pepper stew with bleached palm oil and boiled eggs.',
+                'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true, 'image_url' => 'assets/stews/ofada-stew.jpg'
+            ],
+            [
+                'id' => 9, 'category' => 'stews', 'name' => 'Efo Riro',
+                'description' => 'Rich spinach vegetable stew made with iru and dry prawns.',
+                'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true, 'image_url' => 'assets/stews/efo-riro.jpg'
+            ],
+
+            // BREAKFAST
+            [
+                'id' => 10, 'category' => 'breakfast', 'name' => 'Classic Nigerian Breakfast',
+                'description' => 'Serves 2–3. Akara, pap, boiled eggs, fried plantain, and more.',
+                'sizes' => [['label' => 'Standard Portion', 'price' => 22000]], 'proteins' => [], 'available' => true, 'image_url' => 'assets/breakfast/classic-nigerian.png'
+            ],
+            [
+                'id' => 11, 'category' => 'breakfast', 'name' => 'Hearty Plate',
+                'description' => 'Serves 2–3. Yam, plantain, egg stew, sausages, side salad, and more.',
+                'sizes' => [['label' => 'Standard Portion', 'price' => 22000]], 'proteins' => [], 'available' => true, 'image_url' => 'assets/breakfast/hearty-plate.png'
+            ],
+            [
+                'id' => 12, 'category' => 'breakfast', 'name' => 'Sweet Start',
+                'description' => 'Serves 2–3. Oats, fresh fruit bowl, boiled egg, and more.',
+                'sizes' => [['label' => 'Standard Portion', 'price' => 25000]], 'proteins' => [], 'available' => true, 'image_url' => 'assets/breakfast/sweet-start.png'
+            ],
+            [
+                'id' => 13, 'category' => 'breakfast', 'name' => 'Protein Power',
+                'description' => 'Serves 2–3. Moin-moin, akara, pap, boiled eggs, fried plantain, and more.',
+                'sizes' => [['label' => 'Standard Portion', 'price' => 25000]], 'proteins' => [], 'available' => true, 'image_url' => 'assets/breakfast/protein-power.png'
+            ],
+
+            // DRINKS & WELLNESS
+            [
+                'id' => 14, 'category' => 'drinks', 'name' => 'Zobo Drink',
+                'description' => 'Cold-pressed hibiscus tea with pineapple & cloves.',
+                'sizes' => [['label' => '50cl Bottle', 'price' => 2900]], 'proteins' => [], 'available' => true, 'image_url' => 'assets/drinks/zobo.jpg'
+            ],
+            [
+                'id' => 15, 'category' => 'drinks', 'name' => 'Pineapple Ginger Drink',
+                'description' => 'Fresh tropical pineapple blended with fiery ginger.',
+                'sizes' => [['label' => '50cl Bottle', 'price' => 2900]], 'proteins' => [], 'available' => true, 'image_url' => 'assets/drinks/pineapple-ginger.jpg'
+            ],
+            [
+                'id' => 16, 'category' => 'drinks', 'name' => 'Ginger Immune Booster',
+                'description' => 'Concentrated ginger & lemon shot for natural vitality.',
+                'sizes' => [['label' => '50cl Bottle', 'price' => 3200]], 'proteins' => [], 'available' => true, 'image_url' => 'assets/drinks/ginger-booster.jpg'
+            ],
+            [
+                'id' => 17, 'category' => 'drinks', 'name' => 'Tiger Nut Milk',
+                'description' => 'Creamy, naturally sweet tiger nut & date blend.',
+                'sizes' => [['label' => '50cl Bottle', 'price' => 3300]], 'proteins' => [], 'available' => true, 'image_url' => 'assets/drinks/tiger-nut.jpg'
+            ],
+
+            // PLATTERS
+            [
+                'id' => 18, 'category' => 'platters', 'name' => 'Small Chops Tray',
+                'description' => 'Puff puff, samosa, spring rolls, spicy peppered gizzard.',
+                'sizes' => [['label' => 'Medium Tray', 'price' => 35000], ['label' => 'Large Platter', 'price' => 55000]], 'proteins' => [], 'available' => true, 'image_url' => 'assets/platters/small-chops.jpg'
+            ],
+            [
+                'id' => 19, 'category' => 'platters', 'name' => 'Executive BBQ Platter',
+                'description' => 'Grilled turkey, chicken, spicy croaker fish & fried plantain.',
+                'sizes' => [['label' => 'Platter for 5', 'price' => 65000]], 'proteins' => [], 'available' => true, 'image_url' => 'assets/platters/bbq-platter.jpg'
+            ],
+        ];
+    }
+
     public function list(): void {
-        $db = Database::getConnection();
         $category = $_GET['category'] ?? null;
+        $items = self::getStaticMenu();
 
         if ($category) {
-            $stmt = $db->prepare("SELECT * FROM menu_items WHERE category = :category ORDER BY id ASC");
-            $stmt->execute(['category' => $category]);
-            $items = $stmt->fetchAll();
-
-            // Auto-seed 4 Breakfast Combos if breakfast items are missing or outdated
-            if ($category === 'breakfast' && count($items) < 4) {
-                $combos = [
-                    [
-                        'name' => 'Classic Nigerian',
-                        'description' => 'Serves 2–3. Akara, pap, boiled eggs, fried plantain, and more.',
-                        'sizes' => json_encode([['label' => 'Standard Portion', 'price' => 22000]]),
-                        'proteins' => '[]',
-                        'image_url' => 'assets/breakfast/classic-nigerian.png'
-                    ],
-                    [
-                        'name' => 'Hearty Plate',
-                        'description' => 'Serves 2–3. Yam, plantain, egg stew, sausages, side salad, and more.',
-                        'sizes' => json_encode([['label' => 'Standard Portion', 'price' => 22000]]),
-                        'proteins' => '[]',
-                        'image_url' => 'assets/breakfast/hearty-plate.png'
-                    ],
-                    [
-                        'name' => 'Sweet Start',
-                        'description' => 'Serves 2–3. Oats, fresh fruit bowl, boiled egg, and more.',
-                        'sizes' => json_encode([['label' => 'Standard Portion', 'price' => 25000]]),
-                        'proteins' => '[]',
-                        'image_url' => 'assets/breakfast/sweet-start.png'
-                    ],
-                    [
-                        'name' => 'Protein Power',
-                        'description' => 'Serves 2–3. Moin-moin, akara, pap, boiled eggs, fried plantain, and more.',
-                        'sizes' => json_encode([['label' => 'Standard Portion', 'price' => 25000]]),
-                        'proteins' => '[]',
-                        'image_url' => 'assets/breakfast/protein-power.png'
-                    ]
-                ];
-
-                foreach ($combos as $combo) {
-                    $check = $db->prepare("SELECT id FROM menu_items WHERE category = 'breakfast' AND name = :name");
-                    $check->execute(['name' => $combo['name']]);
-                    if (!$check->fetch()) {
-                        $ins = $db->prepare("INSERT INTO menu_items (category, name, description, sizes, proteins, available, image_url) VALUES ('breakfast', :name, :description, :sizes, :proteins, 1, :image_url)");
-                        $ins->execute([
-                            'name' => $combo['name'],
-                            'description' => $combo['description'],
-                            'sizes' => $combo['sizes'],
-                            'proteins' => $combo['proteins'],
-                            'image_url' => $combo['image_url']
-                        ]);
-                    }
-                }
-
-                $stmt = $db->prepare("SELECT * FROM menu_items WHERE category = :category ORDER BY id ASC");
-                $stmt->execute(['category' => $category]);
-                $items = $stmt->fetchAll();
-            }
-
-            // Auto-seed Soups if missing or updated
-            if ($category === 'soups') {
-                $defaultSizes = json_encode([
-                    ['label' => '2 Litres (Serves ~3)', 'price' => 32000],
-                    ['label' => '3 Litres (Serves ~5)', 'price' => 36000],
-                    ['label' => '5 Litres (Serves ~7)', 'price' => 43000],
-                    ['label' => 'Cooler — Small', 'price' => 0],
-                    ['label' => 'Cooler — Medium', 'price' => 0],
-                ]);
-
-                $defaultProteins = json_encode([
-                    ['name' => 'Beef', 'extraCost' => 4000],
-                    ['name' => 'Chicken', 'extraCost' => 4700],
-                    ['name' => 'Turkey', 'extraCost' => 5700],
-                    ['name' => 'Croaker', 'extraCost' => 5700],
-                    ['name' => 'Tilapia', 'extraCost' => 4700],
-                    ['name' => 'Catfish', 'extraCost' => 5700],
-                    ['name' => 'Snail', 'extraCost' => 6700],
-                    ['name' => 'Mixed Seafood', 'extraCost' => 11700],
-                    ['name' => 'Gizzard', 'extraCost' => 5700],
-                    ['name' => 'Sausages', 'extraCost' => 4700],
-                ]);
-
-                $soups = [
-                    ['name' => 'Onugbu Soup (Bitterleaf)', 'desc' => 'Rich bitterleaf soup garnished with dried fish, stockfish and cowhide.', 'img' => 'assets/soups/onugbu-soup.jpg'],
-                    ['name' => 'Oha Soup', 'desc' => 'Traditional Igbo oha leaf soup, hearty and deeply flavoured.', 'img' => 'assets/soups/oha-soup.jpg'],
-                    ['name' => 'Okro Soup', 'desc' => 'Freshly made okro soup, silky and well-seasoned.', 'img' => 'assets/soups/okro-soup.jpg'],
-                    ['name' => 'Edikang Ikong (Vegetable Soup)', 'desc' => 'Nutrient-dense ugu and waterleaf soup with assorted protein.', 'img' => 'assets/soups/edikang-ikong.jpg'],
-                    ['name' => 'Egusi Soup', 'desc' => 'Thick, golden egusi soup cooked low and slow with melon seeds.', 'img' => 'assets/soups/egusi-soup.jpg'],
-                    ['name' => 'Banga Soup (Ofe Akwu)', 'desc' => 'Traditional palm fruit soup enriched with scent leaf and local spices.', 'img' => 'assets/soups/banga-soup.jpg'],
-                    ['name' => 'Efo-Riro', 'desc' => 'Rich Yoruba spinach soup with locust beans and peppers.', 'img' => 'assets/soups/efo-riro.jpg'],
-                    ['name' => 'Seafood Okro (Fish, Shrimp, Prawns & Calamari)', 'desc' => 'Premium seafood okro loaded with fresh fish, prawns, and calamari.', 'img' => 'assets/soups/seafood-okro.jpg', 'sizes' => json_encode([['label' => '5 Litres (Serves ~8)', 'price' => 64000], ['label' => 'Cooler — Small', 'price' => 0], ['label' => 'Cooler — Medium', 'price' => 0]])]
-                ];
-
-                foreach ($soups as $soup) {
-                    $check = $db->prepare("SELECT id FROM menu_items WHERE category = 'soups' AND name = :name");
-                    $check->execute(['name' => $soup['name']]);
-                    $existing = $check->fetch();
-                    if (!$existing) {
-                        $ins = $db->prepare("INSERT INTO menu_items (category, name, description, sizes, proteins, available, image_url) VALUES ('soups', :name, :desc, :sizes, :proteins, 1, :img)");
-                        $ins->execute([
-                            'name' => $soup['name'],
-                            'desc' => $soup['desc'],
-                            'sizes' => $soup['sizes'] ?? $defaultSizes,
-                            'proteins' => $defaultProteins,
-                            'img' => $soup['img']
-                        ]);
-                    } else {
-                        // Update existing soup items to make sure sizes & proteins are up to date
-                        $upd = $db->prepare("UPDATE menu_items SET sizes = :sizes, proteins = :proteins, description = :desc WHERE id = :id");
-                        $upd->execute([
-                            'sizes' => $soup['sizes'] ?? $defaultSizes,
-                            'proteins' => $defaultProteins,
-                            'desc' => $soup['desc'],
-                            'id' => $existing['id']
-                        ]);
-                    }
-                }
-
-            // Auto-seed Stews if missing or updated
-            if ($category === 'stews') {
-                $stews = [
-                    [
-                        'name' => 'Ayamase (Ofada Stew)',
-                        'desc' => 'Spicy green pepper stew with assorted offals — pairs perfectly with ofada rice.',
-                        'img' => 'assets/stews/ayamase-stew.jpg',
-                        'sizes' => json_encode([
-                            ['label' => '3 Litres (Serves ~5)', 'price' => 40000],
-                            ['label' => '5 Litres (Serves ~8)', 'price' => 49000],
-                        ])
-                    ],
-                    [
-                        'name' => 'Classic Tomato Stew',
-                        'desc' => 'A rich, slow-cooked tomato base stew — the backbone of Nigerian cooking.',
-                        'img' => 'assets/stews/classic-tomato-stew.webp',
-                        'sizes' => json_encode([
-                            ['label' => '3 Litres (Serves ~5)', 'price' => 37000],
-                            ['label' => '5 Litres (Serves ~8)', 'price' => 45000],
-                        ])
-                    ],
-                    [
-                        'name' => 'Peppered Beef Stew',
-                        'desc' => 'Tender chunks of beef in a bold pepper stew with caramelised onions.',
-                        'img' => 'assets/stews/peppered-beef-stew.jpg',
-                        'sizes' => json_encode([
-                            ['label' => '3 Litres (Serves ~5)', 'price' => 37000],
-                            ['label' => '5 Litres (Serves ~8)', 'price' => 45000],
-                        ])
-                    ],
-                    [
-                        'name' => 'Peppered Chicken Stew',
-                        'desc' => 'Hard chicken pieces toss-fried in vibrant habanero pepper sauce.',
-                        'img' => 'assets/stews/peppered-chicken-stew.jpg',
-                        'sizes' => json_encode([
-                            ['label' => '3 Litres (Serves ~5)', 'price' => 37000],
-                            ['label' => '5 Litres (Serves ~8)', 'price' => 45000],
-                        ])
-                    ],
-                    [
-                        'name' => 'Peppered Turkey Stew',
-                        'desc' => 'Succulent turkey pieces fried and simmered in spicy pepper sauce.',
-                        'img' => 'assets/stews/peppered-turkey-stew.jpg',
-                        'sizes' => json_encode([
-                            ['label' => '3 Litres (Serves ~5)', 'price' => 49000],
-                            ['label' => '5 Litres (Serves ~8)', 'price' => 59000],
-                        ])
-                    ]
-                ];
-
-                foreach ($stews as $stew) {
-                    $check = $db->prepare("SELECT id FROM menu_items WHERE category = 'stews' AND name = :name");
-                    $check->execute(['name' => $stew['name']]);
-                    $existing = $check->fetch();
-                    if (!$existing) {
-                        $ins = $db->prepare("INSERT INTO menu_items (category, name, description, sizes, proteins, available, image_url) VALUES ('stews', :name, :desc, :sizes, '[]', 1, :img)");
-                        $ins->execute([
-                            'name' => $stew['name'],
-                            'desc' => $stew['desc'],
-                            'sizes' => $stew['sizes'],
-                            'img' => $stew['img']
-                        ]);
-                    } else {
-                        $upd = $db->prepare("UPDATE menu_items SET sizes = :sizes, description = :desc WHERE id = :id");
-                        $upd->execute([
-                            'sizes' => $stew['sizes'],
-                            'desc' => $stew['desc'],
-                            'id' => $existing['id']
-                        ]);
-                    }
-                }
-
-                $stmt = $db->prepare("SELECT * FROM menu_items WHERE category = :category ORDER BY id ASC");
-                $stmt->execute(['category' => $category]);
-                $items = $stmt->fetchAll();
-            }
-        } else {
-            $stmt = $db->query("SELECT * FROM menu_items ORDER BY id ASC");
-            $items = $stmt->fetchAll();
-        }
-
-        foreach ($items as &$item) {
-            $item['id'] = (int)$item['id'];
-            $item['available'] = (bool)$item['available'];
-            $item['sizes'] = is_string($item['sizes']) ? json_decode($item['sizes'], true) : $item['sizes'];
-            $item['proteins'] = is_string($item['proteins']) ? json_decode($item['proteins'], true) : $item['proteins'];
+            $items = array_values(array_filter($items, fn($item) => $item['category'] === $category));
         }
 
         Response::json($items);
     }
 
     public function get(int $id): void {
-        $db = Database::getConnection();
-        $stmt = $db->prepare("SELECT * FROM menu_items WHERE id = :id LIMIT 1");
-        $stmt->execute(['id' => $id]);
-        $item = $stmt->fetch();
-
-        if (!$item) {
-            Response::error('Menu item not found', 404);
+        $items = self::getStaticMenu();
+        foreach ($items as $item) {
+            if ($item['id'] === $id) {
+                Response::json($item);
+                return;
+            }
         }
-
-        $item['id'] = (int)$item['id'];
-        $item['available'] = (bool)$item['available'];
-        $item['sizes'] = is_string($item['sizes']) ? json_decode($item['sizes'], true) : $item['sizes'];
-        $item['proteins'] = is_string($item['proteins']) ? json_decode($item['proteins'], true) : $item['proteins'];
-
-        Response::json($item);
+        Response::error('Menu item not found', 404);
     }
 
     public function create(): void {
-        Auth::requireAdmin();
-        $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
-
-        if (empty($input['name']) || empty($input['category']) || empty($input['description'])) {
-            Response::error('Name, category, and description are required');
-        }
-
-        $db = Database::getConnection();
-        $stmt = $db->prepare("
-            INSERT INTO menu_items (category, name, description, sizes, proteins, available, image_url)
-            VALUES (:category, :name, :description, :sizes, :proteins, :available, :image_url)
-        ");
-
-        $stmt->execute([
-            'category' => $input['category'],
-            'name' => $input['name'],
-            'description' => $input['description'],
-            'sizes' => json_encode($input['sizes'] ?? []),
-            'proteins' => json_encode($input['proteins'] ?? []),
-            'available' => isset($input['available']) ? (int)(bool)$input['available'] : 1,
-            'image_url' => $input['image_url'] ?? null,
-        ]);
-
-        $newId = (int)$db->lastInsertId();
-        $fetchStmt = $db->prepare("SELECT * FROM menu_items WHERE id = :id LIMIT 1");
-        $fetchStmt->execute(['id' => $newId]);
-        $newItem = $fetchStmt->fetch();
-
-        $newItem['id'] = (int)$newItem['id'];
-        $newItem['available'] = (bool)$newItem['available'];
-        $newItem['sizes'] = json_decode($newItem['sizes'], true);
-        $newItem['proteins'] = json_decode($newItem['proteins'], true);
-
-        Response::json($newItem, 201);
+        Response::error('Admin database modification disabled in JSON storage mode', 403);
     }
 
     public function update(int $id): void {
-        Auth::requireAdmin();
-        $input = json_decode(file_get_contents('php://input'), true);
-
-        $db = Database::getConnection();
-        $stmt = $db->prepare("SELECT * FROM menu_items WHERE id = :id LIMIT 1");
-        $stmt->execute(['id' => $id]);
-        $item = $stmt->fetch();
-
-        if (!$item) {
-            Response::error('Menu item not found', 404);
-        }
-
-        $updateStmt = $db->prepare("
-            UPDATE menu_items SET 
-                category = :category,
-                name = :name,
-                description = :description,
-                sizes = :sizes,
-                proteins = :proteins,
-                available = :available,
-                image_url = :image_url
-            WHERE id = :id
-        ");
-
-        $updateStmt->execute([
-            'id' => $id,
-            'category' => $input['category'] ?? $item['category'],
-            'name' => $input['name'] ?? $item['name'],
-            'description' => $input['description'] ?? $item['description'],
-            'sizes' => isset($input['sizes']) ? json_encode($input['sizes']) : $item['sizes'],
-            'proteins' => isset($input['proteins']) ? json_encode($input['proteins']) : $item['proteins'],
-            'available' => isset($input['available']) ? (int)(bool)$input['available'] : (int)$item['available'],
-            'image_url' => $input['image_url'] ?? $item['image_url'],
-        ]);
-
-        $fetchStmt = $db->prepare("SELECT * FROM menu_items WHERE id = :id LIMIT 1");
-        $fetchStmt->execute(['id' => $id]);
-        $updated = $fetchStmt->fetch();
-
-        $updated['id'] = (int)$updated['id'];
-        $updated['available'] = (bool)$updated['available'];
-        $updated['sizes'] = json_decode($updated['sizes'], true);
-        $updated['proteins'] = json_decode($updated['proteins'], true);
-
-        Response::json($updated);
+        Response::error('Admin database modification disabled in JSON storage mode', 403);
     }
 
-    public function toggleAvailability(int $id): void {
-        Auth::requireAdmin();
-        $db = Database::getConnection();
-
-        $stmt = $db->prepare("UPDATE menu_items SET available = NOT available WHERE id = :id");
-        $stmt->execute(['id' => $id]);
-
-        $fetchStmt = $db->prepare("SELECT * FROM menu_items WHERE id = :id LIMIT 1");
-        $fetchStmt->execute(['id' => $id]);
-        $item = $fetchStmt->fetch();
-
-        if (!$item) {
-            Response::error('Menu item not found', 404);
-        }
-
-        Response::json([
-            'id' => (int)$item['id'],
-            'name' => $item['name'],
-            'available' => (bool)$item['available']
-        ]);
+    public function delete(int $id): void {
+        Response::error('Admin database modification disabled in JSON storage mode', 403);
     }
 }
