@@ -187,6 +187,7 @@ function StatCard({ title, value, subtitle, icon, highlight = false, trend }: { 
 
 const STATUS_CONFIG: Record<string, { label: string; cls: string }> = {
   pending:            { label: "Pending",             cls: "bg-amber-100 text-amber-800 border-amber-200" },
+  fulfilled:          { label: "Fulfilled",           cls: "bg-emerald-100 text-emerald-800 border-emerald-300 font-bold" },
   payment_confirmed:  { label: "Payment Confirmed",   cls: "bg-blue-100 text-blue-800 border-blue-200" },
   cooking_in_progress:{ label: "Cooking in Progress", cls: "bg-orange-100 text-orange-800 border-orange-200" },
   rider_on_the_way:   { label: "Rider on the Way",    cls: "bg-purple-100 text-purple-800 border-purple-200" },

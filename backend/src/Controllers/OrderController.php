@@ -4,297 +4,258 @@ namespace App\Controllers;
 
 use App\Database;
 use App\Response;
-use App\Auth;
 use App\Services\EmailService;
-use App\Services\CalendarService;
-use PDO;
+use Exception;
 use DateTime;
 
 class OrderController {
-    private array $rushFeeRates = [
-        1 => 20000,
-        2 => 15000,
-        3 => 13000,
-        4 => 12000,
-        5 => 10000,
-    ];
+    private string $jsonFile = __DIR__ . '/../../database/orders.json';
 
-    private function calcRushFee(bool $isRush, int $distinctMealCount): int {
-        if (!$isRush) return 0;
-        $count = min(max($distinctMealCount, 1), 5);
-        $rate = $this->rushFeeRates[$count] ?? 10000;
-        return $rate * $count;
+    private function getJsonOrders(): array {
+        if (!file_exists($this->jsonFile)) {
+            file_put_contents($this->jsonFile, json_encode([], JSON_PRETTY_PRINT));
+            return [];
+        }
+        $data = file_get_contents($this->jsonFile);
+        $decoded = json_decode($data, true);
+        return is_array($decoded) ? $decoded : [];
     }
 
-    private function isRushOrder(string $deliveryDate): bool {
-        $delivery = new DateTime($deliveryDate);
-        $now = new DateTime();
-        $diffHours = ($delivery->getTimestamp() - $now->getTimestamp()) / 3600;
-        return $diffHours < 24;
+    private function saveJsonOrders(array $orders): void {
+        file_put_contents($this->jsonFile, json_encode(array_values($orders), JSON_PRETTY_PRINT));
     }
 
     public function list(): void {
-        $db = Database::getConnection();
         $status = $_GET['status'] ?? null;
+        $jsonOrders = $this->getJsonOrders();
 
-        if ($status) {
-            $stmt = $db->prepare("SELECT * FROM orders WHERE status = :status ORDER BY created_at DESC");
-            $stmt->execute(['status' => $status]);
-        } else {
-            $stmt = $db->query("SELECT * FROM orders ORDER BY created_at DESC");
+        // Check if DB is available
+        $dbOrders = [];
+        try {
+            $db = Database::getConnection();
+            if ($status) {
+                $stmt = $db->prepare("SELECT * FROM orders WHERE status = :status ORDER BY created_at DESC");
+                $stmt->execute(['status' => $status]);
+            } else {
+                $stmt = $db->query("SELECT * FROM orders ORDER BY created_at DESC");
+            }
+            $dbOrders = $stmt->fetchAll() ?: [];
+        } catch (Exception $e) {
+            $dbOrders = [];
         }
 
-        $orders = $stmt->fetchAll();
-        foreach ($orders as &$order) {
-            $order['id'] = (int)$order['id'];
-            $order['itemPrice'] = (int)$order['item_price'];
-            $order['rushFee'] = (int)$order['rush_fee'];
-            $order['total'] = (int)$order['total'];
-            $order['customerName'] = $order['customer_name'];
-            $order['customerPhone'] = $order['customer_phone'];
-            $order['customerEmail'] = $order['customer_email'];
-            $order['deliveryAddress'] = $order['delivery_address'];
-            $order['deliveryDate'] = $order['delivery_date'];
-            $order['deliverySlot'] = $order['delivery_slot'];
-            $order['menuItemName'] = $order['menu_item_name'];
-            $order['selectedSize'] = $order['selected_size'];
-            $order['selectedProtein'] = $order['selected_protein'];
-            $order['cartItems'] = is_string($order['cart_items']) ? json_decode($order['cart_items'], true) : $order['cart_items'];
+        // Merge JSON orders and DB orders
+        $ordersMap = [];
+        foreach ($dbOrders as $o) {
+            $id = (int)$o['id'];
+            $ordersMap[$id] = [
+                'id' => $id,
+                'status' => $o['status'] ?? 'pending',
+                'itemPrice' => (int)($o['item_price'] ?? 0),
+                'rushFee' => (int)($o['rush_fee'] ?? 0),
+                'total' => (int)($o['total'] ?? 0),
+                'customerName' => $o['customer_name'] ?? '',
+                'customerPhone' => $o['customer_phone'] ?? '',
+                'customerEmail' => $o['customer_email'] ?? '',
+                'deliveryAddress' => $o['delivery_address'] ?? '',
+                'deliveryDate' => $o['delivery_date'] ?? '',
+                'deliverySlot' => $o['delivery_slot'] ?? '',
+                'menuItemName' => $o['menu_item_name'] ?? '',
+                'selectedSize' => $o['selected_size'] ?? '',
+                'selectedProtein' => $o['selected_protein'] ?? null,
+                'pepperLevel' => $o['pepper_level'] ?? null,
+                'notes' => $o['notes'] ?? '',
+                'cartItems' => is_string($o['cart_items'] ?? null) ? json_decode($o['cart_items'], true) : ($o['cart_items'] ?? []),
+                'created_at' => $o['created_at'] ?? date('Y-m-d H:i:s'),
+            ];
         }
 
-        Response::json($orders);
+        foreach ($jsonOrders as $jo) {
+            $id = (int)$jo['id'];
+            $ordersMap[$id] = array_merge($ordersMap[$id] ?? [], $jo);
+        }
+
+        $allOrders = array_values($ordersMap);
+        usort($allOrders, fn($a, $b) => ($b['id'] <=> $a['id']));
+
+        if ($status && $status !== 'all') {
+            $allOrders = array_values(array_filter($allOrders, function($o) use ($status) {
+                if ($status === 'fulfilled') return $o['status'] === 'fulfilled' || $o['status'] === 'delivered';
+                if ($status === 'pending') return $o['status'] === 'pending';
+                return $o['status'] === $status;
+            }));
+        }
+
+        Response::json($allOrders);
     }
 
     public function create(): void {
         $input = json_decode(file_get_contents('php://input'), true);
 
-        if (empty($input['menuItemId']) || empty($input['customerName']) || empty($input['customerPhone']) || empty($input['deliveryDate']) || empty($input['deliverySlot'])) {
+        if (empty($input['customerName']) || empty($input['customerPhone']) || empty($input['deliveryDate']) || empty($input['deliverySlot'])) {
             Response::error('Missing required order fields');
         }
 
-        $db = Database::getConnection();
-        $stmt = $db->prepare("SELECT * FROM menu_items WHERE id = :id LIMIT 1");
-        $stmt->execute(['id' => (int)$input['menuItemId']]);
-        $menuItem = $stmt->fetch();
+        $jsonOrders = $this->getJsonOrders();
+        $nextId = 1000 + count($jsonOrders) + 1;
 
-        if (!$menuItem) {
-            Response::error('Menu item not found', 404);
-        }
-
-        if (!$menuItem['available']) {
-            Response::error('This item is currently unavailable', 400);
-        }
-
-        $cartItems = $input['cartItems'] ?? null;
-        $itemPrice = 0;
-
+        $cartItems = $input['cartItems'] ?? [];
+        $totalPrice = 0;
         if (is_array($cartItems) && count($cartItems) > 0) {
             foreach ($cartItems as $ci) {
-                $itemPrice += (int)($ci['price'] ?? 0);
+                $totalPrice += (int)($ci['price'] ?? 0);
             }
-        } else {
-            $sizes = is_string($menuItem['sizes']) ? json_decode($menuItem['sizes'], true) : $menuItem['sizes'];
-            $selectedSize = $input['selectedSize'] ?? '';
-            $sizeOption = null;
-
-            foreach ($sizes as $s) {
-                if ($s['label'] === $selectedSize) {
-                    $sizeOption = $s;
-                    break;
-                }
-            }
-
-            if (!$sizeOption) {
-                Response::error('Invalid size selected', 400);
-            }
-
-            $proteinCost = 0;
-            if (!empty($input['selectedProtein'])) {
-                $proteins = is_string($menuItem['proteins']) ? json_decode($menuItem['proteins'], true) : $menuItem['proteins'];
-                foreach ($proteins as $p) {
-                    if ($p['name'] === $input['selectedProtein']) {
-                        $proteinCost = (int)$p['extraCost'];
-                        break;
-                    }
-                }
-            }
-
-            $itemPrice = (int)$sizeOption['price'] + $proteinCost;
         }
 
-        $isRush = $this->isRushOrder($input['deliveryDate']);
-        $distinctMealCount = (is_array($cartItems) && count($cartItems) > 0)
-            ? count(array_unique(array_column($cartItems, 'menuItemId')))
-            : 1;
+        $mainItem = $cartItems[0] ?? [];
+        $menuItemName = $mainItem['menuItemName'] ?? $input['menuItemName'] ?? 'Custom Selection';
+        $selectedSize = $mainItem['selectedSize'] ?? $input['selectedSize'] ?? 'Standard';
+        $selectedProtein = $mainItem['selectedProteins'][0]['name'] ?? $input['selectedProtein'] ?? null;
 
-        $rushFee = $this->calcRushFee($isRush, $distinctMealCount);
-        $total = $itemPrice + $rushFee;
+        $orderData = [
+            'id'              => $nextId,
+            'status'          => 'pending',
+            'customerName'    => $input['customerName'],
+            'customerPhone'   => $input['customerPhone'],
+            'customerEmail'   => $input['customerEmail'] ?? '',
+            'deliveryAddress' => $input['deliveryAddress'] ?? '',
+            'deliveryDate'    => substr($input['deliveryDate'], 0, 10),
+            'deliverySlot'    => $input['deliverySlot'],
+            'menuItemName'    => $menuItemName,
+            'selectedSize'    => $selectedSize,
+            'selectedProtein' => $selectedProtein,
+            'itemPrice'       => $totalPrice,
+            'rushFee'         => (int)($input['rushFee'] ?? 0),
+            'total'           => $totalPrice + (int)($input['rushFee'] ?? 0),
+            'pepperLevel'     => $input['pepperLevel'] ?? null,
+            'notes'           => $input['notes'] ?? '',
+            'cartItems'       => $cartItems,
+            'created_at'      => date('Y-m-d H:i:s'),
+        ];
 
-        $insertStmt = $db->prepare("
-            INSERT INTO orders (
-                menu_item_id, menu_item_name, category, selected_size, selected_protein,
-                customer_name, customer_phone, customer_email, delivery_address, delivery_date,
-                delivery_slot, item_price, rush_fee, total, status, paystack_ref, pepper_level, cart_items, notes
-            ) VALUES (
-                :menu_item_id, :menu_item_name, :category, :selected_size, :selected_protein,
-                :customer_name, :customer_phone, :customer_email, :delivery_address, :delivery_date,
-                :delivery_slot, :item_price, :rush_fee, :total, 'pending', :paystack_ref, :pepper_level, :cart_items, :notes
-            )
-        ");
+        // Save to database/orders.json
+        array_unshift($jsonOrders, $orderData);
+        $this->saveJsonOrders($jsonOrders);
 
-        $insertStmt->execute([
-            'menu_item_id' => $menuItem['id'],
-            'menu_item_name' => $menuItem['name'],
-            'category' => $menuItem['category'],
-            'selected_size' => $input['selectedSize'] ?? 'Standard',
-            'selected_protein' => $input['selectedProtein'] ?? null,
-            'customer_name' => $input['customerName'],
-            'customer_phone' => $input['customerPhone'],
-            'customer_email' => $input['customerEmail'] ?? null,
-            'delivery_address' => $input['deliveryAddress'] ?? null,
-            'delivery_date' => substr($input['deliveryDate'], 0, 10),
-            'delivery_slot' => $input['deliverySlot'],
-            'item_price' => $itemPrice,
-            'rush_fee' => $rushFee,
-            'total' => $total,
-            'paystack_ref' => $input['paystackRef'] ?? null,
-            'pepper_level' => $input['pepperLevel'] ?? null,
-            'cart_items' => $cartItems ? json_encode($cartItems) : null,
-            'notes' => $input['notes'] ?? null,
-        ]);
-
-        $orderId = (int)$db->lastInsertId();
-        $fetchStmt = $db->prepare("SELECT * FROM orders WHERE id = :id LIMIT 1");
-        $fetchStmt->execute(['id' => $orderId]);
-        $order = $fetchStmt->fetch();
-
-        $order['id'] = (int)$order['id'];
-        $order['itemPrice'] = (int)$order['item_price'];
-        $order['rushFee'] = (int)$order['rush_fee'];
-        $order['total'] = (int)$order['total'];
-        $order['customerName'] = $order['customer_name'];
-        $order['customerPhone'] = $order['customer_phone'];
-        $order['customerEmail'] = $order['customer_email'];
-        $order['deliveryAddress'] = $order['delivery_address'];
-        $order['deliveryDate'] = $order['delivery_date'];
-        $order['deliverySlot'] = $order['delivery_slot'];
-        $order['menuItemName'] = $order['menu_item_name'];
-        $order['selectedSize'] = $order['selected_size'];
-        $order['selectedProtein'] = $order['selected_protein'];
-
-        // Trigger emails and calendar event
-        EmailService::sendBookingNotification($order);
-        CalendarService::createDeliveryEvent($order);
-
-        Response::json($order, 201);
-    }
-
-    public function summary(): void {
-        $db = Database::getConnection();
-
-        $allOrdersStmt = $db->query("SELECT * FROM orders ORDER BY created_at DESC");
-        $allOrders = $allOrdersStmt->fetchAll();
-
-        $todayStr = (new DateTime())->format('Y-m-d');
-        $todayOrders = array_filter($allOrders, fn($o) => substr($o['created_at'], 0, 10) === $todayStr);
-
-        $countByStatus = function(string $s) use ($allOrders) {
-            return count(array_filter($allOrders, fn($o) => $o['status'] === $s));
-        };
-
-        $totalRevenue = array_reduce(
-            array_filter($allOrders, fn($o) => $o['status'] !== 'cancelled'),
-            fn($sum, $o) => $sum + (int)$o['total'],
-            0
-        );
-
-        $todayRevenue = array_reduce(
-            array_filter($todayOrders, fn($o) => $o['status'] !== 'cancelled'),
-            fn($sum, $o) => $sum + (int)$o['total'],
-            0
-        );
-
-        $recent = array_slice($allOrders, 0, 10);
-        foreach ($recent as &$ro) {
-            $ro['id'] = (int)$ro['id'];
-            $ro['total'] = (int)$ro['total'];
-            $ro['customerName'] = $ro['customer_name'];
-            $ro['customerPhone'] = $ro['customer_phone'];
-            $ro['deliveryDate'] = $ro['delivery_date'];
-            $ro['deliverySlot'] = $ro['delivery_slot'];
-            $ro['menuItemName'] = $ro['menu_item_name'];
-            $ro['selectedSize'] = $ro['selected_size'];
+        // Save to MySQL DB if connection active
+        try {
+            $db = Database::getConnection();
+            $insertStmt = $db->prepare("
+                INSERT INTO orders (
+                    id, menu_item_id, menu_item_name, category, selected_size, selected_protein,
+                    customer_name, customer_phone, customer_email, delivery_address, delivery_date,
+                    delivery_slot, item_price, rush_fee, total, status, pepper_level, cart_items, notes
+                ) VALUES (
+                    :id, :menu_item_id, :menu_item_name, :category, :selected_size, :selected_protein,
+                    :customer_name, :customer_phone, :customer_email, :delivery_address, :delivery_date,
+                    :delivery_slot, :item_price, :rush_fee, :total, 'pending', :pepper_level, :cart_items, :notes
+                )
+            ");
+            $insertStmt->execute([
+                'id' => $nextId,
+                'menu_item_id' => $input['menuItemId'] ?? 1,
+                'menu_item_name' => $menuItemName,
+                'category' => $mainItem['category'] ?? 'soups',
+                'selected_size' => $selectedSize,
+                'selected_protein' => $selectedProtein,
+                'customer_name' => $input['customerName'],
+                'customer_phone' => $input['customerPhone'],
+                'customer_email' => $input['customerEmail'] ?? null,
+                'delivery_address' => $input['deliveryAddress'] ?? null,
+                'delivery_date' => substr($input['deliveryDate'], 0, 10),
+                'delivery_slot' => $input['deliverySlot'],
+                'item_price' => $totalPrice,
+                'rush_fee' => (int)($input['rushFee'] ?? 0),
+                'total' => $totalPrice + (int)($input['rushFee'] ?? 0),
+                'pepper_level' => $input['pepperLevel'] ?? null,
+                'cart_items' => is_array($cartItems) ? json_encode($cartItems) : null,
+                'notes' => $input['notes'] ?? null,
+            ]);
+        } catch (Exception $e) {
+            // Ignore DB error if running without MySQL
         }
 
-        Response::json([
-            'totalOrders' => count($allOrders),
-            'pendingOrders' => $countByStatus('pending'),
-            'confirmedOrders' => $countByStatus('payment_confirmed') + $countByStatus('confirmed'),
-            'cookingOrders' => $countByStatus('cooking_in_progress') + $countByStatus('cooking'),
-            'deliveredOrders' => $countByStatus('delivered'),
-            'cancelledOrders' => $countByStatus('cancelled'),
-            'totalRevenue' => $totalRevenue,
-            'todayOrders' => count($todayOrders),
-            'todayRevenue' => $todayRevenue,
-            'recentOrders' => $recent,
-        ]);
+        // Trigger HTML Email Notification to afutunde@gmail.com
+        try {
+            EmailService::sendBookingNotification($orderData);
+        } catch (Exception $e) {
+            // Email sending silent failure
+        }
+
+        Response::json($orderData, 201);
     }
 
     public function get(int $id): void {
-        $db = Database::getConnection();
-        $stmt = $db->prepare("SELECT * FROM orders WHERE id = :id LIMIT 1");
-        $stmt->execute(['id' => $id]);
-        $order = $stmt->fetch();
-
-        if (!$order) {
-            Response::error('Order not found', 404);
+        $jsonOrders = $this->getJsonOrders();
+        foreach ($jsonOrders as $jo) {
+            if ((int)$jo['id'] === $id) {
+                Response::json($jo);
+                return;
+            }
         }
 
-        $order['id'] = (int)$order['id'];
-        $order['itemPrice'] = (int)$order['item_price'];
-        $order['rushFee'] = (int)$order['rush_fee'];
-        $order['total'] = (int)$order['total'];
-        $order['customerName'] = $order['customer_name'];
-        $order['customerPhone'] = $order['customer_phone'];
-        $order['customerEmail'] = $order['customer_email'];
-        $order['deliveryAddress'] = $order['delivery_address'];
-        $order['deliveryDate'] = $order['delivery_date'];
-        $order['deliverySlot'] = $order['delivery_slot'];
-        $order['menuItemName'] = $order['menu_item_name'];
-        $order['selectedSize'] = $order['selected_size'];
+        try {
+            $db = Database::getConnection();
+            $stmt = $db->prepare("SELECT * FROM orders WHERE id = :id LIMIT 1");
+            $stmt->execute(['id' => $id]);
+            $order = $stmt->fetch();
+            if ($order) {
+                Response::json([
+                    'id' => (int)$order['id'],
+                    'status' => $order['status'],
+                    'customerName' => $order['customer_name'],
+                    'customerPhone' => $order['customer_phone'],
+                    'customerEmail' => $order['customer_email'],
+                    'deliveryAddress' => $order['delivery_address'],
+                    'deliveryDate' => $order['delivery_date'],
+                    'deliverySlot' => $order['delivery_slot'],
+                    'menuItemName' => $order['menu_item_name'],
+                    'selectedSize' => $order['selected_size'],
+                    'total' => (int)$order['total'],
+                    'notes' => $order['notes'],
+                    'cartItems' => is_string($order['cart_items'] ?? null) ? json_decode($order['cart_items'], true) : [],
+                ]);
+                return;
+            }
+        } catch (Exception $e) {
+            // ignore DB error
+        }
 
-        Response::json($order);
+        Response::error('Order not found', 404);
     }
 
     public function updateStatus(int $id): void {
         $input = json_decode(file_get_contents('php://input'), true);
-        if (empty($input['status'])) {
-            Response::error('Status is required');
+        $newStatus = $input['status'] ?? 'fulfilled';
+
+        $jsonOrders = $this->getJsonOrders();
+        $updatedOrder = null;
+
+        foreach ($jsonOrders as &$jo) {
+            if ((int)$jo['id'] === $id) {
+                $jo['status'] = $newStatus;
+                $updatedOrder = $jo;
+                break;
+            }
+        }
+        unset($jo);
+
+        if ($updatedOrder) {
+            $this->saveJsonOrders($jsonOrders);
         }
 
-        $db = Database::getConnection();
-        $stmt = $db->prepare("UPDATE orders SET status = :status WHERE id = :id");
-        $stmt->execute(['status' => $input['status'], 'id' => $id]);
-
-        $fetchStmt = $db->prepare("SELECT * FROM orders WHERE id = :id LIMIT 1");
-        $fetchStmt->execute(['id' => $id]);
-        $order = $fetchStmt->fetch();
-
-        if (!$order) {
-            Response::error('Order not found', 404);
+        try {
+            $db = Database::getConnection();
+            $stmt = $db->prepare("UPDATE orders SET status = :status WHERE id = :id");
+            $stmt->execute(['status' => $newStatus, 'id' => $id]);
+        } catch (Exception $e) {
+            // ignore DB error
         }
 
-        $order['id'] = (int)$order['id'];
-        $order['total'] = (int)$order['total'];
-        $order['customerName'] = $order['customer_name'];
-        $order['customerEmail'] = $order['customer_email'];
-        $order['menuItemName'] = $order['menu_item_name'];
-        $order['selectedSize'] = $order['selected_size'];
-        $order['deliveryDate'] = $order['delivery_date'];
-        $order['deliverySlot'] = $order['delivery_slot'];
-
-        EmailService::sendCustomerStatusEmail($order);
-
-        Response::json($order);
+        if ($updatedOrder) {
+            Response::json($updatedOrder);
+        } else {
+            Response::json(['id' => $id, 'status' => $newStatus, 'message' => 'Status updated']);
+        }
     }
 }
