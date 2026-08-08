@@ -763,8 +763,7 @@ export default function BookPage() {
   const [deliveryZone, setDeliveryZone] = useState<DeliveryZoneId | "">("");
 
   // ── CART ────────────────────────────────────────────────────────────────────
-  const [pepperLevel, setPepperLevel] = useState<number>(1);
-  const [pepperTouched, setPepperTouched] = useState(false);
+  const [pepperLevel, setPepperLevel] = useState<number | null>(null);
   const [justAdded, setJustAdded] = useState<string | null>(null);
 
   // ── CONFIGURATOR STATE ────────────────────────────────────────────────────
@@ -1055,7 +1054,7 @@ export default function BookPage() {
       });
       return;
     }
-    if (!pepperTouched) {
+    if (pepperLevel === null) {
       toast({
         variant: "destructive",
         title: "Pepper level required",
@@ -1160,11 +1159,6 @@ export default function BookPage() {
 
           const waUrl = `https://wa.me/2348105506052?text=${encodeURIComponent(waMessage)}`;
 
-          if (waWindow && !waWindow.closed) {
-            waWindow.location.href = waUrl;
-          } else {
-            window.location.href = waUrl;
-          }
 
           clearCart();
           toast({
@@ -1174,7 +1168,6 @@ export default function BookPage() {
           setLocation(`/booking-confirmed/${order.id}`);
         },
         onError: (err) => {
-          if (waWindow && !waWindow.closed) waWindow.close();
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const msg =
             (err as any)?.data?.error ||
@@ -1193,7 +1186,7 @@ export default function BookPage() {
   const isSubmitting = createOrder.isPending;
   const canSubmit =
     cart.length > 0 &&
-    pepperTouched &&
+    pepperLevel !== null &&
     deliveryZone !== "" &&
     !isSubmitting &&
     !isSundayToday;
@@ -1602,7 +1595,7 @@ export default function BookPage() {
                   2
                 </div>
                 <h2 className="text-xl font-bold font-display">How Hot?</h2>
-                {pepperTouched ? (
+                {pepperLevel !== null ? (
                   <span className="ml-auto text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1 flex items-center gap-1">
                     <Check className="w-3 h-3" /> Set
                   </span>
@@ -1665,7 +1658,6 @@ export default function BookPage() {
                           type="button"
                           onClick={() => {
                             setPepperLevel(level);
-                            setPepperTouched(true);
                           }}
                           className={[
                             "relative flex flex-col items-center gap-2 rounded-2xl border-2 px-3 py-4 transition-all duration-150 cursor-pointer select-none",
@@ -1711,7 +1703,7 @@ export default function BookPage() {
                       <div
                         className={[
                           "w-4 h-4 rounded-full border-2 flex-shrink-0 transition-colors duration-150",
-                          pepperTouched && pepperLevel >= i
+                          pepperLevel !== null && pepperLevel >= i
                             ? i === 0
                               ? "bg-emerald-500 border-emerald-500"
                               : i === 1
@@ -1724,7 +1716,7 @@ export default function BookPage() {
                         <div
                           className={[
                             "flex-1 h-1 transition-colors duration-150",
-                            pepperTouched && pepperLevel > i
+                            pepperLevel !== null && pepperLevel > i
                               ? i === 0
                                 ? "bg-amber-400"
                                 : "bg-red-400"
@@ -2237,7 +2229,7 @@ export default function BookPage() {
                     </span>
                   </div>
 
-                  {pepperTouched && (
+                  {pepperLevel !== null && (
                     <div className="text-xs text-muted-foreground bg-muted rounded-xl px-3 py-2">
                       Pepper level:{" "}
                       <span
@@ -2298,7 +2290,7 @@ export default function BookPage() {
                     Add at least one item
                   </p>
                 )}
-                {!isSundayToday && !pepperTouched && (
+                {!isSundayToday && pepperLevel === null && (
                   <p className="text-xs text-muted-foreground flex items-center gap-1.5">
                     <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />{" "}
                     Set pepper level (Step 2)
