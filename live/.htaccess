@@ -1,0 +1,19 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Route /api/ requests directly to PHP backend
+    RewriteRule ^api/(.*)$ backend/index.php [QSA,L]
+    RewriteRule ^api$ backend/index.php [QSA,L]
+
+    # Serve existing static files and directories directly
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Route all other URLs to index.html for React SPA client-side routing
+    RewriteRule ^ index.html [L]
+</IfModule>
+
+# Security: Prevent directory listing
+Options -Indexes
