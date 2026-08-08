@@ -868,21 +868,24 @@ export default function BookPage() {
       values.notes ? `Customer notes: ${values.notes}` : "",
     ].filter(Boolean).join("\n\n") + "\n\n---\nPAYMENT DETAILS\nAccount Name: Ahmazing Cuisine\nBank: FCMB\nAccount Number: 1009414545";
 
+    // Pre-open target window synchronously on click so browser popup blockers do NOT block it
+    const waWindow = window.open("about:blank", "_blank");
+
     createOrder.mutate(
       {
         data: {
-          menuItemId:      primary.menuItemId,
-          selectedSize:    primary.selectedSize,
+          menuItemId: primary.menuItemId,
+          selectedSize: primary.selectedSize,
           selectedProtein: primary.selectedProteins[0]?.name ?? null,
-          customerName:    values.customerName,
-          customerPhone:   values.customerPhone,
-          customerEmail:   values.customerEmail || undefined,
+          customerName: values.customerName,
+          customerPhone: values.customerPhone,
+          customerEmail: values.customerEmail || undefined,
           deliveryAddress: values.deliveryAddress,
-          deliveryDate:    values.deliveryDate as unknown as Date,
-          deliverySlot:    values.deliverySlot,
-          notes:           notesStr,
+          deliveryDate: values.deliveryDate as unknown as Date,
+          deliverySlot: values.deliverySlot,
+          notes: notesStr,
           // @ts-expect-error extended fields
-          cartItems:   cart,
+          cartItems: cart,
           // @ts-expect-error extended fields
           pepperLevel: PEPPER_LABELS[pepperLevel],
         },
@@ -901,7 +904,7 @@ export default function BookPage() {
             .join("\n\n");
 
           const waMessage = [
-            `*NEW ORDER REQ — #${order.id}*`,
+            `*NEW ORDER REQ — #AHM-${order.id.toString().padStart(4, "0")}*`,
             `-----------------------------`,
             `*Customer:* ${values.customerName}`,
             `*Phone:* ${values.customerPhone}`,
@@ -927,12 +930,19 @@ export default function BookPage() {
             .join("\n");
 
           const waUrl = `https://wa.me/2348105506052?text=${encodeURIComponent(waMessage)}`;
-          window.open(waUrl, "_blank");
+
+          if (waWindow && !waWindow.closed) {
+            waWindow.location.href = waUrl;
+          } else {
+            window.location.href = waUrl;
+          }
+
           clearCart();
-          toast({ title: "Order Created!", description: "Opening WhatsApp to confirm your order details..." });
+          toast({ title: "Order Created!", description: "Opening WhatsApp with your order receipt..." });
           setLocation(`/booking-confirmed/${order.id}`);
         },
         onError: (err) => {
+          if (waWindow && !waWindow.closed) waWindow.close();
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const msg = (err as any)?.data?.error || (err as any)?.message || "Failed to create booking";
           toast({ variant: "destructive", title: "Booking Error", description: msg });
