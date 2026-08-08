@@ -1,1 +1,37 @@
-[]
+[
+    {
+        "id": 1001,
+        "status": "pending",
+        "customerName": "Test Customer",
+        "customerPhone": "08012345678",
+        "customerEmail": "afutunde@gmail.com",
+        "deliveryAddress": "14 Test Street, VI, Lagos",
+        "deliveryDate": "2026-08-10",
+        "deliverySlot": "11am\u20131pm",
+        "menuItemName": "Onugbu Soup (Bitterleaf)",
+        "selectedSize": "2 Litres (Serves ~3)",
+        "selectedProtein": "Goat Meat",
+        "itemPrice": 32000,
+        "rushFee": 0,
+        "total": 32000,
+        "pepperLevel": "Medium \ud83c\udf36\ufe0f\ud83c\udf36\ufe0f",
+        "notes": "Test order from API",
+        "cartItems": [
+            {
+                "menuItemName": "Onugbu Soup (Bitterleaf)",
+                "category": "soups",
+                "selectedSize": "2 Litres (Serves ~3)",
+                "price": 32000,
+                "selectedProteins": [
+                    {
+                        "name": "Goat Meat",
+                        "qty": 1,
+                        "extraCost": 5000
+                    }
+                ]
+            }
+        ],
+        "created_at": "2026-08-08 01:16:21",
+        "createdAt": "2026-08-08 01:16:21"
+    }
+]

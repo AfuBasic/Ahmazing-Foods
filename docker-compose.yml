@@ -1,20 +1,4 @@
 services:
-  db:
-    image: mysql:8.0
-    container_name: ahmazing_db
-    restart: always
-    environment:
-      MYSQL_DATABASE: ahmazing_db
-      MYSQL_USER: ahmazing_user
-      MYSQL_PASSWORD: ahmazing_pass
-      MYSQL_ROOT_PASSWORD: root_pass
-    ports:
-      - "3307:3306"
-    volumes:
-      - mysqldata:/var/lib/mysql
-      - ./backend/database/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql
-      - ./backend/database/seed.sql:/docker-entrypoint-initdb.d/2_seed.sql
-
   backend:
     build:
       context: ./backend
@@ -24,17 +8,6 @@ services:
     ports:
       - "5001:80"
     environment:
-      DB_DRIVER: mysql
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_NAME: ahmazing_db
-      DB_USER: ahmazing_user
-      DB_PASS: ahmazing_pass
-      ADMIN_EMAIL: ahmazingfoodsorders@gmail.com
+      ADMIN_EMAIL: afutunde@gmail.com
     volumes:
       - ./backend:/var/www/html
-    depends_on:
-      - db
-
-volumes:
-  mysqldata:
