@@ -258,4 +258,42 @@ class OrderController {
             Response::json(['id' => $id, 'status' => $newStatus, 'message' => 'Status updated']);
         }
     }
+
+    public function summary(): void {
+        $jsonOrders = $this->getJsonOrders();
+        
+        $todayStr = date('Y-m-d');
+        $todayOrders = array_filter($jsonOrders, fn($o) => substr($o['created_at'] ?? '', 0, 10) === $todayStr || ($o['deliveryDate'] ?? '') === $todayStr);
+
+        $countByStatus = function(string $s) use ($jsonOrders) {
+            return count(array_filter($jsonOrders, fn($o) => ($o['status'] ?? '') === $s));
+        };
+
+        $totalRevenue = array_reduce(
+            array_filter($jsonOrders, fn($o) => ($o['status'] ?? '') !== 'cancelled'),
+            fn($sum, $o) => $sum + (int)($o['total'] ?? 0),
+            0
+        );
+
+        $todayRevenue = array_reduce(
+            array_filter($todayOrders, fn($o) => ($o['status'] ?? '') !== 'cancelled'),
+            fn($sum, $o) => $sum + (int)($o['total'] ?? 0),
+            0
+        );
+
+        $recent = array_slice($jsonOrders, 0, 10);
+
+        Response::json([
+            'totalOrders' => count($jsonOrders),
+            'pendingOrders' => $countByStatus('pending'),
+            'confirmedOrders' => $countByStatus('fulfilled') + $countByStatus('confirmed') + $countByStatus('payment_confirmed'),
+            'cookingOrders' => $countByStatus('cooking_in_progress') + $countByStatus('cooking'),
+            'deliveredOrders' => $countByStatus('delivered') + $countByStatus('fulfilled'),
+            'cancelledOrders' => $countByStatus('cancelled'),
+            'totalRevenue' => $totalRevenue,
+            'todayOrders' => count($todayOrders),
+            'todayRevenue' => $todayRevenue,
+            'recentOrders' => $recent,
+        ]);
+    }
 }
