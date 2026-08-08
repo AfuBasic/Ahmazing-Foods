@@ -26,7 +26,7 @@ const FALLBACK_BREAKFAST_ITEMS = [
     sizes: [{ label: "Standard Portion", price: 22000 }],
     proteins: [],
     available: true,
-    imageUrl: "assets/breakfast/classic-nigerian.png",
+    imageUrl: "/assets/breakfast/classic-nigerian.png",
   },
   {
     id: 102,
@@ -36,7 +36,7 @@ const FALLBACK_BREAKFAST_ITEMS = [
     sizes: [{ label: "Standard Portion", price: 22000 }],
     proteins: [],
     available: true,
-    imageUrl: "assets/breakfast/hearty-plate.png",
+    imageUrl: "/assets/breakfast/hearty-plate.png",
   },
   {
     id: 103,
@@ -46,7 +46,7 @@ const FALLBACK_BREAKFAST_ITEMS = [
     sizes: [{ label: "Standard Portion", price: 25000 }],
     proteins: [],
     available: true,
-    imageUrl: "assets/breakfast/sweet-start.png",
+    imageUrl: "/assets/breakfast/sweet-start.png",
   },
   {
     id: 104,
@@ -56,7 +56,7 @@ const FALLBACK_BREAKFAST_ITEMS = [
     sizes: [{ label: "Standard Portion", price: 25000 }],
     proteins: [],
     available: true,
-    imageUrl: "assets/breakfast/protein-power.png",
+    imageUrl: "/assets/breakfast/protein-power.png",
   },
 ];
 
