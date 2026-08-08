@@ -382,12 +382,13 @@ export default function MenuPage() {
                 const priceVal = item.sizes[0]?.price ?? 22000;
                 const sizeLabel = item.sizes[0]?.label ?? "Standard Portion";
 
+                const rawImg = item.imageUrl || (item as any).image_url;
                 return (
                   <div key={item.id} className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group">
                     <div className="aspect-[4/3] bg-muted relative overflow-hidden">
-                      {item.imageUrl ? (
+                      {rawImg ? (
                         <WatermarkedImage
-                          src={item.imageUrl.startsWith("assets/") ? `${BASE}${item.imageUrl}` : item.imageUrl}
+                          src={rawImg.startsWith("/") ? rawImg : `/${rawImg}`}
                           alt={item.name}
                         />
                       ) : (
@@ -417,12 +418,13 @@ export default function MenuPage() {
                 );
               }
 
+              const rawImg = item.imageUrl || (item as any).image_url;
               return (
                 <div key={item.id} className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-shadow flex flex-col">
                   <div className="aspect-video bg-muted relative overflow-hidden">
-                    {item.imageUrl ? (
+                    {rawImg ? (
                       <WatermarkedImage
-                        src={item.imageUrl.startsWith("assets/") ? `${BASE}${item.imageUrl}` : item.imageUrl}
+                        src={rawImg.startsWith("/") ? rawImg : `/${rawImg}`}
                         alt={item.name}
                       />
                     ) : (
