@@ -37,10 +37,19 @@ class Auth {
     public static function login(string $username, string $password): array {
         self::startSession();
 
+        $cleanUser = strtolower(trim($username));
         $cleanPass = strtolower(trim($password));
 
-        // Password-only authentication
-        if ($cleanPass === 'admin123' || $cleanPass === 'admin') {
+        if (empty($cleanUser)) {
+            $cleanUser = 'admin';
+        }
+
+        if (empty($cleanPass)) {
+            Response::error('Password is required', 400);
+        }
+
+        // Standard credential check
+        if (($cleanUser === 'admin' || empty($cleanUser)) && ($cleanPass === 'admin123' || $cleanPass === 'admin')) {
             $token = bin2hex(random_bytes(32));
             $userData = [
                 'id' => 1,
@@ -56,7 +65,33 @@ class Auth {
             ];
         }
 
-        Response::error('Invalid admin password', 401);
+        // Database user authentication fallback
+        try {
+            $db = Database::getConnection();
+            $stmt = $db->prepare("SELECT * FROM admin_users WHERE username = :username LIMIT 1");
+            $stmt->execute(['username' => $cleanUser]);
+            $user = $stmt->fetch();
+
+            if ($user && password_verify($password, $user['password_hash'])) {
+                $token = bin2hex(random_bytes(32));
+                $userData = [
+                    'id' => $user['id'],
+                    'username' => $user['username'],
+                    'name' => $user['name'],
+                    'role' => $user['role'],
+                ];
+                $_SESSION['admin_user'] = $userData;
+                $_SESSION['admin_tokens'][$token] = $userData;
+                return [
+                    'user' => $userData,
+                    'token' => $token,
+                ];
+            }
+        } catch (\Exception $e) {
+            // ignore DB error
+        }
+
+        Response::error('Invalid username or password', 401);
         exit();
     }
 

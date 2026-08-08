@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Lock, AlertCircle, ChefHat } from 'lucide-react';
+import { Lock, User, AlertCircle, ChefHat } from 'lucide-react';
 
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
+  const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -23,13 +24,13 @@ export default function AdminLogin() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ username: username.trim() || 'admin', password: password.trim() }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Invalid admin password');
+        throw new Error(data.error || 'Invalid admin credentials');
       }
 
       localStorage.setItem('admin_token', data.token);
@@ -50,7 +51,7 @@ export default function AdminLogin() {
             <ChefHat className="w-8 h-8" />
           </div>
           <h1 className="text-2xl font-bold font-display text-foreground">Admin Portal Login</h1>
-          <p className="text-sm text-muted-foreground">Enter admin password to access kitchen dashboard</p>
+          <p className="text-sm text-muted-foreground">Enter admin credentials to access kitchen dashboard</p>
         </div>
 
         {error && (
@@ -62,7 +63,23 @@ export default function AdminLogin() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="password">Admin Passcode</Label>
+            <Label htmlFor="username">Username</Label>
+            <div className="relative">
+              <User className="absolute left-3.5 top-3 w-4 h-4 text-muted-foreground" />
+              <Input
+                id="username"
+                type="text"
+                placeholder="Enter username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="pl-10 rounded-xl"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
             <div className="relative">
               <Lock className="absolute left-3.5 top-3 w-4 h-4 text-muted-foreground" />
               <Input
