@@ -16,7 +16,6 @@ class Auth {
     public static function requireAdmin(): array {
         self::startSession();
 
-        // Check session or Bearer token header
         $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
         $sessionUser = $_SESSION['admin_user'] ?? null;
 
@@ -39,10 +38,9 @@ class Auth {
         self::startSession();
 
         $cleanPass = strtolower(trim($password));
-        $cleanUser = strtolower(trim($username));
 
-        // Accept admin123 or admin for seamless passcode authentication
-        if ($cleanPass === 'admin123' || $cleanPass === 'admin' || $cleanUser === 'admin123' || $cleanUser === 'admin') {
+        // Password-only authentication
+        if ($cleanPass === 'admin123' || $cleanPass === 'admin') {
             $token = bin2hex(random_bytes(32));
             $userData = [
                 'id' => 1,
@@ -58,65 +56,8 @@ class Auth {
             ];
         }
 
-        try {
-            $db = Database::getConnection();
-            if (empty($username)) {
-                $stmt = $db->query("SELECT * FROM admin_users");
-                $users = $stmt->fetchAll();
-                $user = null;
-                foreach ($users as $u) {
-                    if (password_verify($password, $u['password_hash'])) {
-                        $user = $u;
-                        break;
-                    }
-                }
-                if (!$user) {
-                    Response::error('Invalid password', 401);
-                }
-            } else {
-                $stmt = $db->prepare("SELECT * FROM admin_users WHERE username = :username LIMIT 1");
-                $stmt->execute(['username' => $username]);
-                $user = $stmt->fetch();
-
-                if (!$user || !password_verify($password, $user['password_hash'])) {
-                    Response::error('Invalid username or password', 401);
-                }
-            }
-
-            $token = bin2hex(random_bytes(32));
-            $userData = [
-                'id' => $user['id'],
-                'username' => $user['username'],
-                'name' => $user['name'],
-                'role' => $user['role'],
-            ];
-
-            $_SESSION['admin_user'] = $userData;
-            $_SESSION['admin_tokens'][$token] = $userData;
-
-            return [
-                'user' => $userData,
-                'token' => $token,
-            ];
-        } catch (\Exception $e) {
-            Response::error('Invalid passcode', 401);
-            exit();
-        }
-    }
-        $userData = [
-            'id' => $user['id'],
-            'username' => $user['username'],
-            'name' => $user['name'],
-            'role' => $user['role'],
-        ];
-
-        $_SESSION['admin_user'] = $userData;
-        $_SESSION['admin_tokens'][$token] = $userData;
-
-        return [
-            'user' => $userData,
-            'token' => $token,
-        ];
+        Response::error('Invalid admin password', 401);
+        exit();
     }
 
     public static function logout(): void {
