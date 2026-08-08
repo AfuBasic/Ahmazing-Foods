@@ -763,7 +763,7 @@ export default function BookPage() {
   const [deliveryZone, setDeliveryZone] = useState<DeliveryZoneId | "">("");
 
   // ── CART ────────────────────────────────────────────────────────────────────
-  const [pepperLevel, setPepperLevel] = useState<number | null>(null);
+  const [pepperLevel, setPepperLevel] = useState<number>(1);
   const [justAdded, setJustAdded] = useState<string | null>(null);
 
   // ── CONFIGURATOR STATE ────────────────────────────────────────────────────
@@ -1696,41 +1696,37 @@ export default function BookPage() {
                   )}
                 </div>
 
-                {/* Connector line showing which position is active */}
-                <div className="mt-5 flex items-center gap-0">
-                  {[0, 1, 2].map((i) => (
-                    <div key={i} className="flex-1 flex items-center">
-                      <div
-                        className={[
-                          "w-4 h-4 rounded-full border-2 flex-shrink-0 transition-colors duration-150",
-                          pepperLevel !== null && pepperLevel >= i
-                            ? i === 0
-                              ? "bg-emerald-500 border-emerald-500"
-                              : i === 1
-                                ? "bg-amber-500 border-amber-500"
-                                : "bg-red-500 border-red-500"
-                            : "bg-background border-border",
-                        ].join(" ")}
-                      />
-                      {i < 2 && (
+                {/* Full-width connector bar stretching edge-to-edge aligned with the 3 cards */}
+                <div className="mt-6 relative px-[16.666%]">
+                  <div className="absolute top-1/2 left-[16.666%] right-[16.666%] -translate-y-1/2 h-1.5 bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full transition-all duration-300 rounded-full"
+                      style={{
+                        width: pepperLevel === 0 ? "0%" : pepperLevel === 1 ? "50%" : "100%",
+                        backgroundColor: pepperLevel === 0 ? "#10b981" : pepperLevel === 1 ? "#f59e0b" : "#ef4444",
+                      }}
+                    />
+                  </div>
+                  <div className="relative flex justify-between items-center">
+                    {[0, 1, 2].map((lvl) => {
+                      const active = pepperLevel >= lvl;
+                      const activeColor = lvl === 0 ? "bg-emerald-500 border-emerald-500" : lvl === 1 ? "bg-amber-500 border-amber-500" : "bg-red-500 border-red-500";
+                      return (
                         <div
-                          className={[
-                            "flex-1 h-1 transition-colors duration-150",
-                            pepperLevel !== null && pepperLevel > i
-                              ? i === 0
-                                ? "bg-amber-400"
-                                : "bg-red-400"
-                              : "bg-border",
-                          ].join(" ")}
+                          key={lvl}
+                          onClick={() => setPepperLevel(lvl)}
+                          className={`w-5 h-5 rounded-full border-2 cursor-pointer transition-all duration-300 flex items-center justify-center ${
+                            active ? `${activeColor} scale-110 shadow-sm` : "bg-background border-border"
+                          }`}
                         />
-                      )}
-                    </div>
-                  ))}
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className="flex justify-between mt-1 text-[10px] font-medium text-muted-foreground px-0.5">
-                  <span>Mild</span>
-                  <span>Medium</span>
-                  <span>Hot</span>
+                <div className="grid grid-cols-3 text-center mt-2 text-xs font-semibold text-muted-foreground">
+                  <span className={pepperLevel === 0 ? "text-emerald-700 font-bold" : ""}>Mild</span>
+                  <span className={pepperLevel === 1 ? "text-amber-700 font-bold" : ""}>Medium</span>
+                  <span className={pepperLevel === 2 ? "text-red-700 font-bold" : ""}>Hot</span>
                 </div>
               </div>
             </div>
