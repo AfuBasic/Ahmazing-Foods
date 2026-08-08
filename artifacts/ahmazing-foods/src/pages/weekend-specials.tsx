@@ -557,8 +557,9 @@ export default function WeekendSpecials() {
                     </Link>
                   </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
