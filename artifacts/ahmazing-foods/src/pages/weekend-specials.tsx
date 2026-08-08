@@ -14,8 +14,8 @@ const BASE = import.meta.env.BASE_URL;
 function getImageUrl(url?: string): string {
   if (!url) return "";
   if (url.startsWith("http://") || url.startsWith("https://")) return url;
-  if (url.startsWith("assets/")) return `${BASE}${url}`;
-  return `${BASE}assets/${url}`;
+  if (url.startsWith("/")) return url;
+  return `/${url}`;
 }
 
 const FALLBACK_BREAKFAST_ITEMS = [
@@ -512,22 +512,24 @@ export default function WeekendSpecials() {
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {displayBreakfastPlates.map((item: any) => (
-              <div key={item.id} className="bg-card border border-border rounded-2xl overflow-hidden flex flex-col">
-                {/* Photo */}
-                <div className="aspect-video w-full overflow-hidden bg-muted">
-                  {item.imageUrl ? (
-                    <img
-                      src={getImageUrl(item.imageUrl)}
-                      alt={item.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground/40 text-xs">
-                      Photo coming soon
-                    </div>
-                  )}
-                </div>
+            {displayBreakfastPlates.map((item: any) => {
+              const rawImg = item.imageUrl || item.image_url;
+              return (
+                <div key={item.id} className="bg-card border border-border rounded-2xl overflow-hidden flex flex-col">
+                  {/* Photo */}
+                  <div className="aspect-video w-full overflow-hidden bg-muted">
+                    {rawImg ? (
+                      <img
+                        src={getImageUrl(rawImg)}
+                        alt={item.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground/40 text-xs">
+                        Photo coming soon
+                      </div>
+                    )}
+                  </div>
                   {/* Body */}
                   <div className="p-5 flex flex-col flex-1">
                     <div className="flex justify-between items-start mb-2">
