@@ -25,29 +25,21 @@ class OrderController {
         file_put_contents($this->jsonFile, json_encode(array_values($orders), JSON_PRETTY_PRINT));
     }
 
-    public function list(): void {
-        $status = $_GET['status'] ?? null;
+    private function getAllMergedOrders(): array {
         $jsonOrders = $this->getJsonOrders();
-
-        // Check if DB is available
         $dbOrders = [];
         try {
             $db = Database::getConnection();
-            if ($status) {
-                $stmt = $db->prepare("SELECT * FROM orders WHERE status = :status ORDER BY created_at DESC");
-                $stmt->execute(['status' => $status]);
-            } else {
-                $stmt = $db->query("SELECT * FROM orders ORDER BY created_at DESC");
-            }
+            $stmt = $db->query("SELECT * FROM orders ORDER BY id DESC");
             $dbOrders = $stmt->fetchAll() ?: [];
         } catch (Exception $e) {
             $dbOrders = [];
         }
 
-        // Merge JSON orders and DB orders
         $ordersMap = [];
         foreach ($dbOrders as $o) {
             $id = (int)$o['id'];
+            $created = $o['created_at'] ?? date('Y-m-d H:i:s');
             $ordersMap[$id] = [
                 'id' => $id,
                 'status' => $o['status'] ?? 'pending',
@@ -66,17 +58,27 @@ class OrderController {
                 'pepperLevel' => $o['pepper_level'] ?? null,
                 'notes' => $o['notes'] ?? '',
                 'cartItems' => is_string($o['cart_items'] ?? null) ? json_decode($o['cart_items'], true) : ($o['cart_items'] ?? []),
-                'created_at' => $o['created_at'] ?? date('Y-m-d H:i:s'),
+                'created_at' => $created,
+                'createdAt' => $created,
             ];
         }
 
         foreach ($jsonOrders as $jo) {
             $id = (int)$jo['id'];
+            $created = $jo['created_at'] ?? $jo['createdAt'] ?? date('Y-m-d H:i:s');
+            $jo['created_at'] = $created;
+            $jo['createdAt'] = $created;
             $ordersMap[$id] = array_merge($ordersMap[$id] ?? [], $jo);
         }
 
         $allOrders = array_values($ordersMap);
         usort($allOrders, fn($a, $b) => ($b['id'] <=> $a['id']));
+        return $allOrders;
+    }
+
+    public function list(): void {
+        $status = $_GET['status'] ?? null;
+        $allOrders = $this->getAllMergedOrders();
 
         if ($status && $status !== 'all') {
             $allOrders = array_values(array_filter($allOrders, function($o) use ($status) {
@@ -111,6 +113,7 @@ class OrderController {
         $menuItemName = $mainItem['menuItemName'] ?? $input['menuItemName'] ?? 'Custom Selection';
         $selectedSize = $mainItem['selectedSize'] ?? $input['selectedSize'] ?? 'Standard';
         $selectedProtein = $mainItem['selectedProteins'][0]['name'] ?? $input['selectedProtein'] ?? null;
+        $nowStr = date('Y-m-d H:i:s');
 
         $orderData = [
             'id'              => $nextId,
@@ -130,7 +133,8 @@ class OrderController {
             'pepperLevel'     => $input['pepperLevel'] ?? null,
             'notes'           => $input['notes'] ?? '',
             'cartItems'       => $cartItems,
-            'created_at'      => date('Y-m-d H:i:s'),
+            'created_at'      => $nowStr,
+            'createdAt'       => $nowStr,
         ];
 
         // Save to database/orders.json
@@ -144,11 +148,11 @@ class OrderController {
                 INSERT INTO orders (
                     id, menu_item_id, menu_item_name, category, selected_size, selected_protein,
                     customer_name, customer_phone, customer_email, delivery_address, delivery_date,
-                    delivery_slot, item_price, rush_fee, total, status, pepper_level, cart_items, notes
+                    delivery_slot, item_price, rush_fee, total, status, pepper_level, cart_items, notes, created_at
                 ) VALUES (
                     :id, :menu_item_id, :menu_item_name, :category, :selected_size, :selected_protein,
                     :customer_name, :customer_phone, :customer_email, :delivery_address, :delivery_date,
-                    :delivery_slot, :item_price, :rush_fee, :total, 'pending', :pepper_level, :cart_items, :notes
+                    :delivery_slot, :item_price, :rush_fee, :total, 'pending', :pepper_level, :cart_items, :notes, :created_at
                 )
             ");
             $insertStmt->execute([
@@ -170,6 +174,7 @@ class OrderController {
                 'pepper_level' => $input['pepperLevel'] ?? null,
                 'cart_items' => is_array($cartItems) ? json_encode($cartItems) : null,
                 'notes' => $input['notes'] ?? null,
+                'created_at' => $nowStr,
             ]);
         } catch (Exception $e) {
             // Ignore DB error if running without MySQL
@@ -186,41 +191,13 @@ class OrderController {
     }
 
     public function get(int $id): void {
-        $jsonOrders = $this->getJsonOrders();
-        foreach ($jsonOrders as $jo) {
-            if ((int)$jo['id'] === $id) {
-                Response::json($jo);
+        $allOrders = $this->getAllMergedOrders();
+        foreach ($allOrders as $o) {
+            if ((int)$o['id'] === $id) {
+                Response::json($o);
                 return;
             }
         }
-
-        try {
-            $db = Database::getConnection();
-            $stmt = $db->prepare("SELECT * FROM orders WHERE id = :id LIMIT 1");
-            $stmt->execute(['id' => $id]);
-            $order = $stmt->fetch();
-            if ($order) {
-                Response::json([
-                    'id' => (int)$order['id'],
-                    'status' => $order['status'],
-                    'customerName' => $order['customer_name'],
-                    'customerPhone' => $order['customer_phone'],
-                    'customerEmail' => $order['customer_email'],
-                    'deliveryAddress' => $order['delivery_address'],
-                    'deliveryDate' => $order['delivery_date'],
-                    'deliverySlot' => $order['delivery_slot'],
-                    'menuItemName' => $order['menu_item_name'],
-                    'selectedSize' => $order['selected_size'],
-                    'total' => (int)$order['total'],
-                    'notes' => $order['notes'],
-                    'cartItems' => is_string($order['cart_items'] ?? null) ? json_decode($order['cart_items'], true) : [],
-                ]);
-                return;
-            }
-        } catch (Exception $e) {
-            // ignore DB error
-        }
-
         Response::error('Order not found', 404);
     }
 
@@ -260,17 +237,17 @@ class OrderController {
     }
 
     public function summary(): void {
-        $jsonOrders = $this->getJsonOrders();
+        $allOrders = $this->getAllMergedOrders();
         
         $todayStr = date('Y-m-d');
-        $todayOrders = array_filter($jsonOrders, fn($o) => substr($o['created_at'] ?? '', 0, 10) === $todayStr || ($o['deliveryDate'] ?? '') === $todayStr);
+        $todayOrders = array_filter($allOrders, fn($o) => substr($o['created_at'] ?? $o['createdAt'] ?? '', 0, 10) === $todayStr || ($o['deliveryDate'] ?? '') === $todayStr);
 
-        $countByStatus = function(string $s) use ($jsonOrders) {
-            return count(array_filter($jsonOrders, fn($o) => ($o['status'] ?? '') === $s));
+        $countByStatus = function(string $s) use ($allOrders) {
+            return count(array_filter($allOrders, fn($o) => ($o['status'] ?? '') === $s));
         };
 
         $totalRevenue = array_reduce(
-            array_filter($jsonOrders, fn($o) => ($o['status'] ?? '') !== 'cancelled'),
+            array_filter($allOrders, fn($o) => ($o['status'] ?? '') !== 'cancelled'),
             fn($sum, $o) => $sum + (int)($o['total'] ?? 0),
             0
         );
@@ -281,10 +258,10 @@ class OrderController {
             0
         );
 
-        $recent = array_slice($jsonOrders, 0, 10);
+        $recent = array_slice($allOrders, 0, 10);
 
         Response::json([
-            'totalOrders' => count($jsonOrders),
+            'totalOrders' => count($allOrders),
             'pendingOrders' => $countByStatus('pending'),
             'confirmedOrders' => $countByStatus('fulfilled') + $countByStatus('confirmed') + $countByStatus('payment_confirmed'),
             'cookingOrders' => $countByStatus('cooking_in_progress') + $countByStatus('cooking'),

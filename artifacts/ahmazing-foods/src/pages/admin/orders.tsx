@@ -123,6 +123,7 @@ export default function AdminOrdersList() {
             <thead className="bg-muted/50 text-muted-foreground uppercase text-xs sticky top-0">
               <tr>
                 <th className="px-6 py-4 font-medium">Order ID</th>
+                <th className="px-6 py-4 font-medium">Order Placed</th>
                 <th className="px-6 py-4 font-medium">Delivery Date</th>
                 <th className="px-6 py-4 font-medium">Customer Info</th>
                 <th className="px-6 py-4 font-medium">Ordered Item</th>
@@ -134,14 +135,14 @@ export default function AdminOrdersList() {
             <tbody className="divide-y divide-border relative">
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-24 text-center">
+                  <td colSpan={8} className="px-6 py-24 text-center">
                     <Loader2 className="w-8 h-8 mx-auto animate-spin text-primary mb-4" />
                     <p className="text-muted-foreground">Loading orders...</p>
                   </td>
                 </tr>
               ) : filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-24 text-center text-muted-foreground">
+                  <td colSpan={8} className="px-6 py-24 text-center text-muted-foreground">
                     No orders found matching this filter.
                   </td>
                 </tr>
@@ -154,6 +155,12 @@ export default function AdminOrdersList() {
                     <tr key={order.id} className="hover:bg-muted/30 transition-colors group">
                       <td className="px-6 py-4 font-mono font-bold text-foreground">
                         #AHM-{order.id.toString().padStart(4, "0")}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-xs text-muted-foreground">
+                        <p className="font-medium text-foreground">{formatDate(order.createdAt || order.created_at)}</p>
+                        <p className="text-[11px] text-muted-foreground/75">
+                          {order.createdAt || order.created_at ? order.createdAt.slice(11, 16) : ""}
+                        </p>
                       </td>
                       <td className="px-6 py-4">
                         <p className="font-medium text-foreground">{formatDate(order.deliveryDate)}</p>
