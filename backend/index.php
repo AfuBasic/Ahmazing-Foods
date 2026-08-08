@@ -73,6 +73,10 @@ try {
             (new App\Controllers\OrderController())->updateStatus((int)$m[1]);
             break;
 
+        case preg_match('#^/(?:api/)?orders/(\d+)$#', $uri, $m) && $method === 'DELETE':
+            (new App\Controllers\OrderController())->delete((int)$m[1]);
+            break;
+
         // Weekend Specials
         case ($uri === '/api/specials/votes' || $uri === '/specials/votes') && $method === 'GET':
             (new App\Controllers\SpecialController())->getVotes();

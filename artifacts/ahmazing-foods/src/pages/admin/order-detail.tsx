@@ -1,11 +1,11 @@
-import { useParams, Link } from "wouter";
+import { useParams, Link, useLocation } from "wouter";
 import { 
   useGetOrder, 
   useUpdateOrderStatus, 
   getGetOrderQueryKey,
   OrderStatusUpdateStatus 
 } from "@workspace/api-client-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { formatNaira, formatDate } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,9 +19,20 @@ import {
   Clock, 
   CreditCard, 
   MessageSquare,
-  MessageCircle
+  MessageCircle,
+  Trash2,
+  AlertTriangle,
+  Loader2
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { useState, useEffect } from "react";
 
 function toWaNumber(phone: string): string {
@@ -59,6 +70,32 @@ export default function AdminOrderDetail() {
 
   const updateStatus = useUpdateOrderStatus();
   const [localStatus, setLocalStatus] = useState<OrderStatusUpdateStatus | "">("");
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [, setLocation] = useLocation();
+
+  const deleteOrderMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const res = await fetch(`/api/orders/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete order");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Order Deleted",
+        description: `Order #AHM-${orderId.toString().padStart(4, "0")} was permanently removed.`,
+      });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["orderSummary"] });
+      setLocation("/admin/orders");
+    },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Delete Failed",
+        description: "Could not remove order. Please try again.",
+      });
+    },
+  });
 
   useEffect(() => {
     if (order && !localStatus) {
@@ -117,24 +154,34 @@ export default function AdminOrderDetail() {
           <p className="text-muted-foreground mt-2">Placed on {formatDate(order.createdAt)}</p>
         </div>
 
-        <div className="flex flex-col items-end gap-2 w-full md:w-auto">
-          <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Update Status</label>
-          <Select 
-             value={localStatus} 
-             onValueChange={(val) => handleStatusChange(val as OrderStatusUpdateStatus)}
-             disabled={updateStatus.isPending}
+        <div className="flex flex-col sm:flex-row items-end gap-3 w-full md:w-auto">
+          <div>
+            <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block mb-1">Update Status</label>
+            <Select 
+               value={localStatus} 
+               onValueChange={(val) => handleStatusChange(val as OrderStatusUpdateStatus)}
+               disabled={updateStatus.isPending}
+            >
+              <SelectTrigger className="w-full sm:w-[180px] h-11 text-sm font-bold capitalize">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="confirmed">Confirmed</SelectItem>
+                <SelectItem value="cooking">Cooking</SelectItem>
+                <SelectItem value="delivered">Delivered</SelectItem>
+                <SelectItem value="cancelled" className="text-destructive">Cancelled</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Button
+            variant="destructive"
+            onClick={() => setConfirmDelete(true)}
+            className="h-11 font-bold gap-1.5"
           >
-            <SelectTrigger className="w-full md:w-[200px] h-12 text-base font-bold capitalize">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="confirmed">Confirmed</SelectItem>
-              <SelectItem value="cooking">Cooking</SelectItem>
-              <SelectItem value="delivered">Delivered</SelectItem>
-              <SelectItem value="cancelled" className="text-destructive">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
+            <Trash2 className="w-4 h-4" /> Remove Order
+          </Button>
         </div>
       </div>
 
@@ -285,10 +332,45 @@ export default function AdminOrderDetail() {
                  <p className="mt-2 text-center text-xs text-background/50">Opens WhatsApp with message pre-filled</p>
                </div>
              )}
-           </div>
-        </div>
+            </div>
+         </div>
 
-      </div>
+       </div>
+
+      {/* ── CONFIRM DELETE MODAL ────────────────────────────────────────── */}
+      <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+        <DialogContent className="max-w-md rounded-2xl p-6">
+          <DialogHeader className="items-center text-center">
+            <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950/40 text-red-600 flex items-center justify-center mb-3">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <DialogTitle className="text-xl font-bold font-display text-center text-red-600">
+              Delete Order #{orderId.toString().padStart(4, "0")}?
+            </DialogTitle>
+            <DialogDescription className="text-center text-sm text-muted-foreground pt-1 leading-relaxed">
+              Are you sure you want to permanently delete order <strong className="text-foreground">#AHM-{orderId.toString().padStart(4, "0")}</strong> for <strong className="text-foreground">{order.customerName}</strong>? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex sm:justify-end gap-2 pt-4 border-t border-border mt-4">
+            <Button variant="outline" onClick={() => setConfirmDelete(false)}>
+              Cancel
+            </Button>
+            <Button
+              disabled={deleteOrderMutation.isPending}
+              variant="destructive"
+              onClick={() => deleteOrderMutation.mutate(orderId)}
+              className="font-bold gap-1.5"
+            >
+              {deleteOrderMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Trash2 className="w-4 h-4" />
+              )}
+              Delete Order
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

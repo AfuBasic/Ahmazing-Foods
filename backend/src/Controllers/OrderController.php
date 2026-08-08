@@ -175,4 +175,17 @@ class OrderController {
             'recentOrders' => $recent,
         ]);
     }
+
+    public function delete(int $id): void {
+        $orders = $this->getJsonOrders();
+        $filtered = array_values(array_filter($orders, fn($o) => (int)$o['id'] !== $id));
+
+        if (count($filtered) === count($orders)) {
+            Response::error('Order not found', 404);
+            return;
+        }
+
+        $this->saveJsonOrders($filtered);
+        Response::json(['success' => true, 'message' => "Order #{$id} deleted successfully"]);
+    }
 }

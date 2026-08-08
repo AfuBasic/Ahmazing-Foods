@@ -4,13 +4,24 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatNaira, formatDate } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "./dashboard";
-import { ChevronRight, Search, Loader2, CheckCircle2, RotateCcw } from "lucide-react";
+import { ChevronRight, Search, Loader2, CheckCircle2, RotateCcw, Trash2, AlertTriangle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export default function AdminOrdersList() {
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "fulfilled">("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [confirmFulfillOrder, setConfirmFulfillOrder] = useState<{ id: number; customerName: string } | null>(null);
+  const [confirmDeleteOrder, setConfirmDeleteOrder] = useState<{ id: number; customerName: string } | null>(null);
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -28,7 +39,7 @@ export default function AdminOrdersList() {
   const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: number; status: string }) => {
       const res = await fetch(`/api/orders/${id}/status`, {
-        method: "POST",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
@@ -42,6 +53,33 @@ export default function AdminOrdersList() {
       });
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       queryClient.invalidateQueries({ queryKey: ["orderSummary"] });
+      setConfirmFulfillOrder(null);
+    },
+  });
+
+  const deleteOrderMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const res = await fetch(`/api/orders/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete order");
+      return res.json();
+    },
+    onSuccess: (_, id) => {
+      toast({
+        title: "Order Deleted",
+        description: `Order #AHM-${id.toString().padStart(4, "0")} removed successfully.`,
+      });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["orderSummary"] });
+      setConfirmDeleteOrder(null);
+    },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Delete Failed",
+        description: "Could not remove order. Please try again.",
+      });
     },
   });
 
@@ -64,7 +102,7 @@ export default function AdminOrdersList() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold font-display tracking-tight text-foreground">Order Management</h1>
-          <p className="text-muted-foreground">Orders are saved to database/orders.json and synchronized in real-time.</p>
+          <p className="text-muted-foreground">Manage, search, fulfill, or delete customer bookings in real time.</p>
         </div>
       </div>
 
@@ -159,7 +197,7 @@ export default function AdminOrdersList() {
                       <td className="px-6 py-4 whitespace-nowrap text-xs text-muted-foreground">
                         <p className="font-medium text-foreground">{formatDate(order.createdAt || order.created_at)}</p>
                         <p className="text-[11px] text-muted-foreground/75">
-                          {order.createdAt || order.created_at ? order.createdAt.slice(11, 16) : ""}
+                          {order.createdAt || order.created_at ? (order.createdAt || order.created_at).slice(11, 16) : ""}
                         </p>
                       </td>
                       <td className="px-6 py-4">
@@ -189,12 +227,11 @@ export default function AdminOrdersList() {
                         <StatusBadge status={order.status} />
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                        <div className="flex items-center justify-end gap-1.5">
                           {isPending && (
                             <Button
                               size="sm"
-                              onClick={() => updateStatusMutation.mutate({ id: order.id, status: "fulfilled" })}
-                              disabled={updateStatusMutation.isPending}
+                              onClick={() => setConfirmFulfillOrder({ id: order.id, customerName: order.customerName })}
                               className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-1 text-xs h-8 px-3 rounded-lg shadow-sm"
                             >
                               <CheckCircle2 className="w-3.5 h-3.5" /> Mark as Fulfilled
@@ -213,6 +250,17 @@ export default function AdminOrdersList() {
                             </Button>
                           )}
 
+                          {/* Delete order button */}
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => setConfirmDeleteOrder({ id: order.id, customerName: order.customerName })}
+                            className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg"
+                            title="Remove Order"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+
                           <Button asChild variant="ghost" size="icon" className="h-8 w-8">
                             <Link href={`/admin/orders/${order.id}`}>
                               <ChevronRight className="w-4 h-4" />
@@ -228,6 +276,83 @@ export default function AdminOrdersList() {
           </table>
         </div>
       </div>
+
+      {/* ── CONFIRM FULFILL MODAL ────────────────────────────────────────── */}
+      <Dialog open={!!confirmFulfillOrder} onOpenChange={(open) => !open && setConfirmFulfillOrder(null)}>
+        <DialogContent className="max-w-md rounded-2xl p-6">
+          <DialogHeader className="items-center text-center">
+            <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 flex items-center justify-center mb-3">
+              <CheckCircle2 className="w-6 h-6" />
+            </div>
+            <DialogTitle className="text-xl font-bold font-display text-center">
+              Fulfill Order #{confirmFulfillOrder?.id.toString().padStart(4, "0")}?
+            </DialogTitle>
+            <DialogDescription className="text-center text-sm text-muted-foreground pt-1 leading-relaxed">
+              Are you sure you want to mark the order for <strong className="text-foreground">{confirmFulfillOrder?.customerName}</strong> as fulfilled?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex sm:justify-end gap-2 pt-4 border-t border-border mt-4">
+            <Button variant="outline" onClick={() => setConfirmFulfillOrder(null)}>
+              Cancel
+            </Button>
+            <Button
+              disabled={updateStatusMutation.isPending}
+              onClick={() => {
+                if (confirmFulfillOrder) {
+                  updateStatusMutation.mutate({ id: confirmFulfillOrder.id, status: "fulfilled" });
+                }
+              }}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-1.5"
+            >
+              {updateStatusMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <CheckCircle2 className="w-4 h-4" />
+              )}
+              Confirm Fulfillment
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── CONFIRM DELETE MODAL ────────────────────────────────────────── */}
+      <Dialog open={!!confirmDeleteOrder} onOpenChange={(open) => !open && setConfirmDeleteOrder(null)}>
+        <DialogContent className="max-w-md rounded-2xl p-6">
+          <DialogHeader className="items-center text-center">
+            <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950/40 text-red-600 flex items-center justify-center mb-3">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <DialogTitle className="text-xl font-bold font-display text-center text-red-600">
+              Delete Order #{confirmDeleteOrder?.id.toString().padStart(4, "0")}?
+            </DialogTitle>
+            <DialogDescription className="text-center text-sm text-muted-foreground pt-1 leading-relaxed">
+              Are you sure you want to permanently delete order <strong className="text-foreground">#AHM-{confirmDeleteOrder?.id.toString().padStart(4, "0")}</strong> for <strong className="text-foreground">{confirmDeleteOrder?.customerName}</strong>? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex sm:justify-end gap-2 pt-4 border-t border-border mt-4">
+            <Button variant="outline" onClick={() => setConfirmDeleteOrder(null)}>
+              Cancel
+            </Button>
+            <Button
+              disabled={deleteOrderMutation.isPending}
+              variant="destructive"
+              onClick={() => {
+                if (confirmDeleteOrder) {
+                  deleteOrderMutation.mutate(confirmDeleteOrder.id);
+                }
+              }}
+              className="font-bold gap-1.5"
+            >
+              {deleteOrderMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Trash2 className="w-4 h-4" />
+              )}
+              Delete Order
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

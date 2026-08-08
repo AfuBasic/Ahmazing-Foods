@@ -1,5 +1,57 @@
 [
     {
+        "id": 1002,
+        "status": "pending",
+        "customerName": "Afuwape Babatunde",
+        "customerPhone": "08167890989",
+        "customerEmail": "afutunde@gmail.com",
+        "deliveryAddress": "Plot 7, Block 10",
+        "deliveryDate": "2026-08-10",
+        "deliverySlot": "11am\u20131pm",
+        "menuItemName": "Oha Soup",
+        "selectedSize": "3 Litres (Serves ~5)",
+        "selectedProtein": null,
+        "itemPrice": 595000,
+        "rushFee": 0,
+        "total": 595000,
+        "pepperLevel": "Medium \ud83c\udf36\ufe0f\ud83c\udf36\ufe0f",
+        "notes": "CART (3 items):\n1. Oha Soup \u2014 3 Litres (Serves ~5) (\u20a636,000)\n2. Egusi Soup \u2014 5 Litres (Serves ~7) \u00d712 (\u20a6516,000)\n3. Afang Soup \u2014 5 Litres (Serves ~7) (\u20a643,000)\n\nPepper: Medium \ud83c\udf36\ufe0f\ud83c\udf36\ufe0f\n\nDelivery: 2026-08-10 \u00b7 11am\u20131pm\n\nTotal: \u20a6595,000\n\nCustomer: Afuwape Babatunde | 08167890989 | afutunde@gmail.com\n\nDelivery address: Plot 7, Block 10\n\nDelivery option: Customer's own arrangement \u2014 no delivery fee\n\n---\nPAYMENT DETAILS\nAccount Name: Ahmazing Cuisine\nBank: FCMB\nAccount Number: 1009414545",
+        "cartItems": [
+            {
+                "id": "d3196c79-6c7e-4c00-bf1c-cd0c63cff369",
+                "menuItemId": 2,
+                "menuItemName": "Oha Soup",
+                "category": "soups",
+                "selectedSize": "3 Litres (Serves ~5)",
+                "itemQty": 1,
+                "selectedProteins": [],
+                "price": 36000
+            },
+            {
+                "id": "56f1fa4f-d6f8-4f58-94ac-ddd01f85ac2b",
+                "menuItemId": 4,
+                "menuItemName": "Egusi Soup",
+                "category": "soups",
+                "selectedSize": "5 Litres (Serves ~7)",
+                "itemQty": 12,
+                "selectedProteins": [],
+                "price": 516000
+            },
+            {
+                "id": "07395f5a-0380-4dfa-9f94-5216ae64c483",
+                "menuItemId": 5,
+                "menuItemName": "Afang Soup",
+                "category": "soups",
+                "selectedSize": "5 Litres (Serves ~7)",
+                "itemQty": 1,
+                "selectedProteins": [],
+                "price": 43000
+            }
+        ],
+        "created_at": "2026-08-08 01:57:44",
+        "createdAt": "2026-08-08 01:57:44"
+    },
+    {
         "id": 1001,
         "status": "pending",
         "customerName": "Afuwape Babatunde",
