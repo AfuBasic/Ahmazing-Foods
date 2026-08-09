@@ -23,14 +23,14 @@ const FALLBACK_BREAKFAST_ITEMS = [
     id: 101,
     name: "Classic Nigerian",
     description: "Serves 2–3. Akara, pap, boiled eggs, fried plantain, and more.",
-    sizes: [{ label: "Standard Portion", price: 22000 }],
+    sizes: [{ label: "Standard Portion", price: 27000 }],
     imageUrl: "/assets/breakfast/classic-nigerian.png",
   },
   {
     id: 102,
     name: "Hearty Plate",
     description: "Serves 2–3. Yam, plantain, egg stew, sausages, side salad, and more.",
-    sizes: [{ label: "Standard Portion", price: 22000 }],
+    sizes: [{ label: "Standard Portion", price: 28000 }],
     imageUrl: "/assets/breakfast/hearty-plate.png",
   },
   {
@@ -44,7 +44,7 @@ const FALLBACK_BREAKFAST_ITEMS = [
     id: 104,
     name: "Protein Power",
     description: "Serves 2–3. Moin-moin, akara, pap, boiled eggs, fried plantain, and more.",
-    sizes: [{ label: "Standard Portion", price: 25000 }],
+    sizes: [{ label: "Standard Portion", price: 32000 }],
     imageUrl: "/assets/breakfast/protein-power.png",
   },
 ];

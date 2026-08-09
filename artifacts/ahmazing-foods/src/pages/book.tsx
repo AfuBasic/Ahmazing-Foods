@@ -40,9 +40,12 @@ import {
   ChevronUp,
   Phone,
   MessageCircle,
+  Search,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/context/cart-context";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 // ── STATIC PRODUCTS (not in DB — used for deep-link auto-add) ───────────────
 const STATIC_PRODUCTS: Record<string, number> = {
@@ -109,6 +112,8 @@ const CAT_ORDER = [
   "stews",
   "breakfast",
   "drinks",
+  "snacks",
+  "spices",
   "platters",
 ] as const;
 const CAT_LABELS: Record<string, string> = {
@@ -116,6 +121,8 @@ const CAT_LABELS: Record<string, string> = {
   stews: "Stews",
   breakfast: "Breakfast",
   drinks: "Drinks & Wellness",
+  snacks: "Snacks",
+  spices: "Seeds & Spices",
   platters: "Platters & Trays",
 };
 
@@ -300,6 +307,155 @@ function cartLineDesc(item: CartItem): string {
     .map((p) => `${p.name}${p.qty > 1 ? ` ×${p.qty}` : ""}`)
     .join(", ");
   return `${item.selectedSize}${qty}${prots ? ` + ${prots}` : ""}`;
+}
+
+// ── SEARCHABLE ITEM SELECT COMBOBOX ──────────────────────────────────────────
+function SearchableItemSelect({
+  items,
+  loading,
+  selectedId,
+  onSelect,
+}: {
+  items: any[];
+  loading: boolean;
+  selectedId: number;
+  onSelect: (val: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const selectedItem = useMemo(
+    () => items.find((i) => i.id === selectedId),
+    [items, selectedId]
+  );
+
+  const filteredItems = useMemo(() => {
+    if (!search.trim()) return items;
+    const q = search.toLowerCase().trim();
+    return items.filter(
+      (i) =>
+        i.name.toLowerCase().includes(q) ||
+        (i.category && i.category.toLowerCase().includes(q)) ||
+        (i.description && i.description.toLowerCase().includes(q))
+    );
+  }, [items, search]);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          disabled={loading}
+          className="w-full h-12 justify-between text-base px-4 bg-background font-normal border-border hover:bg-muted/50 transition-colors"
+        >
+          {loading ? (
+            <span className="text-muted-foreground flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin text-primary" /> Loading menu items...
+            </span>
+          ) : selectedItem ? (
+            <span className="font-bold text-foreground truncate flex items-center gap-2">
+              <span className="px-2 py-0.5 text-[10px] uppercase font-extrabold rounded-md bg-primary/10 text-primary shrink-0">
+                {CAT_LABELS[selectedItem.category] || selectedItem.category}
+              </span>
+              <span className="truncate">{selectedItem.name}</span>
+            </span>
+          ) : (
+            <span className="text-muted-foreground truncate">
+              Search or select a dish, drink, snack, spice, platter...
+            </span>
+          )}
+          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 rounded-2xl border border-border shadow-xl overflow-hidden" align="start">
+        {/* Search Bar */}
+        <div className="p-3 border-b border-border bg-muted/40 flex items-center gap-2">
+          <Search className="w-4 h-4 text-muted-foreground shrink-0" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Type to search (e.g. Okro, Platter, Zobo, Egusi, Chin Chin...)"
+            className="w-full bg-transparent text-sm focus:outline-none text-foreground placeholder:text-muted-foreground"
+            autoFocus
+          />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch("")}
+              className="text-xs text-muted-foreground hover:text-foreground font-bold px-1"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+
+        {/* Grouped Items List */}
+        <div className="max-h-80 overflow-y-auto divide-y divide-border/40 p-1">
+          {CAT_ORDER.map((cat) => {
+            const catItems = filteredItems.filter((i) => i.available && i.category === cat);
+            if (!catItems.length) return null;
+            return (
+              <div key={cat} className="py-1">
+                <div className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground bg-muted/60 sticky top-0 z-10 flex items-center justify-between">
+                  <span>{CAT_LABELS[cat] || cat}</span>
+                  <span className="text-[10px] font-semibold text-muted-foreground/75">
+                    {catItems.length} item{catItems.length !== 1 ? "s" : ""}
+                  </span>
+                </div>
+                {catItems.map((item) => {
+                  const isSelected = item.id === selectedId;
+                  const minPrice = item.sizes?.[0]?.price;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        onSelect(item.id.toString());
+                        setOpen(false);
+                        setSearch("");
+                      }}
+                      className={cn(
+                        "w-full text-left px-3 py-2.5 rounded-xl text-sm flex items-center justify-between transition-colors group hover:bg-primary/10",
+                        isSelected ? "bg-primary/15 font-bold text-primary" : "text-foreground"
+                      )}
+                    >
+                      <div className="flex flex-col min-w-0 pr-2">
+                        <span className="truncate font-medium group-hover:text-primary">
+                          {item.name}
+                        </span>
+                        {item.description && (
+                          <span className="text-xs text-muted-foreground truncate font-normal">
+                            {item.description}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        {minPrice && (
+                          <span className="text-xs font-bold text-muted-foreground group-hover:text-primary">
+                            {formatNaira(minPrice)}
+                          </span>
+                        )}
+                        {isSelected && <Check className="w-4 h-4 text-primary shrink-0" />}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            );
+          })}
+
+          {filteredItems.length === 0 && (
+            <div className="p-6 text-center text-sm text-muted-foreground">
+              No items matching "<strong className="text-foreground">{search}</strong>" found.
+            </div>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -977,52 +1133,12 @@ export default function BookPage() {
                   <SubStepLabel letter="A" done={!!configItem}>
                     Choose an Item
                   </SubStepLabel>
-                  <Select
-                    disabled={loadingMenu}
-                    onValueChange={selectDish}
-                    value={configItemId ? configItemId.toString() : ""}
-                  >
-                    <SelectTrigger className="h-12 text-base">
-                      <SelectValue
-                        placeholder={
-                          loadingMenu
-                            ? "Loading…"
-                            : "Choose a dish, drink, snack or platter"
-                        }
-                      />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-80 overflow-y-auto">
-                      {CAT_ORDER.map((cat) => {
-                        const catItems =
-                          menuItems?.filter(
-                            (i) => i.available && i.category === cat,
-                          ) ?? [];
-                        if (!catItems.length) return null;
-                        return (
-                          <div key={cat}>
-                            <div className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border/50 sticky top-0 bg-popover z-10">
-                              {CAT_LABELS[cat]}
-                              {cat === "soups" ||
-                              cat === "stews" ||
-                              cat === "breakfast" ? (
-                                <span className="ml-1 font-normal normal-case text-muted-foreground/60">
-                                  (max {MAX_FOOD_MEALS} meals)
-                                </span>
-                              ) : null}
-                            </div>
-                            {catItems.map((item) => (
-                              <SelectItem
-                                key={item.id}
-                                value={item.id.toString()}
-                              >
-                                {item.name}
-                              </SelectItem>
-                            ))}
-                          </div>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
+                  <SearchableItemSelect
+                    items={menuItems ?? []}
+                    loading={loadingMenu}
+                    selectedId={configItemId}
+                    onSelect={selectDish}
+                  />
                 </div>
 
                 {/* ── B: Size ────────────────────────────────────────── */}
