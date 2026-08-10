@@ -471,24 +471,13 @@ class MenuController
                 'imageUrl' => '/assets/products/premium-pepper-mix.jpg'
             ],
 
-            // ── PLATTERS & TRAYS ────────────────────────────────────────────
+            // ── PLATTERS & TRAYS (8 items) ──────────────────────────────────
             [
-                'id' => 18,
+                'id' => 17,
                 'category' => 'platters',
-                'name' => 'Small Chops Tray',
-                'description' => 'Puff puff, samosa, spring rolls, spicy peppered gizzard.',
-                'sizes' => [['label' => 'Medium Tray', 'price' => 35000], ['label' => 'Large Platter', 'price' => 55000]],
-                'proteins' => [],
-                'available' => true,
-                'image_url' => '/assets/platters/party-starter-platter.jpg',
-                'imageUrl' => '/assets/platters/party-starter-platter.jpg'
-            ],
-            [
-                'id' => 19,
-                'category' => 'platters',
-                'name' => 'Executive BBQ Platter',
-                'description' => 'Grilled turkey, chicken, spicy croaker fish & fried plantain.',
-                'sizes' => [['label' => 'Platter for 5', 'price' => 65000]],
+                'name' => 'Breakfast Platter',
+                'description' => 'A full spread for 8–10: akara, moin-moin, pap, egg stew, yam, plantain, fresh juice.',
+                'sizes' => [['label' => 'Standard', 'price' => 154000]],
                 'proteins' => [],
                 'available' => true,
                 'image_url' => '/assets/platters/breakfast-platter.jpg',
@@ -498,34 +487,81 @@ class MenuController
                 'id' => 46,
                 'category' => 'platters',
                 'name' => 'Party Starter Platter',
-                'description' => 'Assorted small chops, mini sausages, peppered chicken & gizzard skewers.',
-                'sizes' => [['label' => 'Serves 4–6', 'price' => 45000]],
+                'description' => 'Small chops assortment for 15–20: puff-puff, spring rolls, samosas, chicken skewers.',
+                'sizes' => [['label' => 'Standard', 'price' => 247500]],
                 'proteins' => [],
                 'available' => true,
                 'image_url' => '/assets/platters/party-starter-platter.jpg',
                 'imageUrl' => '/assets/platters/party-starter-platter.jpg'
             ],
             [
-                'id' => 47,
+                'id' => 49,
                 'category' => 'platters',
-                'name' => 'Birthday Celebration Platter',
-                'description' => 'Grilled croaker, fried plantain, peppered turkey, jollof rice & drinks.',
-                'sizes' => [['label' => 'Serves 6–8', 'price' => 75000]],
+                'name' => 'Classic Tray',
+                'description' => 'Jollof rice (serves 10), fried chicken (10pcs) and a side salad.',
+                'sizes' => [['label' => 'Standard', 'price' => 34500]],
+                'proteins' => [],
+                'available' => true,
+                'image_url' => '/assets/platters/party-starter-platter.jpg',
+                'imageUrl' => '/assets/platters/party-starter-platter.jpg'
+            ],
+            [
+                'id' => 50,
+                'category' => 'platters',
+                'name' => 'Deluxe Tray',
+                'description' => 'Jollof + fried rice (serves 15), grilled chicken (15pcs), coleslaw and plantain.',
+                'sizes' => [['label' => 'Standard', 'price' => 51750]],
                 'proteins' => [],
                 'available' => true,
                 'image_url' => '/assets/platters/birthday-platter.jpg',
                 'imageUrl' => '/assets/platters/birthday-platter.jpg'
             ],
             [
-                'id' => 48,
+                'id' => 51,
                 'category' => 'platters',
-                'name' => 'Anniversary Luxury Platter',
-                'description' => 'Whole grilled fish, jumbo prawns, snail, peppered turkey & grilled chicken.',
-                'sizes' => [['label' => 'Serves 8–10', 'price' => 85000]],
+                'name' => 'Grand Tray',
+                'description' => 'Full spread for 30: jollof, fried rice, peppered turkey, chicken, coleslaw, salad.',
+                'sizes' => [['label' => 'Standard', 'price' => 103500]],
                 'proteins' => [],
                 'available' => true,
                 'image_url' => '/assets/platters/anniversary-platter.jpg',
                 'imageUrl' => '/assets/platters/anniversary-platter.jpg'
+            ],
+            [
+                'id' => 52,
+                'category' => 'platters',
+                'name' => 'Ultimate Tray',
+                'description' => 'The works for 40+: all three rice options, grilled and peppered meats, full accompaniments.',
+                'sizes' => [['label' => 'Standard', 'price' => 132250]],
+                'proteins' => [],
+                'available' => true,
+                'image_url' => '/assets/platters/anniversary-platter.jpg',
+                'imageUrl' => '/assets/platters/anniversary-platter.jpg'
+            ],
+            [
+                'id' => 53,
+                'category' => 'platters',
+                'name' => 'Jollof Lunch Pack',
+                'description' => 'Single-serve jollof rice with grilled chicken or beef — perfect for office delivery.',
+                'sizes' => [
+                    ['label' => 'Regular', 'price' => 9350],
+                    ['label' => 'Large', 'price' => 9900]
+                ],
+                'proteins' => [],
+                'available' => true,
+                'image_url' => '/assets/platters/party-starter-platter.jpg',
+                'imageUrl' => '/assets/platters/party-starter-platter.jpg'
+            ],
+            [
+                'id' => 18,
+                'category' => 'platters',
+                'name' => 'Small Chops Box',
+                'description' => 'Mixed small chops — puff-puff, spring rolls, samosas (assorted, 12pcs).',
+                'sizes' => [['label' => 'Standard', 'price' => 6000]],
+                'proteins' => [],
+                'available' => true,
+                'image_url' => '/assets/platters/party-starter-platter.jpg',
+                'imageUrl' => '/assets/platters/party-starter-platter.jpg'
             ],
         ];
     }
