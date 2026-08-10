@@ -46,11 +46,6 @@ const MEAL_LINKS = [
     label: "Trays & Platters",
     desc: "Styled food trays for events and gifting",
   },
-  {
-    href: "/weekend-specials",
-    label: "Weekend Specials",
-    desc: "Vote for the dish you want this weekend",
-  },
 ];
 
 const MEAL_PATHS = MEAL_LINKS.map((l) => l.href);
