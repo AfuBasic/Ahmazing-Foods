@@ -922,7 +922,7 @@ export default function BookPage() {
           notes: notesStr,
           cartItems: cart,
           pepperLevel: PEPPER_LABELS[pepperLevel],
-        },
+        } as any,
       },
       {
         onSuccess: (order) => {

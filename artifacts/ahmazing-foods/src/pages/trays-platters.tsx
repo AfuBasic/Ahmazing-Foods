@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { WatermarkedImage } from "@/components/ui/watermarked-image";
 import { Link } from "wouter";
-import { GlassWater, MessageCircle, AlertCircle, CheckCircle2, Plus, Minus, CalendarDays } from "lucide-react";
+import { GlassWater, MessageCircle, AlertCircle, CheckCircle2, Plus, Minus, CalendarDays, Check, MapPin, User } from "lucide-react";
 
 const WA_NUMBER = "2348105506052";
 const BASE = import.meta.env.BASE_URL;
@@ -9,6 +9,18 @@ const asset = (p: string) => `${BASE}${p}`;
 const BRAND_GREEN = "#0F9E0F";
 const RUSH_FLAT_FEE = 20000;
 const RUSH_CAP_PCT = 0.5;
+const OFFICE_PHONE = "+234 (810)-550-6052";
+
+// Bike delivery zones — Small Chop Boxes only (ceiling prices)
+const BIKE_ZONES = [
+  { id: "t1",  label: "Tier 1 — Lekki, Ikate, VGC, Chevron, Igbo-Efon",                               fee: 4500,  quote: false },
+  { id: "t1b", label: "Tier 1B — Ajah, Abraham Adesanya, Lakowe, Awoyaya, Ogombo",                     fee: 6500,  quote: false },
+  { id: "t2",  label: "Tier 2 — Lagos Island, Marina, Apapa, VI, Ikoyi, Banana Island, Yaba, Surulere", fee: 8500,  quote: false },
+  { id: "t3",  label: "Tier 3 — Ikeja, Maryland, Gbagada, Anthony, Ojota",                             fee: 10500, quote: false },
+  { id: "t4",  label: "Tier 4 — Festac, Oshodi, Isolo, Mushin, Amuwo-Odofin, Alimosho, Agege",        fee: 12500, quote: false },
+  { id: "t5",  label: "Tier 5 — Ikorodu, Badagry, Epe, far Ibeju-Lekki",                              fee: null,  quote: true  },
+] as const;
+type BikeZoneId = typeof BIKE_ZONES[number]["id"];
 
 // ── Delivery helpers ───────────────────────────────────────────────────────
 function getToday(): string {
@@ -129,19 +141,30 @@ function blendCostDisplay(bm: BlendMap): string {
   return `${u} units selected — 1st free, +₦${extra.toLocaleString("en-NG")} for the extra ${u - 1}`;
 }
 
+// ── Types ─────────────────────────────────────────────────────────────────
+interface CustInfo {
+  name: string; phone: string; address: string;
+  altName: string; altPhone: string;
+}
+function custLines(c: CustInfo): string[] {
+  const lines = [`Name: ${c.name}`, `Phone: ${c.phone}`, `Delivery address: ${c.address}`];
+  if (c.altName) lines.push(`Recipient (receiving order): ${c.altName}${c.altPhone ? ` | ${c.altPhone}` : ""}`);
+  return lines;
+}
+
 // ── WA message builders ───────────────────────────────────────────────────
 function deliveryDesc(date: string, time: string, isRush: boolean, rushWindowLabel: string): string {
   if (isRush) return `Today — ${rushWindowLabel}`;
   return time ? `${date} at ${fmt12hr(time)}` : date;
 }
 
-function buildPlatterMsg(item: PlattersItem, wine: string, blends: BlendMap, drinks: string[], delivInfo: string): string {
+function buildPlatterMsg(item: PlattersItem, wine: string, blends: BlendMap, drinks: string[], delivInfo: string, cust: CustInfo): string {
   const blendItems = PEPPER_BLENDS.filter((b) => (blends[b] ?? 0) > 0).map((b) => ({ name: b, qty: blends[b]! }));
   const totalUnits = blendTotalUnits(blends);
   const extraBlend = blendExtraCharge(blends);
   const total = item.priceNum + extraBlend;
 
-  const lines: string[] = [`Hi, I'd like to order the ${item.name} (${item.priceStr}).`];
+  const lines: string[] = [`Hi, I'd like to order the ${item.name} (${item.priceStr}).`, "", ...custLines(cust), ""];
   if (wine) lines.push(`Wine: ${wine}`);
   if (blendItems.length) {
     const desc = blendItems.map((b) => (b.qty > 1 ? `${b.name} x${b.qty}` : b.name)).join(", ");
@@ -149,28 +172,44 @@ function buildPlatterMsg(item: PlattersItem, wine: string, blends: BlendMap, dri
     if (extraBlend > 0) lines.push(`Extra blend fee: ${totalUnits - 1} extra unit${totalUnits - 1 > 1 ? "s" : ""} × ₦3,000 = ₦${extraBlend.toLocaleString("en-NG")}`);
   }
   if (drinks.length) lines.push(`Free drink${drinks.length > 1 ? "s" : ""}: ${drinks.join(", ")}`);
-  lines.push(`Delivery: ${delivInfo}`);
-  if (extraBlend > 0) lines.push(`TOTAL: ₦${total.toLocaleString("en-NG")}`);
+  lines.push(`Delivery date: ${delivInfo}`);
+  lines.push(`Delivery method: Car delivery required — please call ${OFFICE_PHONE} for car delivery pricing, or arrange your own pickup`);
+  if (extraBlend > 0) lines.push(`TOTAL (excl. delivery): ₦${total.toLocaleString("en-NG")}`);
   lines.push("", "PAY BY TRANSFER:", "Account Name: Ahmazing Cuisine", "Bank: FCMB", "Account Number: 1009414545");
   return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(lines.join("\n"))}`;
 }
 
-function buildTrayMsg(item: TrayItem, drinks: string[], delivInfo: string): string {
-  const lines: string[] = [`Hi, I'd like to order the ${item.name} (${item.priceStr}).`];
+function buildTrayMsg(item: TrayItem, drinks: string[], delivInfo: string, cust: CustInfo): string {
+  const lines: string[] = [`Hi, I'd like to order the ${item.name} (${item.priceStr}).`, "", ...custLines(cust), ""];
   if (drinks.length) lines.push(`Free drinks (${drinks.length}): ${drinks.join(", ")}`);
-  lines.push(`Delivery: ${delivInfo}`);
+  lines.push(`Delivery date: ${delivInfo}`);
+  lines.push(`Delivery method: Car delivery required — please call ${OFFICE_PHONE} for car delivery pricing, or arrange your own pickup`);
   lines.push("", "PAY BY TRANSFER:", "Account Name: Ahmazing Cuisine", "Bank: FCMB", "Account Number: 1009414545");
   return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(lines.join("\n"))}`;
 }
 
-function buildPackageMsg(item: PackageItem, drinks: string[], delivInfo: string, rushFee: number): string {
-  const total = item.priceNum + rushFee;
-  const lines: string[] = [`Hi, I'd like to order ${item.name} (${item.priceStr}).`];
+function buildPackageMsg(
+  item: PackageItem, drinks: string[], delivInfo: string, rushFee: number,
+  pkgDelivMode: "bike" | "own" | "", pkgZoneId: string, cust: CustInfo,
+): string {
+  const bikeZone = BIKE_ZONES.find((z) => z.id === pkgZoneId);
+  const bikeFee = pkgDelivMode === "bike" && bikeZone && !bikeZone.quote ? bikeZone.fee : 0;
+  const total = item.priceNum + rushFee + (bikeFee ?? 0);
+
+  const lines: string[] = [`Hi, I'd like to order ${item.name} (${item.priceStr}).`, "", ...custLines(cust), ""];
   if (item.drinkMode === "fixed" && item.fixedDrinks) lines.push(`Includes: ${item.fixedDrinks}`);
   else if (drinks.length) lines.push(`Free drink${drinks.length > 1 ? "s" : ""}: ${drinks.join(", ")}`);
-  lines.push(`Delivery: ${delivInfo}`);
+  lines.push(`Delivery date: ${delivInfo}`);
+  if (pkgDelivMode === "bike" && bikeZone) {
+    lines.push(bikeZone.quote
+      ? `Delivery: Bike — ${bikeZone.label} — fee to be quoted`
+      : `Delivery: Bike — ${bikeZone.label} — ₦${(bikeZone.fee!).toLocaleString("en-NG")}`
+    );
+  } else if (pkgDelivMode === "own") {
+    lines.push(`Delivery: Customer's own arrangement — no delivery fee`);
+  }
   if (rushFee > 0) lines.push(`Rush fee: ₦${Math.round(rushFee).toLocaleString("en-NG")}`);
-  if (rushFee > 0) lines.push(`TOTAL: ₦${Math.round(total).toLocaleString("en-NG")}`);
+  if (rushFee > 0 || bikeFee) lines.push(`TOTAL: ₦${Math.round(total).toLocaleString("en-NG")}`);
   lines.push("", "PAY BY TRANSFER:", "Account Name: Ahmazing Cuisine", "Bank: FCMB", "Account Number: 1009414545");
   return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(lines.join("\n"))}`;
 }
@@ -405,17 +444,20 @@ interface PlatterCardProps {
   drinks: string[];
   delivInfo: string;
   deliveryOk: boolean;
+  customerReady: boolean;
+  custInfo: CustInfo;
   onWine: (w: string) => void;
   onBlend: (b: BlendMap) => void;
   onDrink: (d: string[]) => void;
 }
-function PlatterCard({ item, wine, blends, drinks, delivInfo, deliveryOk, onWine, onBlend, onDrink }: PlatterCardProps) {
+function PlatterCard({ item, wine, blends, drinks, delivInfo, deliveryOk, customerReady, custInfo, onWine, onBlend, onDrink }: PlatterCardProps) {
   const wineOk = wine !== "";
   const blendOk = blendTotalUnits(blends) >= 1;
   const drinksOk = drinks.length === 2;
-  const ready = wineOk && blendOk && drinksOk && deliveryOk;
+  const ready = wineOk && blendOk && drinksOk && deliveryOk && customerReady;
 
   const missing: string[] = [];
+  if (!customerReady) missing.push("fill in your details in the 'Your Details' section above");
   if (!deliveryOk) missing.push("choose a future delivery date (Platters need 24–48 hrs notice)");
   if (!wineOk) missing.push("select a wine");
   if (!blendOk) missing.push("choose at least 1 pepper blend");
@@ -481,7 +523,7 @@ function PlatterCard({ item, wine, blends, drinks, delivInfo, deliveryOk, onWine
             </div>
           ) : (
             <a
-              href={buildPlatterMsg(item, wine, blends, drinks, delivInfo)}
+              href={buildPlatterMsg(item, wine, blends, drinks, delivInfo, custInfo)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90"
@@ -503,13 +545,15 @@ function PlatterCard({ item, wine, blends, drinks, delivInfo, deliveryOk, onWine
 }
 
 // ── Tray card ─────────────────────────────────────────────────────────────
-function TrayCard({ item, drinks, delivInfo, deliveryOk, onDrink }: {
-  item: TrayItem; drinks: string[]; delivInfo: string; deliveryOk: boolean; onDrink: (d: string[]) => void;
+function TrayCard({ item, drinks, delivInfo, deliveryOk, customerReady, custInfo, onDrink }: {
+  item: TrayItem; drinks: string[]; delivInfo: string; deliveryOk: boolean;
+  customerReady: boolean; custInfo: CustInfo; onDrink: (d: string[]) => void;
 }) {
   const drinksOk = drinks.length === 4;
-  const ready = drinksOk && deliveryOk;
+  const ready = drinksOk && deliveryOk && customerReady;
 
   const missing: string[] = [];
+  if (!customerReady) missing.push("fill in your details in the 'Your Details' section above");
   if (!deliveryOk) missing.push("choose a future delivery date (Trays need 24–48 hrs notice)");
   const diff = 4 - drinks.length;
   if (diff > 0) missing.push(`choose ${diff} more drink${diff > 1 ? "s" : ""}`);
@@ -539,7 +583,7 @@ function TrayCard({ item, drinks, delivInfo, deliveryOk, onDrink }: {
             </div>
           ) : (
             <a
-              href={buildTrayMsg(item, drinks, delivInfo)}
+              href={buildTrayMsg(item, drinks, delivInfo, custInfo)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90"
@@ -555,21 +599,26 @@ function TrayCard({ item, drinks, delivInfo, deliveryOk, onDrink }: {
 }
 
 // ── Package card ──────────────────────────────────────────────────────────
-function PackageCard({ item, drinks, delivInfo, isToday, sameDayEligible, rushWindow, onDrink }: {
+function PackageCard({ item, drinks, delivInfo, isToday, sameDayEligible, rushWindow, pkgDelivMode, pkgZoneId, customerReady, custInfo, onDrink }: {
   item: PackageItem; drinks: string[]; delivInfo: string;
-  isToday: boolean; sameDayEligible: boolean; rushWindow: string | null; onDrink: (d: string[]) => void;
+  isToday: boolean; sameDayEligible: boolean; rushWindow: string | null;
+  pkgDelivMode: "bike" | "own" | ""; pkgZoneId: string;
+  customerReady: boolean; custInfo: CustInfo; onDrink: (d: string[]) => void;
 }) {
   const fee = (isToday && sameDayEligible) ? rushFeeFor(item.priceNum) : 0;
 
   const drinksOk = item.drinkMode === "pick2" ? drinks.length === 2 : true;
   const rushOk = !isToday || sameDayEligible;
   const windowOk = !sameDayEligible || rushWindow !== null;
-  const ready = drinksOk && rushOk && windowOk;
+  const delivOk = pkgDelivMode !== "" && (pkgDelivMode !== "bike" || pkgZoneId !== "");
+  const ready = drinksOk && rushOk && windowOk && delivOk && customerReady;
 
   const missing: string[] = [];
+  if (!customerReady) missing.push("fill in your details in the 'Your Details' section above");
   if (isToday && !sameDayEligible) missing.push("choose a future delivery date (same-day window is 6–9 AM only)");
   else if (sameDayEligible && !rushWindow) missing.push("select a delivery window above");
   if (!drinksOk) missing.push(`choose ${2 - drinks.length} more drink${2 - drinks.length > 1 ? "s" : ""}`);
+  if (!delivOk) missing.push("choose a delivery option in the Small Chop Boxes section above");
 
   return (
     <div className="bg-card rounded-2xl border border-border overflow-hidden flex flex-col hover:shadow-lg transition-shadow">
@@ -619,7 +668,7 @@ function PackageCard({ item, drinks, delivInfo, isToday, sameDayEligible, rushWi
             </div>
           ) : (
             <a
-              href={buildPackageMsg(item, drinks, delivInfo, fee)}
+              href={buildPackageMsg(item, drinks, delivInfo, fee, pkgDelivMode, pkgZoneId, custInfo)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90"
@@ -640,6 +689,23 @@ export default function TraysAndPlattersPage() {
   const [delivDate, setDelivDate] = useState(getTomorrow);
   const [delivTime, setDelivTime] = useState("12:00");
   const [rushWindow, setRushWindow] = useState<string | null>(null);
+
+  // Small Chop Boxes delivery option (bike-eligible)
+  const [pkgDelivMode, setPkgDelivMode] = useState<"bike" | "own" | "">("");
+  const [pkgZoneId,    setPkgZoneId]    = useState<BikeZoneId | "">("");
+
+  // Customer details (page-level — shared across all cards)
+  const [custName,    setCustName]    = useState("");
+  const [custPhone,   setCustPhone]   = useState("");
+  const [custAddress, setCustAddress] = useState("");
+  const [hasAlt,      setHasAlt]      = useState(false);
+  const [altName,     setAltName]     = useState("");
+  const [altPhone,    setAltPhone]    = useState("");
+  const customerReady = !!(custName.trim() && custPhone.trim() && custAddress.trim());
+  const custInfo: CustInfo = {
+    name: custName.trim(), phone: custPhone.trim(), address: custAddress.trim(),
+    altName: altName.trim(), altPhone: altPhone.trim(),
+  };
 
   // Per-card state
   const [wineChoices, setWineChoices] = useState<Record<string, string>>({});
@@ -695,6 +761,73 @@ export default function TraysAndPlattersPage() {
           onRushWindow={setRushWindow}
         />
 
+        {/* ── Your Details ─────────────────────────────────────────────── */}
+        <section className="max-w-lg">
+          <div className="flex items-center gap-2 mb-4">
+            <User className="w-4 h-4 text-muted-foreground" />
+            <h2 className="text-xl font-bold font-display">Your Details</h2>
+            <span className="text-xs text-destructive font-semibold ml-1">*required</span>
+          </div>
+          <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
+            So we know who to deliver to and can confirm your order by phone.
+          </p>
+          <div className="space-y-3">
+            <input
+              type="text"
+              placeholder="Full name *"
+              value={custName}
+              onChange={(e) => setCustName(e.target.value)}
+              className="w-full text-sm px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+            />
+            <input
+              type="tel"
+              placeholder="Phone number *"
+              value={custPhone}
+              onChange={(e) => setCustPhone(e.target.value)}
+              className="w-full text-sm px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+            />
+            <input
+              type="text"
+              placeholder="Delivery address *"
+              value={custAddress}
+              onChange={(e) => setCustAddress(e.target.value)}
+              className="w-full text-sm px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+            />
+            <button
+              type="button"
+              onClick={() => setHasAlt((v) => !v)}
+              className="flex items-center justify-between w-full px-4 py-3 rounded-xl border border-border text-sm hover:bg-muted transition-colors text-left"
+            >
+              <span className="text-muted-foreground">Someone else is receiving this order</span>
+              <span className="text-xs text-muted-foreground">{hasAlt ? "▲ optional" : "▼ optional"}</span>
+            </button>
+            {hasAlt && (
+              <div className="pl-4 border-l-2 border-border space-y-3">
+                <input
+                  type="text"
+                  placeholder="Recipient's name"
+                  value={altName}
+                  onChange={(e) => setAltName(e.target.value)}
+                  className="w-full text-sm px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                />
+                <input
+                  type="tel"
+                  placeholder="Recipient's phone"
+                  value={altPhone}
+                  onChange={(e) => setAltPhone(e.target.value)}
+                  className="w-full text-sm px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                />
+              </div>
+            )}
+            {customerReady && (
+              <div className="flex items-center gap-2 text-xs text-[#0F9E0F]">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Details saved — you can now order from any item below</span>
+              </div>
+            )}
+          </div>
+        </section>
+
         {/* ── Platters ─────────────────────────────────────────────────── */}
         <section>
           <div className="mb-10">
@@ -703,6 +836,14 @@ export default function TraysAndPlattersPage() {
               Every platter is ₦190,000 or more and includes your choice of wine, your pepper blend selection,
               and exactly 2 complimentary drinks.
             </p>
+            <div className="mt-4 flex items-start gap-3 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 max-w-2xl">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              <span>
+                <strong>Car delivery required.</strong> Platters are multi-compartment and can't safely travel by bike.
+                Call <a href="tel:+2348105506052" className="underline font-semibold">{"+234 (810)-550-6052"}</a> for a car delivery quote,
+                or arrange your own pickup — your WhatsApp order message will include this note.
+              </span>
+            </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
             {PLATTERS.map((item) => (
@@ -714,6 +855,8 @@ export default function TraysAndPlattersPage() {
                 drinks={getDrinks(item.name)}
                 delivInfo={delivInfo}
                 deliveryOk={plattersDelivOk}
+                customerReady={customerReady}
+                custInfo={custInfo}
                 onWine={(w) => setWine(item.name, w)}
                 onBlend={(b) => setBlends(item.name, b)}
                 onDrink={(d) => setDrinks(item.name, d)}
@@ -730,6 +873,14 @@ export default function TraysAndPlattersPage() {
               Our original food tray tiers, restored and updated. Each includes exactly 4 complimentary drinks of
               your choice — no wine, no pepper blend.
             </p>
+            <div className="mt-4 flex items-start gap-3 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 max-w-2xl">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              <span>
+                <strong>Car delivery required.</strong> Food trays can't safely travel by bike.
+                Call <a href="tel:+2348105506052" className="underline font-semibold">{"+234 (810)-550-6052"}</a> for a car delivery quote,
+                or arrange your own pickup — your WhatsApp order message will include this note.
+              </span>
+            </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
             {TRAYS.map((item) => (
@@ -739,6 +890,8 @@ export default function TraysAndPlattersPage() {
                 drinks={getDrinks(item.name)}
                 delivInfo={delivInfo}
                 deliveryOk={traysDelivOk}
+                customerReady={customerReady}
+                custInfo={custInfo}
                 onDrink={(d) => setDrinks(item.name, d)}
               />
             ))}
@@ -754,6 +907,109 @@ export default function TraysAndPlattersPage() {
               variety and 2 free drinks of your choice. Premium comes with 5 fixed drinks plus water — nothing
               to select. Same-day delivery available if you order between 6–9 AM; rush fee applies.
             </p>
+
+            {/* Small Chops delivery option picker */}
+            <div className="mt-6 bg-muted/50 border border-border rounded-2xl p-5 max-w-2xl">
+              <div className="flex items-center gap-2 mb-4">
+                <MapPin className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm font-bold">How should we deliver your Small Chop Box?</span>
+              </div>
+              <div className="space-y-2">
+                {/* Option 1: Bike Delivery */}
+                <button
+                  type="button"
+                  onClick={() => setPkgDelivMode("bike")}
+                  className={[
+                    "w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border-2 text-left transition-all",
+                    pkgDelivMode === "bike"
+                      ? "border-[#0F9E0F] bg-green-50"
+                      : "border-border hover:border-[#0F9E0F]/40 bg-white",
+                  ].join(" ")}
+                >
+                  <span className={[
+                    "w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
+                    pkgDelivMode === "bike" ? "border-[#0F9E0F] bg-[#0F9E0F]" : "border-muted-foreground/30 bg-white",
+                  ].join(" ")}>
+                    {pkgDelivMode === "bike" && <Check className="w-3 h-3 text-white" />}
+                  </span>
+                  <span className="text-sm">
+                    <span className="font-semibold">Bike Delivery</span>
+                    <span className="text-muted-foreground font-normal"> — select your zone below</span>
+                  </span>
+                </button>
+
+                {/* Zone picker (shown when bike selected) */}
+                {pkgDelivMode === "bike" && (
+                  <div className="ml-4 pl-4 border-l-2 border-[#0F9E0F]/20 space-y-2">
+                    {BIKE_ZONES.map((zone) => {
+                      const sel = pkgZoneId === zone.id;
+                      const [tierPart, areaPart] = zone.label.split(" — ");
+                      return (
+                        <button
+                          key={zone.id}
+                          type="button"
+                          onClick={() => setPkgZoneId(zone.id as BikeZoneId)}
+                          className={[
+                            "w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl border-2 text-left transition-all",
+                            sel ? "border-[#0F9E0F] bg-green-50" : "border-border hover:border-[#0F9E0F]/40 bg-white",
+                          ].join(" ")}
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <span className={[
+                              "w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center",
+                              sel ? "border-[#0F9E0F] bg-[#0F9E0F]" : "border-muted-foreground/30 bg-white",
+                            ].join(" ")}>
+                              {sel && <Check className="w-2.5 h-2.5 text-white" />}
+                            </span>
+                            <span className="text-sm leading-snug min-w-0">
+                              <span className="font-semibold">{tierPart}</span>
+                              <span className="text-muted-foreground font-normal"> — {areaPart}</span>
+                            </span>
+                          </div>
+                          {zone.quote ? (
+                            <span className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2.5 py-1 shrink-0 whitespace-nowrap">
+                              Contact Us
+                            </span>
+                          ) : (
+                            <span className={["text-sm font-bold shrink-0 tabular-nums whitespace-nowrap", sel ? "text-[#0F9E0F]" : "text-foreground"].join(" ")}>
+                              ₦{zone.fee!.toLocaleString("en-NG")}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                    {pkgZoneId === "t5" && (
+                      <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-xs text-amber-700">
+                        <strong>Quote-only zone.</strong> We'll confirm the exact delivery fee via WhatsApp after you send your order.
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Option 3: Own Arrangement */}
+                <button
+                  type="button"
+                  onClick={() => { setPkgDelivMode("own"); setPkgZoneId(""); }}
+                  className={[
+                    "w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border-2 text-left transition-all",
+                    pkgDelivMode === "own"
+                      ? "border-[#0F9E0F] bg-green-50"
+                      : "border-border hover:border-[#0F9E0F]/40 bg-white",
+                  ].join(" ")}
+                >
+                  <span className={[
+                    "w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
+                    pkgDelivMode === "own" ? "border-[#0F9E0F] bg-[#0F9E0F]" : "border-muted-foreground/30 bg-white",
+                  ].join(" ")}>
+                    {pkgDelivMode === "own" && <Check className="w-3 h-3 text-white" />}
+                  </span>
+                  <span className="text-sm">
+                    <span className="font-semibold">My Own Arrangement</span>
+                    <span className="text-muted-foreground font-normal"> — I'll collect or arrange my own delivery. No fee.</span>
+                  </span>
+                </button>
+              </div>
+            </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
             {PACKAGES.map((item) => (
@@ -765,6 +1021,10 @@ export default function TraysAndPlattersPage() {
                 isToday={isToday}
                 sameDayEligible={sameDayEligible}
                 rushWindow={rushWindow}
+                pkgDelivMode={pkgDelivMode}
+                pkgZoneId={pkgZoneId}
+                customerReady={customerReady}
+                custInfo={custInfo}
                 onDrink={(d) => setDrinks(item.name, d)}
               />
             ))}
