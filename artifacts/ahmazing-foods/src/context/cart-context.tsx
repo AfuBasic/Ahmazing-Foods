@@ -59,6 +59,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       // Check if identical item (same menuItemId, size, proteins) exists
       const existingIdx = prev.findIndex(
         (p) =>
+          p.menuItemName === item.menuItemName &&
           p.menuItemId === item.menuItemId &&
           p.selectedSize === item.selectedSize &&
           JSON.stringify(p.selectedProteins) === JSON.stringify(item.selectedProteins)
