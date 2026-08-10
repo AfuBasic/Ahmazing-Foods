@@ -50,10 +50,28 @@ class MenuController
         return [
             // ── SOUPS ────────────────────────────────────────────────────────
             [
-                'id' => 1, 'category' => 'soups', 'name' => 'Onugbu Soup (Bitterleaf)',
-                'description' => 'Rich bitterleaf soup garnished with dried fish, stockfish and cowhide.',
+                'id' => 20, 'category' => 'soups', 'name' => 'Banga Soup (Ofe Akwu)',
+                'description' => 'Aromatic palm nut soup cooked the Delta way with native spices.',
                 'sizes' => $standardSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
-                'image_url' => '/assets/soups/onugbu-soup.jpg', 'imageUrl' => '/assets/soups/onugbu-soup.jpg'
+                'image_url' => '/assets/soups/banga-soup.jpg', 'imageUrl' => '/assets/soups/banga-soup.jpg'
+            ],
+            [
+                'id' => 4, 'category' => 'soups', 'name' => 'Edikang Ikong (Vegetable Soup)',
+                'description' => 'A rich, nutritious Cross River vegetable soup made with ugu and waterleaf.',
+                'sizes' => $standardSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
+                'image_url' => '/assets/soups/edikang-ikong.jpg', 'imageUrl' => '/assets/soups/edikang-ikong.jpg'
+            ],
+            [
+                'id' => 9, 'category' => 'soups', 'name' => 'Efo-Riro',
+                'description' => 'Yoruba spinach stew cooked with peppers, assorted meats and a rich base.',
+                'sizes' => $standardSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
+                'image_url' => '/assets/soups/efo-riro.jpg', 'imageUrl' => '/assets/soups/efo-riro.jpg'
+            ],
+            [
+                'id' => 6, 'category' => 'soups', 'name' => 'Egusi Soup',
+                'description' => 'Thick, golden egusi soup cooked low and slow with ground melon seeds.',
+                'sizes' => $standardSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
+                'image_url' => '/assets/soups/egusi-soup.jpg', 'imageUrl' => '/assets/soups/egusi-soup.jpg'
             ],
             [
                 'id' => 2, 'category' => 'soups', 'name' => 'Oha Soup',
@@ -68,28 +86,10 @@ class MenuController
                 'image_url' => '/assets/soups/okro-soup.jpg', 'imageUrl' => '/assets/soups/okro-soup.jpg'
             ],
             [
-                'id' => 4, 'category' => 'soups', 'name' => 'Edikang Ikong (Vegetable Soup)',
-                'description' => 'A rich, nutritious Cross River vegetable soup made with ugu and waterleaf.',
+                'id' => 1, 'category' => 'soups', 'name' => 'Onugbu Soup (Bitterleaf)',
+                'description' => 'Rich bitterleaf soup garnished with dried fish, stockfish and cowhide.',
                 'sizes' => $standardSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
-                'image_url' => '/assets/soups/edikang-ikong.jpg', 'imageUrl' => '/assets/soups/edikang-ikong.jpg'
-            ],
-            [
-                'id' => 6, 'category' => 'soups', 'name' => 'Egusi Soup',
-                'description' => 'Thick, golden egusi soup cooked low and slow with ground melon seeds.',
-                'sizes' => $standardSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
-                'image_url' => '/assets/soups/egusi-soup.jpg', 'imageUrl' => '/assets/soups/egusi-soup.jpg'
-            ],
-            [
-                'id' => 20, 'category' => 'soups', 'name' => 'Banga Soup (Ofe Akwu)',
-                'description' => 'Aromatic palm nut soup cooked the Delta way with native spices.',
-                'sizes' => $standardSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
-                'image_url' => '/assets/soups/banga-soup.jpg', 'imageUrl' => '/assets/soups/banga-soup.jpg'
-            ],
-            [
-                'id' => 9, 'category' => 'soups', 'name' => 'Efo-Riro',
-                'description' => 'Yoruba spinach stew cooked with peppers, assorted meats and a rich base.',
-                'sizes' => $standardSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
-                'image_url' => '/assets/soups/efo-riro.jpg', 'imageUrl' => '/assets/soups/efo-riro.jpg'
+                'image_url' => '/assets/soups/onugbu-soup.jpg', 'imageUrl' => '/assets/soups/onugbu-soup.jpg'
             ],
             [
                 'id' => 21, 'category' => 'soups', 'name' => 'Seafood Okro',
