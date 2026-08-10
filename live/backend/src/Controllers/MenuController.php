@@ -93,7 +93,7 @@ class MenuController {
                 'id' => 9, 'category' => 'stews', 'name' => 'Efo Riro',
                 'description' => 'Rich spinach vegetable stew made with iru and dry prawns.',
                 'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
-                'image_url' => '/assets/stews/efo-riro.jpg', 'imageUrl' => '/assets/stews/efo-riro.jpg'
+                'image_url' => '/assets/soups/efo-riro.jpg', 'imageUrl' => '/assets/soups/efo-riro.jpg'
             ],
             [
                 'id' => 22, 'category' => 'stews', 'name' => 'Peppered Chicken Stew',
