@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useListMenuItems } from "@workspace/api-client-react";
@@ -11,43 +11,7 @@ import { Input } from "@/components/ui/input";
 import { formatNaira } from "@/lib/format";
 
 const BASE = import.meta.env.BASE_URL;
-function getImageUrl(url?: string): string {
-  if (!url) return "";
-  if (url.startsWith("http://") || url.startsWith("https://")) return url;
-  if (url.startsWith("/")) return url;
-  return `/${url}`;
-}
-
-const FALLBACK_BREAKFAST_ITEMS = [
-  {
-    id: 101,
-    name: "Classic Nigerian",
-    description: "Serves 2–3. Akara, pap, boiled eggs, fried plantain, and more.",
-    sizes: [{ label: "Standard Portion", price: 27000 }],
-    imageUrl: "/assets/breakfast/classic-nigerian.png",
-  },
-  {
-    id: 102,
-    name: "Hearty Plate",
-    description: "Serves 2–3. Yam, plantain, egg stew, sausages, side salad, and more.",
-    sizes: [{ label: "Standard Portion", price: 28000 }],
-    imageUrl: "/assets/breakfast/hearty-plate.png",
-  },
-  {
-    id: 103,
-    name: "Sweet Start",
-    description: "Serves 2–3. Oats, fresh fruit bowl, boiled egg, and more.",
-    sizes: [{ label: "Standard Portion", price: 25000 }],
-    imageUrl: "/assets/breakfast/sweet-start.png",
-  },
-  {
-    id: 104,
-    name: "Protein Power",
-    description: "Serves 2–3. Moin-moin, akara, pap, boiled eggs, fried plantain, and more.",
-    sizes: [{ label: "Standard Portion", price: 32000 }],
-    imageUrl: "/assets/breakfast/protein-power.png",
-  },
-];
+const asset = (p: string) => `${BASE}${p}`;
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -134,10 +98,7 @@ export default function WeekendSpecials() {
 
   // Fetch always-available breakfast plates
   const { data: menuData } = useListMenuItems({ category: "breakfast" });
-  const displayBreakfastPlates = useMemo(() => {
-    if (menuData && menuData.length >= 4) return menuData;
-    return FALLBACK_BREAKFAST_ITEMS;
-  }, [menuData]);
+  const breakfastPlates = menuData ?? [];
 
   // Countdown ticker
   useEffect(() => {
@@ -511,16 +472,21 @@ export default function WeekendSpecials() {
             While you wait for the weekly special, these combo plates are available every weekend — book by Friday night to secure yours.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {displayBreakfastPlates.map((item: any) => {
-              const rawImg = item.imageUrl || item.image_url;
-              return (
+          {breakfastPlates.length === 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="h-36 rounded-2xl bg-muted animate-pulse" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {breakfastPlates.map((item) => (
                 <div key={item.id} className="bg-card border border-border rounded-2xl overflow-hidden flex flex-col">
                   {/* Photo */}
                   <div className="aspect-video w-full overflow-hidden bg-muted">
-                    {rawImg ? (
+                    {item.imageUrl ? (
                       <img
-                        src={getImageUrl(rawImg)}
+                        src={asset(item.imageUrl)}
                         alt={item.name}
                         className="w-full h-full object-cover"
                       />
@@ -535,14 +501,14 @@ export default function WeekendSpecials() {
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="font-bold font-display text-lg">{item.name}</h3>
                       <span className="text-primary font-bold text-sm whitespace-nowrap ml-2">
-                        {formatNaira(Math.min(...item.sizes.map((s: any) => s.price)))}
+                        {formatNaira(Math.min(...item.sizes.map((s) => s.price)))}
                       </span>
                     </div>
                     {item.description && (
                       <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{item.description}</p>
                     )}
                     <div className="flex flex-wrap gap-1.5 mb-4">
-                      {item.sizes.map((s: any) => (
+                      {item.sizes.map((s) => (
                         <span key={s.label} className="text-xs bg-muted px-2.5 py-1 rounded-full text-muted-foreground">
                           {s.label} · {formatNaira(s.price)}
                         </span>
@@ -557,19 +523,9 @@ export default function WeekendSpecials() {
                     </Link>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ── What's next advice block ───────────────────────────────────── */}
-      <section className="max-w-4xl mx-auto px-6 py-6">
-        <div className="bg-muted/50 rounded-2xl p-6 border border-border">
-          <h3 className="font-bold font-display text-base mb-2">What's next for this feature</h3>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Right now, voting confirms your own pick and gives you something to share — it doesn't yet show a live count everyone can see updating together. That needs a small shared backend to work properly across every visitor at once. This page is built so that piece can be added later without changing anything else here.
-          </p>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

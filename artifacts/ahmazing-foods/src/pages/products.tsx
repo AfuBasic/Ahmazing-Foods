@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { Link } from "wouter";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, Minus, Plus } from "lucide-react";
 
 import { WatermarkedImage } from "@/components/ui/watermarked-image";
 const BASE = import.meta.env.BASE_URL;
 const asset = (p: string) => `${BASE}assets/${p}`;
+
+const MIN_QTY = 6;
 
 interface Product {
   name: string;
@@ -61,6 +64,12 @@ const groups: { heading: string; sub: string; products: Product[] }[] = [
 ];
 
 export default function ProductsPage() {
+  // qty per product — drinks have a minimum of MIN_QTY bottles
+  const [qtys, setQtys] = useState<Record<string, number>>({});
+  const getQty = (name: string) => qtys[name] ?? MIN_QTY;
+  const setQty = (name: string, n: number) =>
+    setQtys((prev) => ({ ...prev, [name]: Math.max(MIN_QTY, n) }));
+
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Page header */}
@@ -68,7 +77,7 @@ export default function ProductsPage() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex items-center gap-3 mb-6">
             <ShoppingBag className="w-5 h-5 opacity-60" />
-            <span className="text-background/60 text-sm font-medium uppercase tracking-wider">Products</span>
+            <span className="text-background/60 text-sm font-medium uppercase tracking-wider">Drinks</span>
           </div>
           <h1 className="text-5xl md:text-7xl font-bold font-display mb-6">
             Take a piece of<br />AHmazing home
@@ -80,56 +89,117 @@ export default function ProductsPage() {
         </div>
       </div>
 
+      {/* Minimum purchase notice */}
+      <div className="container mx-auto px-4 md:px-6 mb-10">
+        <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 max-w-2xl">
+          <span className="text-amber-500 text-lg mt-0.5 shrink-0">📦</span>
+          <p className="text-sm text-amber-800 leading-relaxed">
+            <strong>Minimum order: 6 bottles per drink.</strong>{" "}
+            Set your quantity below — we batch our drinks in small runs, so a minimum of six keeps each batch worth making.
+          </p>
+        </div>
+      </div>
+
       {/* Product groups */}
       <div className="container mx-auto px-4 md:px-6 space-y-20">
-        {groups.filter(g => !HIDDEN_SECTIONS.includes(g.heading)).map((group) => (
-          <section key={group.heading}>
-            <div className="mb-10">
-              <h2 className="text-3xl font-bold font-display mb-2">{group.heading}</h2>
-              <p className="text-muted-foreground">{group.sub}</p>
-            </div>
+        {groups.filter(g => !HIDDEN_SECTIONS.includes(g.heading)).map((group) => {
+          const isDrinks = group.heading === "Drinks & Wellness";
+          return (
+            <section key={group.heading}>
+              <div className="mb-10">
+                <h2 className="text-3xl font-bold font-display mb-2">{group.heading}</h2>
+                <p className="text-muted-foreground">{group.sub}</p>
+              </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-              {group.products.map((p) => (
-                <div
-                  key={p.name}
-                  className="bg-card rounded-2xl border border-border overflow-hidden flex flex-col hover:shadow-lg transition-shadow group"
-                >
-                  {/* Image */}
-                  <div className="aspect-square bg-muted overflow-hidden">
-                    {p.img ? (
-                      <WatermarkedImage
-                        src={asset(p.img)}
-                        alt={p.name}
-                        imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted-foreground/40 text-xs text-center px-4">
-                        Photo coming soon
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+                {group.products.map((p) => {
+                  const qty = getQty(p.name);
+                  return (
+                    <div
+                      key={p.name}
+                      className="bg-card rounded-2xl border border-border overflow-hidden flex flex-col hover:shadow-lg transition-shadow group"
+                    >
+                      {/* Image */}
+                      <div className="aspect-square bg-muted overflow-hidden relative">
+                        {p.img ? (
+                          <WatermarkedImage
+                            src={asset(p.img)}
+                            alt={p.name}
+                            imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-muted-foreground/40 text-xs text-center px-4">
+                            Photo coming soon
+                          </div>
+                        )}
+                        {isDrinks && (
+                          <span className="absolute top-2 left-2 text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200 rounded-full px-2 py-0.5 leading-tight">
+                            min. 6 bottles
+                          </span>
+                        )}
                       </div>
-                    )}
-                  </div>
 
-                  {/* Body */}
-                  <div className="p-4 flex flex-col flex-1">
-                    <h3 className="font-display font-bold text-[15px] leading-tight mb-1">{p.name}</h3>
-                    <p className="text-xs text-muted-foreground mb-3 flex-1">{p.size}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-primary text-base">{p.price}</span>
-                      <Link
-                        href={`/book?cat=products&item=${encodeURIComponent(p.name)}&size=Standard`}
-                        className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full text-white transition-opacity hover:opacity-90"
-                        style={{ background: "#0F9E0F" }}
-                      >
-                        Order →
-                      </Link>
+                      {/* Body */}
+                      <div className="p-4 flex flex-col flex-1">
+                        <h3 className="font-display font-bold text-[15px] leading-tight mb-1">{p.name}</h3>
+                        <p className="text-xs text-muted-foreground mb-3 flex-1">{p.size}</p>
+
+                        {isDrinks ? (
+                          <>
+                            {/* Qty stepper */}
+                            <div className="flex items-center justify-between gap-2 mb-3">
+                              <div className="flex items-center gap-1 border border-border rounded-lg overflow-hidden">
+                                <button
+                                  type="button"
+                                  onClick={() => setQty(p.name, qty - 1)}
+                                  disabled={qty <= MIN_QTY}
+                                  className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                  aria-label="Decrease quantity"
+                                >
+                                  <Minus className="w-3.5 h-3.5" />
+                                </button>
+                                <span className="w-8 text-center text-sm font-bold tabular-nums">{qty}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => setQty(p.name, qty + 1)}
+                                  className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors"
+                                  aria-label="Increase quantity"
+                                >
+                                  <Plus className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                              <span className="text-xs text-muted-foreground tabular-nums">{p.price} each</span>
+                            </div>
+
+                            {/* Order button */}
+                            <Link
+                              href={`/book?cat=products&item=${encodeURIComponent(p.name)}&size=Standard&qty=${qty}`}
+                              className="flex items-center justify-center gap-1.5 text-xs font-bold px-3 py-2 rounded-full text-white transition-opacity hover:opacity-90 w-full"
+                              style={{ background: "#0F9E0F" }}
+                            >
+                              Order {qty} bottles →
+                            </Link>
+                          </>
+                        ) : (
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-primary text-base">{p.price}</span>
+                            <Link
+                              href={`/book?cat=products&item=${encodeURIComponent(p.name)}&size=Standard`}
+                              className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full text-white transition-opacity hover:opacity-90"
+                              style={{ background: "#0F9E0F" }}
+                            >
+                              Order →
+                            </Link>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        ))}
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })}
 
         {/* Bottom CTA */}
         <div className="rounded-2xl bg-muted border border-border p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6 mt-8">
