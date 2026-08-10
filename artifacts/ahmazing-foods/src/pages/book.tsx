@@ -310,17 +310,6 @@ export default function BookPage() {
 
   // ── DEEP-LINK: pre-fill cart from URL params ──────────────────────────────
   const deepLinkDone   = useRef(false);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const deepLinkParams = useMemo(() => {
-    const p = new URLSearchParams(window.location.search);
-    return {
-      cat:  p.get("cat")  ?? "",
-      item: p.get("item") ?? "",
-      size: p.get("size") ?? "",
-      qty:  Math.max(1, parseInt(p.get("qty") ?? "1", 10) || 1),
-    };
-  }, []);
-
   // ── FORM ───────────────────────────────────────────────────────────────────
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
@@ -488,74 +477,71 @@ export default function BookPage() {
     prevProteinCount.current = n;
   }, [proteins]);
 
-  // ── DEEP-LINK: auto-add item from URL params when menu loads ──────────────
+  // ── DEEP-LINK: auto-add item from URL params when page loads ──────────────
   const lastProcessedKey = useRef<string>("");
   useEffect(() => {
-    if (!deepLinkParams.cat || !deepLinkParams.item) return;
+    const p = new URLSearchParams(window.location.search);
+    const cat = p.get("cat") ?? "";
+    const item = p.get("item") ?? "";
+    const size = p.get("size") ?? "";
+    const qty = Math.max(1, parseInt(p.get("qty") ?? "1", 10) || 1);
 
-    const currentKey = `${deepLinkParams.cat}:${deepLinkParams.item}:${deepLinkParams.size}:${deepLinkParams.qty}`;
+    if (!cat || !item) return;
+
+    const currentKey = `${cat}:${item}:${size}:${qty}`;
     if (lastProcessedKey.current === currentKey) return;
+    lastProcessedKey.current = currentKey;
 
     // Products are static (not in DB) — handle without waiting for API
-    if (deepLinkParams.cat === "products") {
-      const unitPrice = STATIC_PRODUCTS[deepLinkParams.item];
+    if (cat === "products") {
+      const unitPrice = STATIC_PRODUCTS[item];
       if (!unitPrice) return;
       const MIN_DRINK_QTY = 6;
-      const itemQty = Math.max(MIN_DRINK_QTY, deepLinkParams.qty);
-      deepLinkDone.current = true;
-      const existingIndex = cart.findIndex((i) => i.category === "products" && i.menuItemName === deepLinkParams.item);
-      if (existingIndex >= 0) {
-        const updated = [...cart];
-        updated[existingIndex] = {
-          ...updated[existingIndex],
-          itemQty,
-          price: unitPrice * itemQty,
-        };
-        setCartItems(updated);
-      } else {
-        addGlobalCart({
-          id:               `dl-prod-${Date.now()}`,
-          menuItemId:       0,
-          menuItemName:     deepLinkParams.item,
-          category:         "products",
-          selectedSize:     "Standard",
-          itemQty,
-          selectedProteins: [],
-          price:            unitPrice * itemQty,
-        });
-      }
-      setJustAdded(deepLinkParams.item);
+      const itemQty = Math.max(MIN_DRINK_QTY, qty);
+
+      addGlobalCart({
+        id:               `dl-prod-${Date.now()}`,
+        menuItemId:       0,
+        menuItemName:     item,
+        category:         "products",
+        selectedSize:     "Standard",
+        itemQty,
+        selectedProteins: [],
+        price:            unitPrice * itemQty,
+      });
+      setJustAdded(item);
       setTimeout(() => setJustAdded(null), 6000);
       return;
     }
 
-    if (!menuItems?.length) return;
+    if (!menuItems?.length) {
+      lastProcessedKey.current = "";
+      return;
+    }
     const found = menuItems.find(
       (m) =>
-        m.category === deepLinkParams.cat &&
-        m.name.toLowerCase() === deepLinkParams.item.toLowerCase()
+        m.category === cat &&
+        m.name.toLowerCase() === item.toLowerCase()
     );
     if (!found) return;
-    const sizeObj = deepLinkParams.size
-      ? (found.sizes.find((s) => s.label === deepLinkParams.size) ?? found.sizes[0])
+    const sizeObj = size
+      ? (found.sizes.find((s) => s.label === size) ?? found.sizes[0])
       : found.sizes[0];
     if (!sizeObj) return;
-    deepLinkDone.current = true;
-    if (!cart.some((i) => i.menuItemId === found.id && i.selectedSize === sizeObj.label)) {
-      addGlobalCart({
-        id:               `dl-${found.id}-${Date.now()}`,
-        menuItemId:       found.id,
-        menuItemName:     found.name,
-        category:         found.category,
-        selectedSize:     sizeObj.label,
-        itemQty:          1,
-        selectedProteins: [],
-        price:            sizeObj.price,
-      });
-    }
+
+    addGlobalCart({
+      id:               `dl-${found.id}-${Date.now()}`,
+      menuItemId:       found.id,
+      menuItemName:     found.name,
+      category:         found.category,
+      selectedSize:     sizeObj.label,
+      itemQty:          1,
+      selectedProteins: [],
+      price:            sizeObj.price,
+    });
     setJustAdded(found.name);
     setTimeout(() => setJustAdded(null), 6000);
-  }, [menuItems, deepLinkParams, cart]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [menuItems, window.location.search]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── HANDLERS ──────────────────────────────────────────────────────────────
   function selectDish(val: string) { setConfigItemId(parseInt(val)); }
