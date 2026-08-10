@@ -11,9 +11,9 @@ import {
   Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
+import { ChevronsUpDown } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { formatNaira } from "@/lib/format";
 import {
@@ -179,6 +179,92 @@ function cartLineDesc(item: CartItem): string {
     .map((p) => `${p.name}${p.qty > 1 ? ` ×${p.qty}` : ""}`)
     .join(", ");
   return `${item.selectedSize}${qty}${prots ? ` + ${prots}` : ""}`;
+}
+
+function SearchableItemSelect({
+  menuItems,
+  loadingMenu,
+  value,
+  onSelect,
+}: {
+  menuItems: any[] | undefined;
+  loadingMenu: boolean;
+  value: number;
+  onSelect: (id: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const selectedItem = menuItems?.find((i) => i.id === value);
+
+  const filteredByCat = useMemo(() => {
+    if (!menuItems) return {};
+    const map: Record<string, any[]> = {};
+    const query = search.trim().toLowerCase();
+    for (const cat of CAT_ORDER) {
+      const items = menuItems.filter(
+        (i) => i.available && i.category === cat && (query === "" || i.name.toLowerCase().includes(query))
+      );
+      if (items.length > 0) {
+        map[cat] = items;
+      }
+    }
+    return map;
+  }, [menuItems, search]);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          disabled={loadingMenu}
+          className="w-full h-12 justify-between text-base px-4 font-normal bg-background border-2 border-border hover:border-primary/40"
+        >
+          <span className="truncate">
+            {selectedItem ? selectedItem.name : loadingMenu ? "Loading…" : "Choose a dish, drink, snack or platter"}
+          </span>
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[340px] sm:w-[480px] p-0" align="start">
+        <Command className="rounded-xl border border-border shadow-md">
+          <CommandInput
+            placeholder="Search all 48 catalog dishes, drinks, snacks & platters..."
+            value={search}
+            onValueChange={setSearch}
+            className="h-11 text-sm"
+          />
+          <CommandList className="max-h-72 overflow-y-auto p-1">
+            <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">No dishes or items match your search.</CommandEmpty>
+            {CAT_ORDER.map((cat) => {
+              const catItems = filteredByCat[cat];
+              if (!catItems || catItems.length === 0) return null;
+              return (
+                <CommandGroup key={cat} heading={CAT_LABELS[cat]}>
+                  {catItems.map((item) => (
+                    <CommandItem
+                      key={item.id}
+                      value={item.name}
+                      onSelect={() => {
+                        onSelect(item.id.toString());
+                        setOpen(false);
+                      }}
+                      className="cursor-pointer flex items-center justify-between py-2 text-sm"
+                    >
+                      <span>{item.name}</span>
+                      {value === item.id && <Check className="h-4 w-4 text-primary shrink-0" />}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              );
+            })}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -411,8 +497,17 @@ export default function BookPage() {
       const itemQty = Math.max(MIN_DRINK_QTY, deepLinkParams.qty);
       deepLinkDone.current = true;
       setCart((prev) => {
-        if (prev.some((i) => i.category === "products" && i.menuItemName === deepLinkParams.item)) return prev;
-        return [{
+        const existingIndex = prev.findIndex((i) => i.category === "products" && i.menuItemName === deepLinkParams.item);
+        if (existingIndex >= 0) {
+          const updated = [...prev];
+          updated[existingIndex] = {
+            ...updated[existingIndex],
+            itemQty,
+            price: unitPrice * itemQty,
+          };
+          return updated;
+        }
+        return [...prev, {
           id:               `dl-prod-${Date.now()}`,
           menuItemId:       0,
           menuItemName:     deepLinkParams.item,
@@ -442,7 +537,7 @@ export default function BookPage() {
     deepLinkDone.current = true;
     setCart((prev) => {
       if (prev.some((i) => i.menuItemId === found.id && i.selectedSize === sizeObj.label)) return prev;
-      return [{
+      return [...prev, {
         id:               `dl-${found.id}-${Date.now()}`,
         menuItemId:       found.id,
         menuItemName:     found.name,
@@ -665,36 +760,12 @@ export default function BookPage() {
                 {/* ── A: Select item ─────────────────────────────────── */}
                 <div className="space-y-2.5">
                   <SubStepLabel letter="A" done={!!configItem}>Choose an Item</SubStepLabel>
-                  <Select
-                    disabled={loadingMenu}
-                    onValueChange={selectDish}
-                    value={configItemId ? configItemId.toString() : ""}
-                  >
-                    <SelectTrigger className="h-12 text-base">
-                      <SelectValue placeholder={loadingMenu ? "Loading…" : "Choose a dish, drink, snack or platter"} />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-80 overflow-y-auto">
-                      {CAT_ORDER.map((cat) => {
-                        const catItems = menuItems?.filter((i) => i.available && i.category === cat) ?? [];
-                        if (!catItems.length) return null;
-                        return (
-                          <div key={cat}>
-                            <div className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border/50 sticky top-0 bg-popover z-10">
-                              {CAT_LABELS[cat]}
-                              {cat === "soups" || cat === "stews" || cat === "breakfast"
-                                ? <span className="ml-1 font-normal normal-case text-muted-foreground/60">(max {MAX_FOOD_MEALS} meals)</span>
-                                : null}
-                            </div>
-                            {catItems.map((item) => (
-                              <SelectItem key={item.id} value={item.id.toString()}>
-                                {item.name}
-                              </SelectItem>
-                            ))}
-                          </div>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
+                  <SearchableItemSelect
+                    menuItems={menuItems}
+                    loadingMenu={loadingMenu}
+                    value={configItemId}
+                    onSelect={selectDish}
+                  />
                 </div>
 
                 {/* ── B: Size ────────────────────────────────────────── */}
