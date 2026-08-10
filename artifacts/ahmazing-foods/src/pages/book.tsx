@@ -25,6 +25,7 @@ import {
   Phone, MessageCircle,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useCart } from "@/context/cart-context";
 
 // ── STATIC PRODUCTS (not in DB — used for deep-link auto-add) ───────────────
 const STATIC_PRODUCTS: Record<string, number> = {
@@ -287,7 +288,7 @@ export default function BookPage() {
   const [bikeBlockReason, setBikeBlockReason] = useState<string | null>(null);
 
   // ── CART ────────────────────────────────────────────────────────────────────
-  const [cart, setCart]                   = useState<CartItem[]>([]);
+  const { cart, addToCart: addGlobalCart, removeFromCart, updateQty, clearCart, setCartItems } = useCart();
   const [pepperLevel, setPepperLevel]     = useState<number>(1);
   const [pepperTouched, setPepperTouched] = useState(true);
   const [justAdded, setJustAdded]         = useState<string | null>(null);
@@ -499,18 +500,17 @@ export default function BookPage() {
       const MIN_DRINK_QTY = 6;
       const itemQty = Math.max(MIN_DRINK_QTY, deepLinkParams.qty);
       deepLinkDone.current = true;
-      setCart((prev) => {
-        const existingIndex = prev.findIndex((i) => i.category === "products" && i.menuItemName === deepLinkParams.item);
-        if (existingIndex >= 0) {
-          const updated = [...prev];
-          updated[existingIndex] = {
-            ...updated[existingIndex],
-            itemQty,
-            price: unitPrice * itemQty,
-          };
-          return updated;
-        }
-        return [...prev, {
+      const existingIndex = cart.findIndex((i) => i.category === "products" && i.menuItemName === deepLinkParams.item);
+      if (existingIndex >= 0) {
+        const updated = [...cart];
+        updated[existingIndex] = {
+          ...updated[existingIndex],
+          itemQty,
+          price: unitPrice * itemQty,
+        };
+        setCartItems(updated);
+      } else {
+        addGlobalCart({
           id:               `dl-prod-${Date.now()}`,
           menuItemId:       0,
           menuItemName:     deepLinkParams.item,
@@ -519,8 +519,8 @@ export default function BookPage() {
           itemQty,
           selectedProteins: [],
           price:            unitPrice * itemQty,
-        }];
-      });
+        });
+      }
       setJustAdded(deepLinkParams.item);
       setTimeout(() => setJustAdded(null), 6000);
       return;
@@ -538,9 +538,8 @@ export default function BookPage() {
       : found.sizes[0];
     if (!sizeObj) return;
     deepLinkDone.current = true;
-    setCart((prev) => {
-      if (prev.some((i) => i.menuItemId === found.id && i.selectedSize === sizeObj.label)) return prev;
-      return [...prev, {
+    if (!cart.some((i) => i.menuItemId === found.id && i.selectedSize === sizeObj.label)) {
+      addGlobalCart({
         id:               `dl-${found.id}-${Date.now()}`,
         menuItemId:       found.id,
         menuItemName:     found.name,
@@ -549,11 +548,11 @@ export default function BookPage() {
         itemQty:          1,
         selectedProteins: [],
         price:            sizeObj.price,
-      }];
-    });
+      });
+    }
     setJustAdded(found.name);
     setTimeout(() => setJustAdded(null), 6000);
-  }, [menuItems, deepLinkParams]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [menuItems, deepLinkParams, cart]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── HANDLERS ──────────────────────────────────────────────────────────────
   function selectDish(val: string) { setConfigItemId(parseInt(val)); }
@@ -579,7 +578,7 @@ export default function BookPage() {
       return { name, qty, extraCost: p?.extraCost ?? 0 };
     });
     const name = configItem.name;
-    setCart((prev) => [...prev, {
+    addGlobalCart({
       id: crypto.randomUUID(),
       menuItemId:      configItem.id,
       menuItemName:    name,
@@ -588,15 +587,13 @@ export default function BookPage() {
       itemQty,
       selectedProteins: selProteins,
       price:           configPrice,
-    }]);
+    });
     setConfigItemId(0);
     setJustAdded(name);
     setTimeout(() => setJustAdded(null), 4000);
     toast({ title: "Added to cart", description: `${name} — ${configSize}${itemQty > 1 ? ` ×${itemQty}` : ""}` });
     scrollTo(step1Ref.current, 240);
   }
-
-  function removeFromCart(id: string) { setCart((prev) => prev.filter((i) => i.id !== id)); }
 
   function onSubmit(values: z.infer<typeof customerSchema>) {
     if (cart.length === 0) {
