@@ -775,8 +775,8 @@ export default function BookPage() {
                       Choose Size
                       <span className="ml-2 text-xs font-normal text-muted-foreground">— {configItem.name}</span>
                     </SubStepLabel>
-                    <div className={`grid gap-2 ${configItem.sizes.length > 3 ? "grid-cols-2 sm:grid-cols-3" : "grid-cols-2 sm:grid-cols-3"}`}>
-                      {configItem.sizes.map((size) => {
+                    <div className={`grid gap-2 ${configItem.sizes.filter((s) => s.price > 0).length > 3 ? "grid-cols-2 sm:grid-cols-3" : "grid-cols-2 sm:grid-cols-3"}`}>
+                      {configItem.sizes.filter((s) => s.price > 0).map((size) => {
                         const sel = configSize === size.label;
                         return (
                           <button key={size.label} type="button" onClick={() => setConfigSize(size.label)}
