@@ -489,6 +489,7 @@ export default function BookPage() {
   }, [proteins]);
 
   // ── DEEP-LINK: auto-add item from URL params when menu loads ──────────────
+  const lastProcessedKey = useRef<string>("");
   useEffect(() => {
     if (!deepLinkParams.cat || !deepLinkParams.item) return;
 
