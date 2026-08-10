@@ -98,17 +98,17 @@ class MenuController
                 'image_url' => '/assets/soups/seafood-okro.jpg', 'imageUrl' => '/assets/soups/seafood-okro.jpg'
             ],
 
-            // ── STEWS & MAINS ────────────────────────────────────────────────
+            // ── STEWS & MAINS (5 items) ──────────────────────────────────────
             [
-                'id' => 7,
+                'id' => 25,
                 'category' => 'stews',
-                'name' => 'Buka Stew',
-                'description' => 'Smoky palm-oil buka stew with assorted meats.',
+                'name' => 'Classic Tomato Stew',
+                'description' => 'A rich, slow-cooked tomato base stew — the backbone of Nigerian cooking.',
                 'sizes' => $stewSizes37_45,
                 'proteins' => [],
                 'available' => true,
-                'image_url' => '/assets/stews/buka-stew.jpg',
-                'imageUrl' => '/assets/stews/buka-stew.jpg'
+                'image_url' => '/assets/stews/classic-tomato-stew.webp',
+                'imageUrl' => '/assets/stews/classic-tomato-stew.webp'
             ],
             [
                 'id' => 8,
@@ -120,6 +120,17 @@ class MenuController
                 'available' => true,
                 'image_url' => '/assets/stews/ayamase-stew.jpg',
                 'imageUrl' => '/assets/stews/ayamase-stew.jpg'
+            ],
+            [
+                'id' => 24,
+                'category' => 'stews',
+                'name' => 'Peppered Beef Stew',
+                'description' => 'Tender chunks of beef in a bold pepper stew with caramelised onions.',
+                'sizes' => $stewSizes37_45,
+                'proteins' => [],
+                'available' => true,
+                'image_url' => '/assets/stews/peppered-beef-stew.jpg',
+                'imageUrl' => '/assets/stews/peppered-beef-stew.jpg'
             ],
             [
                 'id' => 22,
@@ -142,28 +153,6 @@ class MenuController
                 'available' => true,
                 'image_url' => '/assets/stews/peppered-turkey-stew.jpg',
                 'imageUrl' => '/assets/stews/peppered-turkey-stew.jpg'
-            ],
-            [
-                'id' => 24,
-                'category' => 'stews',
-                'name' => 'Peppered Beef Stew',
-                'description' => 'Tender chunks of beef in a bold pepper stew with caramelised onions.',
-                'sizes' => $stewSizes37_45,
-                'proteins' => [],
-                'available' => true,
-                'image_url' => '/assets/stews/peppered-beef-stew.jpg',
-                'imageUrl' => '/assets/stews/peppered-beef-stew.jpg'
-            ],
-            [
-                'id' => 25,
-                'category' => 'stews',
-                'name' => 'Classic Tomato Stew',
-                'description' => 'A rich, slow-cooked tomato base stew — the backbone of Nigerian cooking.',
-                'sizes' => $stewSizes37_45,
-                'proteins' => [],
-                'available' => true,
-                'image_url' => '/assets/stews/classic-tomato-stew.webp',
-                'imageUrl' => '/assets/stews/classic-tomato-stew.webp'
             ],
 
             // ── BREAKFAST ───────────────────────────────────────────────────
