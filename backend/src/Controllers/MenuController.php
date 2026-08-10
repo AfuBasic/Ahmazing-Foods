@@ -10,6 +10,8 @@ class MenuController {
             ['label' => '2 Litres (Serves ~3)', 'price' => 32000],
             ['label' => '3 Litres (Serves ~5)', 'price' => 36000],
             ['label' => '5 Litres (Serves ~7)', 'price' => 43000],
+            ['label' => 'Cooler — Small', 'price' => 0],
+            ['label' => 'Cooler — Medium', 'price' => 0],
         ];
 
         $defaultProteins = [
@@ -28,10 +30,28 @@ class MenuController {
         return [
             // ── SOUPS ────────────────────────────────────────────────────────
             [
-                'id' => 1, 'category' => 'soups', 'name' => 'Onugbu Soup (Bitterleaf)',
-                'description' => 'Rich bitterleaf soup garnished with dried fish, stockfish and cowhide.',
+                'id' => 20, 'category' => 'soups', 'name' => 'Banga Soup (Palm Fruit)',
+                'description' => 'Delta-style palm fruit soup enriched with native spices and herbs.',
                 'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
-                'image_url' => '/assets/soups/onugbu-soup.jpg', 'imageUrl' => '/assets/soups/onugbu-soup.jpg'
+                'image_url' => '/assets/soups/banga-soup.jpg', 'imageUrl' => '/assets/soups/banga-soup.jpg'
+            ],
+            [
+                'id' => 4, 'category' => 'soups', 'name' => 'Edikang Ikong (Vegetable Soup)',
+                'description' => 'Nutrient-dense ugu and waterleaf soup with assorted protein.',
+                'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
+                'image_url' => '/assets/soups/edikang-ikong.jpg', 'imageUrl' => '/assets/soups/edikang-ikong.jpg'
+            ],
+            [
+                'id' => 9, 'category' => 'soups', 'name' => 'Efo Riro',
+                'description' => 'Rich spinach vegetable stew made with iru and dry prawns.',
+                'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
+                'image_url' => '/assets/soups/efo-riro.jpg', 'imageUrl' => '/assets/soups/efo-riro.jpg'
+            ],
+            [
+                'id' => 6, 'category' => 'soups', 'name' => 'Egusi Soup',
+                'description' => 'Classic melon seed soup with pumpkin leaves and smoked fish.',
+                'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
+                'image_url' => '/assets/soups/egusi-soup.jpg', 'imageUrl' => '/assets/soups/egusi-soup.jpg'
             ],
             [
                 'id' => 2, 'category' => 'soups', 'name' => 'Oha Soup',
@@ -46,28 +66,10 @@ class MenuController {
                 'image_url' => '/assets/soups/okro-soup.jpg', 'imageUrl' => '/assets/soups/okro-soup.jpg'
             ],
             [
-                'id' => 4, 'category' => 'soups', 'name' => 'Edikang Ikong (Vegetable Soup)',
-                'description' => 'Nutrient-dense ugu and waterleaf soup with assorted protein.',
+                'id' => 1, 'category' => 'soups', 'name' => 'Onugbu Soup (Bitterleaf)',
+                'description' => 'Rich bitterleaf soup garnished with dried fish, stockfish and cowhide.',
                 'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
-                'image_url' => '/assets/soups/edikang-ikong.jpg', 'imageUrl' => '/assets/soups/edikang-ikong.jpg'
-            ],
-            [
-                'id' => 5, 'category' => 'soups', 'name' => 'Afang Soup',
-                'description' => 'Efik-style afang and okazi leaf soup with rich palm oil.',
-                'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
-                'image_url' => '/assets/soups/seafood-okro.jpg', 'imageUrl' => '/assets/soups/seafood-okro.jpg'
-            ],
-            [
-                'id' => 6, 'category' => 'soups', 'name' => 'Egusi Soup',
-                'description' => 'Classic melon seed soup with pumpkin leaves and smoked fish.',
-                'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
-                'image_url' => '/assets/soups/egusi-soup.jpg', 'imageUrl' => '/assets/soups/egusi-soup.jpg'
-            ],
-            [
-                'id' => 20, 'category' => 'soups', 'name' => 'Banga Soup',
-                'description' => 'Delta-style palm fruit soup enriched with native spices and herbs.',
-                'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
-                'image_url' => '/assets/soups/banga-soup.jpg', 'imageUrl' => '/assets/soups/banga-soup.jpg'
+                'image_url' => '/assets/soups/onugbu-soup.jpg', 'imageUrl' => '/assets/soups/onugbu-soup.jpg'
             ],
             [
                 'id' => 21, 'category' => 'soups', 'name' => 'Seafood Okro',
