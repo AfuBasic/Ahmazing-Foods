@@ -9,6 +9,7 @@ import {
   MapPin,
   ChevronDown,
   UtensilsCrossed,
+  Droplets,
   ShoppingBag,
 } from "lucide-react";
 import { useState } from "react";
@@ -50,9 +51,24 @@ const MEAL_LINKS = [
 
 const MEAL_PATHS = MEAL_LINKS.map((l) => l.href);
 
-// Top-level nav links (beside Our Meals)
+// Drinks sub-pages grouped under "Our Drinks" dropdown
+const DRINK_LINKS = [
+  {
+    href: "/products",
+    label: "Drinks",
+    desc: "Cold-pressed juices and wellness shots, no preservatives",
+  },
+  {
+    href: "/drink-crates",
+    label: "Wellness Crates",
+    desc: "Drinks ordered by health goal, by the crate",
+  },
+];
+
+const DRINK_PATHS = DRINK_LINKS.map((l) => l.href);
+
+// Top-level nav links (beside Our Meals / Our Drinks)
 const TOP_LINKS = [
-  { href: "/products", label: "Products" },
   { href: "/blog", label: "Blog" },
   { href: "/catering", label: "Catering" },
 ];
@@ -181,10 +197,74 @@ function MealsDropdown({ location }: { location: string }) {
   );
 }
 
+// ── Our Drinks desktop dropdown ───────────────────────────────────────────
+function DrinksDropdown({ location }: { location: string }) {
+  const [open, setOpen] = useState(false);
+  const isDrinkActive = DRINK_PATHS.some(
+    (p) => location === p || location.startsWith(p + "/"),
+  );
+
+  return (
+    <div
+      className="relative"
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+          setTimeout(() => setOpen(false), 120);
+        }
+      }}
+    >
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className={cn(
+          "flex items-center gap-1 text-[14px] font-medium transition-all hover:text-primary focus:outline-none",
+          isDrinkActive
+            ? "text-primary border-b-2 border-primary py-1"
+            : "text-foreground",
+        )}
+      >
+        Our Drinks{" "}
+        <ChevronDown
+          className={cn(
+            "w-3.5 h-3.5 transition-transform duration-200",
+            open && "rotate-180",
+          )}
+        />
+      </button>
+
+      {open && (
+        <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-border rounded-xl shadow-xl p-2 z-50">
+          {DRINK_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setOpen(false)}
+              className={cn(
+                "flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors",
+                location === link.href ? "bg-primary/5 text-primary" : "",
+              )}
+            >
+              <Droplets className="w-4 h-4 mt-0.5 shrink-0 text-muted-foreground" />
+              <div>
+                <span className="block font-semibold text-sm">
+                  {link.label}
+                </span>
+                <span className="block text-xs text-muted-foreground leading-snug">
+                  {link.desc}
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Site header ───────────────────────────────────────────────────────────
 function SiteHeader({ location }: { location: string }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileMealsOpen, setMobileMealsOpen] = useState(false);
+  const [mobileDrinksOpen, setMobileDrinksOpen] = useState(false);
   const { cartCount } = useCart();
   const closeMenu = () => setMobileMenuOpen(false);
 
@@ -226,6 +306,9 @@ function SiteHeader({ location }: { location: string }) {
           <nav className="hidden md:flex items-center gap-6">
             {/* Our Meals dropdown */}
             <MealsDropdown location={location} />
+
+            {/* Our Drinks dropdown */}
+            <DrinksDropdown location={location} />
 
             {/* Top-level links */}
             {TOP_LINKS.map((link) => (
@@ -305,16 +388,8 @@ function SiteHeader({ location }: { location: string }) {
             style={{ backgroundColor: "#ffffff", top: 0 }}
           >
             <div className="flex items-center justify-between px-4 h-20 border-b border-border">
-              <Link
-                href="/"
-                className="flex items-center gap-2"
-                onClick={closeMenu}
-              >
-                <img
-                  src={LOGO_SRC}
-                  alt="AHmazing Foods"
-                  className="h-10 w-auto"
-                />
+              <Link href="/" className="flex items-center gap-2" onClick={closeMenu}>
+                <img src={LOGO_SRC} alt="AHmazing Foods" className="h-10 w-auto" />
               </Link>
               <button
                 className="p-2 text-foreground"
@@ -364,6 +439,44 @@ function SiteHeader({ location }: { location: string }) {
                 </div>
               )}
 
+              {/* Our Drinks expandable */}
+              <button
+                onClick={() => setMobileDrinksOpen((o) => !o)}
+                className={cn(
+                  "flex items-center justify-between text-xl font-display font-semibold py-3 border-b border-border/50",
+                  DRINK_PATHS.some((p) => location === p)
+                    ? "text-primary"
+                    : "text-foreground",
+                )}
+              >
+                Our Drinks
+                <ChevronDown
+                  className={cn(
+                    "w-5 h-5 transition-transform",
+                    mobileDrinksOpen && "rotate-180",
+                  )}
+                />
+              </button>
+              {mobileDrinksOpen && (
+                <div className="pl-4 pb-2 space-y-0.5">
+                  {DRINK_LINKS.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={closeMenu}
+                      className={cn(
+                        "block py-2.5 text-lg font-medium border-b border-border/30",
+                        location === link.href
+                          ? "text-primary"
+                          : "text-foreground/80",
+                      )}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+
               {/* Top-level links */}
               {TOP_LINKS.map((link) => (
                 <Link
@@ -371,7 +484,9 @@ function SiteHeader({ location }: { location: string }) {
                   href={link.href}
                   className={cn(
                     "text-xl font-display font-semibold py-3 border-b border-border/50 transition-colors",
-                    location === link.href ? "text-primary" : "text-foreground",
+                    location === link.href
+                      ? "text-primary"
+                      : "text-foreground",
                   )}
                   onClick={closeMenu}
                 >
@@ -448,7 +563,7 @@ function SiteFooter() {
                   href="/products"
                   className="hover:text-primary transition-colors"
                 >
-                  Products
+                  Drinks
                 </Link>
               </li>
               <li>
@@ -457,6 +572,14 @@ function SiteFooter() {
                   className="hover:text-primary transition-colors"
                 >
                   Trays & Platters
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/drink-crates"
+                  className="hover:text-primary transition-colors"
+                >
+                  Wellness Crates
                 </Link>
               </li>
               <li>
