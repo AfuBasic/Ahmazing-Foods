@@ -693,16 +693,20 @@ export default function BookPage() {
 
   // ── AUTO-SCROLL: dish selected → size ────────────────────────────────────
   useEffect(() => {
-    if (configItem) return scrollTo(sizeRef.current);
+    if (configItem) {
+      scrollTo(sizeRef.current);
+    }
   }, [configItem?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── AUTO-SCROLL: size selected → qty/protein/addBtn ──────────────────────
   useEffect(() => {
     if (!configSize || !configItem) return;
     // scroll to protein if food with proteins, otherwise to quantity/add area
-    return hasProteins
-      ? scrollTo(proteinRef.current)
-      : scrollTo(qtyRef.current);
+    if (hasProteins) {
+      scrollTo(proteinRef.current);
+    } else {
+      scrollTo(qtyRef.current);
+    }
   }, [configSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── AUTO-SCROLL: first protein ticked → add button ───────────────────────
@@ -913,7 +917,7 @@ export default function BookPage() {
           customerPhone: values.customerPhone,
           customerEmail: values.customerEmail || undefined,
           deliveryAddress: values.deliveryAddress,
-          deliveryDate: values.deliveryDate as unknown as Date,
+          deliveryDate: values.deliveryDate as any,
           deliverySlot: values.deliverySlot,
           notes: notesStr,
           cartItems: cart,
