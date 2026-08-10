@@ -490,8 +490,10 @@ export default function BookPage() {
 
   // ── DEEP-LINK: auto-add item from URL params when menu loads ──────────────
   useEffect(() => {
-    if (deepLinkDone.current) return;
     if (!deepLinkParams.cat || !deepLinkParams.item) return;
+
+    const currentKey = `${deepLinkParams.cat}:${deepLinkParams.item}:${deepLinkParams.size}:${deepLinkParams.qty}`;
+    if (lastProcessedKey.current === currentKey) return;
 
     // Products are static (not in DB) — handle without waiting for API
     if (deepLinkParams.cat === "products") {
