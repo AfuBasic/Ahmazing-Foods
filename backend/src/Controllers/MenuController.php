@@ -22,6 +22,18 @@ class MenuController
             ['label' => 'Cooler — Medium', 'price' => 0],
         ];
 
+        $defaultSoupSizes = $standardSoupSizes;
+
+        $stewSizes37_45 = [
+            ['label' => '3 Litres (Serves ~5)', 'price' => 37000],
+            ['label' => '5 Litres (Serves ~8)', 'price' => 45000],
+        ];
+
+        $stewSizes40_49 = [
+            ['label' => '3 Litres (Serves ~5)', 'price' => 40000],
+            ['label' => '5 Litres (Serves ~8)', 'price' => 49000],
+        ];
+
         $defaultProteins = [
             ['name' => 'Beef', 'extraCost' => 4000],
             ['name' => 'Chicken', 'extraCost' => 4700],
@@ -92,8 +104,8 @@ class MenuController
                 'category' => 'stews',
                 'name' => 'Buka Stew',
                 'description' => 'Smoky palm-oil buka stew with assorted meats.',
-                'sizes' => $defaultSoupSizes,
-                'proteins' => $defaultProteins,
+                'sizes' => $stewSizes37_45,
+                'proteins' => [],
                 'available' => true,
                 'image_url' => '/assets/stews/buka-stew.jpg',
                 'imageUrl' => '/assets/stews/buka-stew.jpg'
@@ -101,32 +113,21 @@ class MenuController
             [
                 'id' => 8,
                 'category' => 'stews',
-                'name' => 'Ofada Stew',
-                'description' => 'Ayamase green pepper stew with bleached palm oil and boiled eggs.',
-                'sizes' => $defaultSoupSizes,
-                'proteins' => $defaultProteins,
+                'name' => 'Ayamase (Ofada Stew)',
+                'description' => 'Spicy green pepper stew with assorted offals — pairs perfectly with ofada rice.',
+                'sizes' => $stewSizes40_49,
+                'proteins' => [],
                 'available' => true,
                 'image_url' => '/assets/stews/ayamase-stew.jpg',
                 'imageUrl' => '/assets/stews/ayamase-stew.jpg'
             ],
             [
-                'id' => 9,
-                'category' => 'stews',
-                'name' => 'Efo Riro',
-                'description' => 'Rich spinach vegetable stew made with iru and dry prawns.',
-                'sizes' => $defaultSoupSizes,
-                'proteins' => $defaultProteins,
-                'available' => true,
-                'image_url' => '/assets/soups/efo-riro.jpg',
-                'imageUrl' => '/assets/soups/efo-riro.jpg'
-            ],
-            [
                 'id' => 22,
                 'category' => 'stews',
                 'name' => 'Peppered Chicken Stew',
-                'description' => 'Deeply spiced habanero and tomato stew with fried chicken cuts.',
-                'sizes' => $defaultSoupSizes,
-                'proteins' => $defaultProteins,
+                'description' => 'Succulent chicken pieces simmered in a spiced tomato and pepper stew.',
+                'sizes' => $stewSizes37_45,
+                'proteins' => [],
                 'available' => true,
                 'image_url' => '/assets/stews/peppered-chicken-stew.jpg',
                 'imageUrl' => '/assets/stews/peppered-chicken-stew.jpg'
@@ -135,9 +136,9 @@ class MenuController
                 'id' => 23,
                 'category' => 'stews',
                 'name' => 'Peppered Turkey Stew',
-                'description' => 'Hearty red pepper sauce cooked with prime turkey cuts.',
-                'sizes' => $defaultSoupSizes,
-                'proteins' => $defaultProteins,
+                'description' => 'Juicy turkey pieces slow-cooked in a bold, well-spiced pepper stew.',
+                'sizes' => $stewSizes40_49,
+                'proteins' => [],
                 'available' => true,
                 'image_url' => '/assets/stews/peppered-turkey-stew.jpg',
                 'imageUrl' => '/assets/stews/peppered-turkey-stew.jpg'
@@ -146,9 +147,9 @@ class MenuController
                 'id' => 24,
                 'category' => 'stews',
                 'name' => 'Peppered Beef Stew',
-                'description' => 'Tender fried beef pieces simmered in spicy pepper reduction.',
-                'sizes' => $defaultSoupSizes,
-                'proteins' => $defaultProteins,
+                'description' => 'Tender chunks of beef in a bold pepper stew with caramelised onions.',
+                'sizes' => $stewSizes37_45,
+                'proteins' => [],
                 'available' => true,
                 'image_url' => '/assets/stews/peppered-beef-stew.jpg',
                 'imageUrl' => '/assets/stews/peppered-beef-stew.jpg'
@@ -157,9 +158,9 @@ class MenuController
                 'id' => 25,
                 'category' => 'stews',
                 'name' => 'Classic Tomato Stew',
-                'description' => 'Traditional Nigerian rich tomato stew for rice, yam or plantain.',
-                'sizes' => $defaultSoupSizes,
-                'proteins' => $defaultProteins,
+                'description' => 'A rich, slow-cooked tomato base stew — the backbone of Nigerian cooking.',
+                'sizes' => $stewSizes37_45,
+                'proteins' => [],
                 'available' => true,
                 'image_url' => '/assets/stews/classic-tomato-stew.webp',
                 'imageUrl' => '/assets/stews/classic-tomato-stew.webp'
