@@ -7,9 +7,9 @@ use App\Response;
 class MenuController {
     private static function getStaticMenu(): array {
         $defaultSoupSizes = [
-            ['label' => '2 Litres (Serves ~3)', 'price' => 32000],
-            ['label' => '3 Litres (Serves ~5)', 'price' => 36000],
-            ['label' => '5 Litres (Serves ~7)', 'price' => 43000],
+            ['label' => '3 Litre (Serves ~5)', 'price' => 36000],
+            ['label' => '5 Litre (Serves ~7)', 'price' => 43000],
+            ['label' => '10 Litre (Serves ~15)', 'price' => 80000],
             ['label' => 'Cooler — Small', 'price' => 0],
             ['label' => 'Cooler — Medium', 'price' => 0],
         ];
@@ -38,7 +38,13 @@ class MenuController {
             [
                 'id' => 4, 'category' => 'soups', 'name' => 'Edikang Ikong (Vegetable Soup)',
                 'description' => 'Nutrient-dense ugu and waterleaf soup with assorted protein.',
-                'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
+                'sizes' => [
+                    ['label' => '3 Litre (Serves ~5)', 'price' => 38000],
+                    ['label' => '5 Litre (Serves ~7)', 'price' => 46000],
+                    ['label' => '10 Litre (Serves ~15)', 'price' => 85000],
+                    ['label' => 'Cooler — Small', 'price' => 0],
+                    ['label' => 'Cooler — Medium', 'price' => 0],
+                ], 'proteins' => $defaultProteins, 'available' => true,
                 'image_url' => '/assets/soups/edikang-ikong.jpg', 'imageUrl' => '/assets/soups/edikang-ikong.jpg'
             ],
             [
@@ -74,7 +80,11 @@ class MenuController {
             [
                 'id' => 21, 'category' => 'soups', 'name' => 'Seafood Okro',
                 'description' => 'Rich okro soup loaded with fresh prawns, crabs, croaker and calamari.',
-                'sizes' => $defaultSoupSizes, 'proteins' => $defaultProteins, 'available' => true,
+                'sizes' => [
+                    ['label' => '3 Litre', 'price' => 60000],
+                    ['label' => 'Cooler — Small', 'price' => 0],
+                    ['label' => 'Cooler — Medium', 'price' => 0],
+                ], 'proteins' => $defaultProteins, 'available' => true,
                 'image_url' => '/assets/soups/seafood-okro.jpg', 'imageUrl' => '/assets/soups/seafood-okro.jpg'
             ],
 
