@@ -1,5 +1,6 @@
 import { useLocation, Link } from "wouter";
 import { useListMenuItems, ListMenuItemsCategory } from "@workspace/api-client-react";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNaira } from "@/lib/format";
 import { ArrowLeft, Leaf, MessageCircle } from "lucide-react";
@@ -35,7 +36,7 @@ const healthyPicks: Record<string, Array<{ name: string; why: string }>> = {
 
 export default function MenuPage() {
   const [location] = useLocation();
-
+  
   // Extract category from location (e.g. "/soups" -> "soups")
   const path = location.replace('/', '');
   const category = path as ListMenuItemsCategory;
@@ -62,14 +63,13 @@ export default function MenuPage() {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      {/* Dark brown header banner */}
-      <div className="bg-[#2A1810] text-white pt-12 pb-20 rounded-b-[3rem] shadow-xl mb-0">
-        <div className="container mx-auto px-4 md:px-6 max-w-6xl">
-          <Link href="/" className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-6 text-sm font-medium transition-colors">
+      <div className="bg-foreground text-background pt-16 pb-24 rounded-b-[3rem] shadow-xl mb-0">
+        <div className="container mx-auto px-4 md:px-6">
+          <Link href="/" className="inline-flex items-center gap-2 text-background/70 hover:text-background mb-8 text-sm font-medium transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to Home
           </Link>
-          <h1 className="text-4xl md:text-6xl font-bold font-display mb-4">{titles[category as keyof typeof titles] || category}</h1>
-          <p className="text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed">
+          <h1 className="text-5xl md:text-7xl font-bold font-display mb-6">{titles[category as keyof typeof titles] || category}</h1>
+          <p className="text-xl text-background/80 max-w-2xl leading-relaxed">
             {descriptions[category as keyof typeof descriptions] || "Explore our menu options below."}
           </p>
         </div>
@@ -77,18 +77,18 @@ export default function MenuPage() {
 
       {/* Banner photo */}
       {bannerImg && (
-        <div className="container mx-auto px-4 md:px-6 max-w-6xl -mt-12 mb-10">
-          <div className="rounded-3xl overflow-hidden shadow-2xl h-60 md:h-80 border-4 border-white">
+        <div className="container mx-auto px-4 md:px-6 -mt-12 mb-12">
+          <div className="rounded-2xl overflow-hidden shadow-xl h-56 md:h-72">
             <img src={asset(bannerImg)} alt={titles[category as keyof typeof titles] || category} className="w-full h-full object-cover" />
           </div>
         </div>
       )}
 
-      <div className="container mx-auto px-4 md:px-6 max-w-6xl">
+      <div className="container mx-auto px-4 md:px-6">
 
         {/* ── COOLER QUOTE NOTE (soups only) ───────────────────────────── */}
         {category === "soups" && (
-          <div className="mb-10 flex items-start gap-3 rounded-2xl border border-green-200 bg-green-50/90 px-6 py-4 shadow-sm">
+          <div className="mb-8 flex items-start gap-3 rounded-2xl border border-green-200 bg-green-50 px-5 py-4">
             <MessageCircle className="w-5 h-5 mt-0.5 shrink-0 text-green-700" />
             <p className="text-sm text-green-900 leading-relaxed">
               <strong>Planning a cooler for an event?</strong> Message us on{" "}
@@ -96,7 +96,7 @@ export default function MenuPage() {
                 href="https://wa.me/2348105506052?text=Hi%2C%20I%27d%20like%20a%20quote%20for%20a%20cooler%20size%20soup%20order"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-bold underline text-green-800 hover:text-green-950"
+                className="font-bold underline"
               >
                 WhatsApp
               </a>{" "}
@@ -106,10 +106,10 @@ export default function MenuPage() {
         )}
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="flex flex-col space-y-4 bg-white p-6 rounded-3xl border border-border">
-                <Skeleton className="h-56 rounded-2xl w-full" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3, 4, 5, 6].map(i => (
+              <div key={i} className="flex flex-col space-y-4">
+                <Skeleton className="h-64 rounded-2xl w-full" />
                 <Skeleton className="h-8 w-3/4" />
                 <Skeleton className="h-4 w-full" />
                 <Skeleton className="h-4 w-1/2" />
@@ -117,92 +117,91 @@ export default function MenuPage() {
             ))}
           </div>
         ) : error ? (
-          <div className="text-center py-24 bg-card rounded-3xl border border-border">
+          <div className="text-center py-24 bg-card rounded-2xl border border-border">
             <h3 className="text-2xl font-bold text-destructive mb-2">Could not load menu</h3>
             <p className="text-muted-foreground">Check your connection and try again.</p>
           </div>
         ) : !menuItems?.length ? (
-          <div className="text-center py-24 bg-card rounded-3xl border border-border">
+          <div className="text-center py-24 bg-card rounded-2xl border border-border">
             <h3 className="text-2xl font-bold mb-2">Nothing here yet</h3>
             <p className="text-muted-foreground">This category is coming soon — check back shortly.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {menuItems.filter(item => item.available).map((item) => {
-              const rawImg = item.imageUrl || (item as any).image_url;
-              return (
-                <div key={item.id} className="bg-white rounded-3xl border border-border overflow-hidden shadow-sm hover:shadow-xl transition-shadow flex flex-col p-6 gap-5">
-                  <div className="aspect-[16/10] bg-muted relative overflow-hidden rounded-2xl">
-                    {rawImg ? (
-                      <WatermarkedImage
-                        src={rawImg.startsWith("/") ? rawImg : rawImg.startsWith("assets/") ? `${BASE}${rawImg}` : `/${rawImg}`}
-                        alt={item.name}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted-foreground/30 text-5xl">🍲</div>
-                    )}
-                  </div>
-                  <div className="flex flex-col flex-1 gap-3">
-                    <h3 className="text-2xl font-bold font-display leading-tight">{item.name}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {menuItems.filter(item => item.available).map((item) => (
+              <div key={item.id} className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-shadow flex flex-col">
+                <div className="aspect-video bg-muted relative overflow-hidden">
+                  {item.imageUrl ? (
+                    <WatermarkedImage
+                      src={item.imageUrl.startsWith("assets/") ? `${BASE}${item.imageUrl}` : item.imageUrl}
+                      alt={item.name}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground/30 text-5xl">🍲</div>
+                  )}
+                </div>
+                <div className="p-6 flex flex-col flex-1 gap-3">
+                  <h3 className="text-xl font-bold font-display leading-tight">{item.name}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
 
-                    {item.sizes.length > 0 && (
-                      <div className="pt-2">
-                        <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-3">
-                          {item.sizes.length === 1 ? "Price" : "Sizes & Prices"}
-                        </p>
-                        <div className="space-y-2.5">
-                          {item.sizes.map((size) => {
-                            const isContactUs = size.price === 0;
-                            return (
-                              <div key={size.label} className="flex items-center justify-between gap-3 text-sm py-0.5">
-                                <span className="text-foreground font-medium min-w-0 flex-1 truncate">{size.label}</span>
-                                {isContactUs ? (
-                                  <a
-                                    href="https://wa.me/2348105506052?text=Hi%2C%20I%27d%20like%20a%20quote%20for%20a%20cooler%20size%20soup%20order"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="shrink-0 text-xs font-bold px-4 py-1.5 rounded-full text-white hover:opacity-90 transition-opacity flex items-center gap-1"
+                  {item.sizes.length > 0 && (
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                        {item.sizes.length === 1 ? "Price" : "Sizes & Prices"}
+                      </p>
+                      <div className="space-y-2">
+                        {item.sizes.map((size) => {
+                          const isContactUs = size.price === 0;
+                          return (
+                            <div key={size.label} className="flex items-center justify-between gap-2 text-sm">
+                              {item.sizes.length > 1 && (
+                                <span className="text-foreground min-w-0 flex-1 truncate">{size.label}</span>
+                              )}
+                              {isContactUs ? (
+                                <a
+                                  href="https://wa.me/2348105506052?text=Hi%2C%20I%27d%20like%20a%20quote%20for%20a%20cooler%20size%20soup%20order"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full text-white hover:opacity-90 transition-opacity flex items-center gap-1"
+                                  style={{ background: "#25D366" }}
+                                >
+                                  <MessageCircle className="w-3 h-3" /> Contact Us
+                                </a>
+                              ) : (
+                                <>
+                                  <span className="font-bold shrink-0">{formatNaira(size.price)}</span>
+                                  <Link
+                                    href={`/book?cat=${encodeURIComponent(category)}&item=${encodeURIComponent(item.name)}&size=${encodeURIComponent(size.label)}`}
+                                    className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full text-white hover:opacity-90 transition-opacity"
                                     style={{ background: "#0F9E0F" }}
                                   >
-                                    <MessageCircle className="w-3.5 h-3.5" /> Contact Us
-                                  </a>
-                                ) : (
-                                  <div className="flex items-center gap-3 shrink-0">
-                                    <span className="font-bold text-foreground text-sm">{formatNaira(size.price)}</span>
-                                    <Link
-                                      href={`/book?cat=${encodeURIComponent(category)}&item=${encodeURIComponent(item.name)}&size=${encodeURIComponent(size.label)}`}
-                                      className="shrink-0 text-xs font-bold px-4 py-1.5 rounded-full text-white hover:opacity-90 transition-opacity"
-                                      style={{ background: "#0F9E0F" }}
-                                    >
-                                      Order →
-                                    </Link>
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-
-                    {item.proteins.length > 0 && (
-                      <div className="pt-3 border-t border-border/50">
-                        <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2.5">Add Protein</p>
-                        <div className="grid grid-cols-2 gap-2">
-                          {item.proteins.map((protein) => (
-                            <div key={protein.name} className="flex items-center justify-between text-xs bg-muted/60 border border-border/40 rounded-xl px-3 py-2">
-                              <span className="text-foreground font-medium truncate">{protein.name}</span>
-                              <span className="font-bold text-foreground shrink-0 ml-1">+{formatNaira(protein.extraCost)}</span>
+                                    Book →
+                                  </Link>
+                                </>
+                              )}
                             </div>
-                          ))}
-                        </div>
+                          );
+                        })}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
+
+                  {item.proteins.length > 0 && (
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Add Protein</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {item.proteins.map((protein) => (
+                          <span key={protein.name} className="inline-flex items-center text-xs bg-muted rounded-full px-2.5 py-1 gap-1">
+                            {protein.name}
+                            <span className="font-bold text-foreground">+{formatNaira(protein.extraCost)}</span>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         )}
 
