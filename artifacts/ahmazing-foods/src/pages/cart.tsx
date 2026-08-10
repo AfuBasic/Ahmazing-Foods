@@ -89,9 +89,19 @@ export default function CartPage() {
                         </span>
                       </div>
                       <h3 className="font-bold text-lg text-foreground leading-snug">{item.menuItemName}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Size: <span className="font-medium text-foreground">{item.selectedSize}</span>
-                      </p>
+                      {item.category === "crate" && item.crateLines && item.crateLines.length > 0 ? (
+                        <div className="space-y-0.5 pt-1">
+                          {item.crateLines.map((line) => (
+                            <p key={line.name} className="text-xs text-muted-foreground">
+                              • {line.name}: {line.qty} × ₦{line.pricePerBottle.toLocaleString("en-NG")} = <strong className="text-foreground font-semibold">₦{(line.qty * line.pricePerBottle).toLocaleString("en-NG")}</strong>
+                            </p>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">
+                          Size: <span className="font-medium text-foreground">{item.selectedSize}</span>
+                        </p>
+                      )}
                       {proteinsText && (
                         <p className="text-xs text-muted-foreground">
                           Proteins: <span className="text-foreground font-medium">{proteinsText}</span>

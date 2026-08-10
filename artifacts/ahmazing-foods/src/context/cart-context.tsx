@@ -6,6 +6,12 @@ export interface SelProtein {
   extraCost: number;
 }
 
+export interface CrateLine {
+  name: string;
+  qty: number;
+  pricePerBottle: number;
+}
+
 export interface CartItem {
   id: string;
   menuItemId: number;
@@ -16,6 +22,7 @@ export interface CartItem {
   selectedProteins: SelProtein[];
   price: number;
   imageUrl?: string;
+  crateLines?: CrateLine[];
 }
 
 interface CartContextType {

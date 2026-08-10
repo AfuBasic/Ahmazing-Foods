@@ -370,7 +370,13 @@ export default function BookPage() {
       ...(deliverySlot ? [`*Delivery window:* ${deliverySlot}`] : []),
       "",
       "*My cart:*",
-      ...cart.map((ci, i) => `${i + 1}. ${ci.menuItemName} — ${cartLineDesc(ci)} (${formatNaira(ci.price)})`),
+      ...cart.map((ci, i) => {
+        if (ci.category === "crate" && ci.crateLines && ci.crateLines.length > 0) {
+          const subLines = ci.crateLines.map(l => `   • ${l.name}: ${l.qty} bottles × ${formatNaira(l.pricePerBottle)} = ${formatNaira(l.qty * l.pricePerBottle)}`).join("\n");
+          return `${i + 1}. ${ci.menuItemName} (${formatNaira(ci.price)})\n${subLines}`;
+        }
+        return `${i + 1}. ${ci.menuItemName} — ${cartLineDesc(ci)} (${formatNaira(ci.price)})`;
+      }),
       "",
       `*Cart total (excl. delivery):* ${formatNaira(cartTotal)}`,
       "",

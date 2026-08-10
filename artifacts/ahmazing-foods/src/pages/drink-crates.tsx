@@ -10,6 +10,8 @@ import {
   AlertCircle, CheckCircle2, MessageCircle, ChevronDown, ChevronUp,
   MapPin, FlaskConical, Check, User, Phone,
 } from "lucide-react";
+import { useCart } from "@/context/cart-context";
+import { useToast } from "@/hooks/use-toast";
 
 const WA_NUMBER = "2348105506052";
 
@@ -135,11 +137,13 @@ function validateQtys(cat: Category, qtys: number[]): string | null {
 }
 
 export default function DrinkCratesPage() {
+  const { cart: globalCart, addToCart: addGlobalCart, removeFromCart: removeGlobalCart } = useCart();
+  const { toast } = useToast();
+
   const [qtys,      setQtys]      = useState<Record<string, number[]>>(() =>
     Object.fromEntries(CATEGORIES.map((c) => [c.id, c.drinks.map(() => 0)]))
   );
   const [open,      setOpen]      = useState<Record<string, boolean>>({});
-  const [cart,      setCart]      = useState<CartLine[]>([]);
   const [packaging,  setPackaging]  = useState<"nylon" | "branded">("nylon");
   const [delivMode,  setDelivMode]  = useState<"car" | "own" | "">("");
   const [carZone,    setCarZone]    = useState<string>("");
@@ -153,20 +157,21 @@ export default function DrinkCratesPage() {
   const [altName,     setAltName]     = useState("");
   const [altPhone,    setAltPhone]    = useState("");
 
+  const crateItems = globalCart.filter((i) => i.category === "crate");
   const packagingCost = packaging === "branded" ? BRANDED_COST : NYLON_COST;
-  const drinkSubtotal = cart.reduce((s, l) => s + l.subtotal, 0);
+  const drinkSubtotal = crateItems.reduce((s, i) => s + i.price, 0);
   // Delivery is always quoted (car) or free (own) — never a fixed fee shown on site
   const grandTotal   = drinkSubtotal + packagingCost;
 
-  // Reset delivery mode + zone when the crate cart is fully cleared
+  // Reset delivery mode + zone when crate items are fully cleared
   useEffect(() => {
-    if (cart.length === 0) { setDelivMode(""); setCarZone(""); }
-  }, [cart.length]);
+    if (crateItems.length === 0) { setDelivMode(""); setCarZone(""); }
+  }, [crateItems.length]);
 
   // Computed readiness
   const customerReady = !!(custName.trim() && custPhone.trim() && custAddress.trim());
   const delivReady    = delivMode === "own" || (delivMode === "car" && carZone !== "");
-  const canOrder      = cart.length > 0 && customerReady && delivReady;
+  const canOrder      = crateItems.length > 0 && customerReady && delivReady;
 
   function toggleOpen(id: string) { setOpen((p) => ({ ...p, [id]: !p[id] })); }
 
@@ -182,14 +187,36 @@ export default function DrinkCratesPage() {
     const err = validateQtys(cat, q);
     if (err) { setErrors((p) => ({ ...p, [cat.id]: err })); return; }
     setErrors((p) => ({ ...p, [cat.id]: "" }));
-    const drinks  = cat.drinks.map((d, i) => ({ name: d.name, qty: q[i], pricePerBottle: d.pricePerBottle })).filter((d) => d.qty > 0);
+    const drinks = cat.drinks
+      .map((d, i) => ({ name: d.name, qty: q[i], pricePerBottle: d.pricePerBottle }))
+      .filter((d) => d.qty > 0);
     const subtotal = drinks.reduce((s, d) => s + d.qty * d.pricePerBottle, 0);
-    setCart((prev) => [...prev, { categoryId: cat.id, categoryTitle: cat.title, drinks, subtotal }]);
+    const sizeDesc = drinks.map((d) => `${d.name} ×${d.qty}`).join(", ");
+
+    addGlobalCart({
+      id:               `crate-${cat.id}-${Date.now()}`,
+      menuItemId:       0,
+      menuItemName:     `Wellness Crate — ${cat.title}`,
+      category:         "crate",
+      selectedSize:     sizeDesc,
+      itemQty:          1,
+      selectedProteins: [],
+      price:            subtotal,
+      imageUrl:         cat.heroImg,
+      crateLines:       drinks,
+    });
+
     setQtys((prev) => ({ ...prev, [cat.id]: cat.drinks.map(() => 0) }));
     setOpen((p) => ({ ...p, [cat.id]: false }));
+    toast({
+      title: "Added to Cart",
+      description: `Wellness Crate — ${cat.title} (${sizeDesc})`,
+    });
   }
 
-  function removeFromCart(idx: number) { setCart((prev) => prev.filter((_, i) => i !== idx)); }
+  function removeFromCart(id: string) {
+    removeGlobalCart(id);
+  }
 
   function buildMessage() {
     const zoneObj = CAR_ZONES.find((z) => z.id === carZone);
@@ -205,11 +232,13 @@ export default function DrinkCratesPage() {
     lines.push("");
 
     // Cart
-    cart.forEach((line) => {
-      lines.push(`▸ ${line.categoryTitle}`);
-      line.drinks.forEach((d) =>
-        lines.push(`  • ${d.name}: ${d.qty} bottles × ${fmt(d.pricePerBottle)} = ${fmt(d.qty * d.pricePerBottle)}`)
-      );
+    crateItems.forEach((item) => {
+      lines.push(`▸ ${item.menuItemName}`);
+      if (item.crateLines) {
+        item.crateLines.forEach((d) =>
+          lines.push(`  • ${d.name}: ${d.qty} bottles × ${fmt(d.pricePerBottle)} = ${fmt(d.qty * d.pricePerBottle)}`)
+        );
+      }
     });
     lines.push("");
     lines.push(`Packaging: ${packaging === "branded" ? `Branded Pack — ${fmt(BRANDED_COST)}` : "Nylon Bag — Complimentary"}`);
@@ -272,7 +301,7 @@ export default function DrinkCratesPage() {
             const err    = errors[cat.id];
             const isOpen = !!open[cat.id];
             const bothOn = cat.drinks.length > 1 && q[0] > 0 && q[1] > 0;
-            const inCart = cart.some((l) => l.categoryId === cat.id);
+            const inCart = globalCart.some((l) => l.id.startsWith(`crate-${cat.id}`));
 
             return (
               <div
@@ -390,7 +419,7 @@ export default function DrinkCratesPage() {
                         <button type="button" onClick={() => addToCrate(cat)}
                           className="shrink-0 px-5 py-2 rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90"
                           style={{ background: "#0F9E0F" }}>
-                          + Add to Crate
+                          + Add to Cart
                         </button>
                       </div>
                     </div>
@@ -402,7 +431,7 @@ export default function DrinkCratesPage() {
         </div>
 
         {/* ── Crate summary ──────────────────────────────────────── */}
-        {cart.length === 0 ? (
+        {crateItems.length === 0 ? (
           <div className="text-center text-muted-foreground py-10 border border-dashed border-border rounded-2xl">
             <ShoppingCart className="w-8 h-8 mx-auto mb-3 opacity-30" />
             <p className="text-sm">Your crate is empty — tap a card above to select quantities.</p>
@@ -412,24 +441,24 @@ export default function DrinkCratesPage() {
             <div className="px-5 py-4 border-b border-border flex items-center gap-2">
               <ShoppingCart className="w-5 h-5 text-primary" />
               <h2 className="font-display font-bold text-lg">Your Crate</h2>
-              <span className="ml-auto text-xs text-muted-foreground">{cart.length} categor{cart.length === 1 ? "y" : "ies"}</span>
+              <span className="ml-auto text-xs text-muted-foreground">{crateItems.length} crate{crateItems.length === 1 ? "" : "s"}</span>
             </div>
 
             <div className="p-5 space-y-3">
 
               {/* Cart lines */}
-              {cart.map((line, idx) => (
-                <div key={idx} className="flex items-start gap-3 p-3.5 bg-muted/40 rounded-xl">
+              {crateItems.map((item) => (
+                <div key={item.id} className="flex items-start gap-3 p-3.5 bg-muted/40 rounded-xl">
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm mb-1">{line.categoryTitle}</p>
-                    {line.drinks.map((d) => (
+                    <p className="font-semibold text-sm mb-1">{item.menuItemName}</p>
+                    {item.crateLines?.map((d) => (
                       <p key={d.name} className="text-xs text-muted-foreground">
                         {d.name}: {d.qty} × {fmt(d.pricePerBottle)} = <strong>{fmt(d.qty * d.pricePerBottle)}</strong>
                       </p>
                     ))}
                   </div>
-                  <span className="font-bold text-sm shrink-0">{fmt(line.subtotal)}</span>
-                  <button type="button" onClick={() => removeFromCart(idx)}
+                  <span className="font-bold text-sm shrink-0">{fmt(item.price)}</span>
+                  <button type="button" onClick={() => removeFromCart(item.id)}
                     className="text-muted-foreground hover:text-destructive transition-colors shrink-0" aria-label="Remove">
                     <Trash2 className="w-4 h-4" />
                   </button>
