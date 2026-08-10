@@ -1,6 +1,6 @@
+import { useMemo } from "react";
 import { useLocation, Link } from "wouter";
 import { useListMenuItems, ListMenuItemsCategory } from "@workspace/api-client-react";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNaira } from "@/lib/format";
 import { ArrowLeft, Leaf, MessageCircle } from "lucide-react";
@@ -34,17 +34,241 @@ const healthyPicks: Record<string, Array<{ name: string; why: string }>> = {
   ],
 };
 
+const STANDARD_SOUP_SIZES = [
+  { label: "2 Litres (Serves ~3)", price: 32000 },
+  { label: "3 Litres (Serves ~5)", price: 36000 },
+  { label: "5 Litres (Serves ~7)", price: 43000 },
+  { label: "Cooler — Small",       price: 0 },
+  { label: "Cooler — Medium",      price: 0 },
+];
+
+const SOUP_PROTEINS = [
+  { name: "Beef",          extraCost: 4000  },
+  { name: "Chicken",       extraCost: 4700  },
+  { name: "Turkey",        extraCost: 5700  },
+  { name: "Croaker",       extraCost: 5700  },
+  { name: "Tilapia",       extraCost: 4700  },
+  { name: "Catfish",       extraCost: 5700  },
+  { name: "Snail",         extraCost: 6700  },
+  { name: "Mixed Seafood", extraCost: 11700 },
+  { name: "Gizzard",       extraCost: 5700  },
+  { name: "Sausages",      extraCost: 4700  },
+];
+
+const FALLBACK_ITEMS: Record<string, any[]> = {
+  soups: [
+    {
+      id: 1,
+      category: "soups",
+      name: "Onugbu Soup (Bitterleaf)",
+      description: "Rich bitterleaf soup garnished with dried fish, stockfish and cowhide.",
+      sizes: STANDARD_SOUP_SIZES,
+      proteins: SOUP_PROTEINS,
+      available: true,
+      imageUrl: "assets/soups/onugbu-soup.jpg",
+    },
+    {
+      id: 2,
+      category: "soups",
+      name: "Oha Soup",
+      description: "Traditional Igbo oha leaf soup, hearty and deeply flavoured.",
+      sizes: STANDARD_SOUP_SIZES,
+      proteins: SOUP_PROTEINS,
+      available: true,
+      imageUrl: "assets/soups/oha-soup.jpg",
+    },
+    {
+      id: 3,
+      category: "soups",
+      name: "Okro Soup",
+      description: "Freshly made okro soup, silky and well-seasoned with your choice of protein.",
+      sizes: STANDARD_SOUP_SIZES,
+      proteins: SOUP_PROTEINS,
+      available: true,
+      imageUrl: "assets/soups/okro-soup.jpg",
+    },
+    {
+      id: 4,
+      category: "soups",
+      name: "Edikang Ikong (Vegetable Soup)",
+      description: "A rich, nutritious Cross River vegetable soup made with ugu and waterleaf.",
+      sizes: STANDARD_SOUP_SIZES,
+      proteins: SOUP_PROTEINS,
+      available: true,
+      imageUrl: "assets/soups/edikang-ikong.jpg",
+    },
+    {
+      id: 6,
+      category: "soups",
+      name: "Egusi Soup",
+      description: "Thick, golden egusi soup cooked low and slow with ground melon seeds.",
+      sizes: STANDARD_SOUP_SIZES,
+      proteins: SOUP_PROTEINS,
+      available: true,
+      imageUrl: "assets/soups/egusi-soup.jpg",
+    },
+    {
+      id: 20,
+      category: "soups",
+      name: "Banga Soup (Ofe Akwu)",
+      description: "Aromatic palm nut soup cooked the Delta way with native spices.",
+      sizes: STANDARD_SOUP_SIZES,
+      proteins: SOUP_PROTEINS,
+      available: true,
+      imageUrl: "assets/soups/banga-soup.jpg",
+    },
+    {
+      id: 9,
+      category: "soups",
+      name: "Efo-Riro",
+      description: "Yoruba spinach stew cooked with peppers, assorted meats and a rich base.",
+      sizes: STANDARD_SOUP_SIZES,
+      proteins: SOUP_PROTEINS,
+      available: true,
+      imageUrl: "assets/soups/efo-riro.jpg",
+    },
+    {
+      id: 21,
+      category: "soups",
+      name: "Seafood Okro",
+      description: "Luscious okro soup loaded with fresh mixed seafood. 5L and Cooler only.",
+      sizes: [
+        { label: "5 Litres", price: 56000 },
+        { label: "Cooler — Small", price: 0 },
+        { label: "Cooler — Medium", price: 0 },
+      ],
+      proteins: [],
+      available: true,
+      imageUrl: "assets/soups/seafood-okro.jpg",
+    },
+  ],
+  stews: [
+    {
+      id: 25,
+      category: "stews",
+      name: "Classic Tomato Stew",
+      description: "A rich, slow-cooked tomato base stew — the backbone of Nigerian cooking.",
+      sizes: [
+        { label: "3 Litres (Serves ~5)", price: 37000 },
+        { label: "5 Litres (Serves ~8)", price: 45000 },
+      ],
+      proteins: [],
+      available: true,
+      imageUrl: "assets/stews/classic-tomato-stew.webp",
+    },
+    {
+      id: 8,
+      category: "stews",
+      name: "Ayamase (Ofada Stew)",
+      description: "Spicy green pepper stew with assorted offals — pairs perfectly with ofada rice.",
+      sizes: [
+        { label: "3 Litres (Serves ~5)", price: 40000 },
+        { label: "5 Litres (Serves ~8)", price: 49000 },
+      ],
+      proteins: [],
+      available: true,
+      imageUrl: "assets/stews/ayamase-stew.jpg",
+    },
+    {
+      id: 24,
+      category: "stews",
+      name: "Peppered Beef Stew",
+      description: "Tender chunks of beef in a bold pepper stew with caramelised onions.",
+      sizes: [
+        { label: "3 Litres (Serves ~5)", price: 37000 },
+        { label: "5 Litres (Serves ~8)", price: 45000 },
+      ],
+      proteins: [],
+      available: true,
+      imageUrl: "assets/stews/peppered-beef-stew.jpg",
+    },
+    {
+      id: 22,
+      category: "stews",
+      name: "Peppered Chicken Stew",
+      description: "Succulent chicken pieces simmered in a spiced tomato and pepper stew.",
+      sizes: [
+        { label: "3 Litres (Serves ~5)", price: 37000 },
+        { label: "5 Litres (Serves ~8)", price: 45000 },
+      ],
+      proteins: [],
+      available: true,
+      imageUrl: "assets/stews/peppered-chicken-stew.jpg",
+    },
+    {
+      id: 23,
+      category: "stews",
+      name: "Peppered Turkey Stew",
+      description: "Juicy turkey pieces slow-cooked in a bold, well-spiced pepper stew.",
+      sizes: [
+        { label: "3 Litres (Serves ~5)", price: 40000 },
+        { label: "5 Litres (Serves ~8)", price: 49000 },
+      ],
+      proteins: [],
+      available: true,
+      imageUrl: "assets/stews/peppered-turkey-stew.jpg",
+    },
+  ],
+  breakfast: [
+    {
+      id: 10,
+      category: "breakfast",
+      name: "Classic Nigerian Breakfast",
+      description: "Serves 2–3. Akara, pap, boiled eggs, fried plantain, and more.",
+      sizes: [{ label: "Standard Portion", price: 27000 }],
+      proteins: [],
+      available: true,
+      imageUrl: "assets/breakfast/classic-nigerian.png",
+    },
+    {
+      id: 11,
+      category: "breakfast",
+      name: "Hearty Plate",
+      description: "Serves 2–3. Yam, plantain, egg stew, sausages, side salad, and more.",
+      sizes: [{ label: "Standard Portion", price: 28000 }],
+      proteins: [],
+      available: true,
+      imageUrl: "assets/breakfast/hearty-plate.png",
+    },
+    {
+      id: 12,
+      category: "breakfast",
+      name: "Sweet Start",
+      description: "Serves 2–3. Oats, fresh fruit bowl, boiled egg, and more.",
+      sizes: [{ label: "Standard Portion", price: 25000 }],
+      proteins: [],
+      available: true,
+      imageUrl: "assets/breakfast/sweet-start.png",
+    },
+    {
+      id: 13,
+      category: "breakfast",
+      name: "Protein Power",
+      description: "Serves 2–3. Moin-moin, akara, pap, boiled eggs, fried plantain, and more.",
+      sizes: [{ label: "Standard Portion", price: 32000 }],
+      proteins: [],
+      available: true,
+      imageUrl: "assets/breakfast/protein-power.png",
+    },
+  ],
+};
+
 export default function MenuPage() {
   const [location] = useLocation();
-  
+
   // Extract category from location (e.g. "/soups" -> "soups")
   const path = location.replace('/', '');
   const category = path as ListMenuItemsCategory;
 
-  const { data: menuItems, isLoading, error } = useListMenuItems(
+  const { data: menuItems, isLoading } = useListMenuItems(
     { category },
     { query: { queryKey: ["menuItems", category] } }
   );
+
+  const displayItems = useMemo(() => {
+    if (menuItems && menuItems.length > 0) return menuItems;
+    return FALLBACK_ITEMS[category] ?? [];
+  }, [menuItems, category]);
 
   const titles = {
     soups: "Rich Soups",
@@ -105,7 +329,7 @@ export default function MenuPage() {
           </div>
         )}
 
-        {isLoading ? (
+        {isLoading && (!displayItems || displayItems.length === 0) ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3, 4, 5, 6].map(i => (
               <div key={i} className="flex flex-col space-y-4">
@@ -116,92 +340,90 @@ export default function MenuPage() {
               </div>
             ))}
           </div>
-        ) : error ? (
-          <div className="text-center py-24 bg-card rounded-2xl border border-border">
-            <h3 className="text-2xl font-bold text-destructive mb-2">Could not load menu</h3>
-            <p className="text-muted-foreground">Check your connection and try again.</p>
-          </div>
-        ) : !menuItems?.length ? (
+        ) : !displayItems?.length ? (
           <div className="text-center py-24 bg-card rounded-2xl border border-border">
             <h3 className="text-2xl font-bold mb-2">Nothing here yet</h3>
             <p className="text-muted-foreground">This category is coming soon — check back shortly.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {menuItems.filter(item => item.available).map((item) => (
-              <div key={item.id} className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-shadow flex flex-col">
-                <div className="aspect-video bg-muted relative overflow-hidden">
-                  {item.imageUrl ? (
-                    <WatermarkedImage
-                      src={item.imageUrl.startsWith("assets/") ? `${BASE}${item.imageUrl}` : item.imageUrl}
-                      alt={item.name}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground/30 text-5xl">🍲</div>
-                  )}
-                </div>
-                <div className="p-6 flex flex-col flex-1 gap-3">
-                  <h3 className="text-xl font-bold font-display leading-tight">{item.name}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+            {displayItems.filter(item => item.available).map((item) => {
+              const rawImg = item.imageUrl || (item as any).image_url;
+              return (
+                <div key={item.id} className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-shadow flex flex-col">
+                  <div className="aspect-video bg-muted relative overflow-hidden">
+                    {rawImg ? (
+                      <WatermarkedImage
+                        src={rawImg.startsWith("/") ? rawImg : rawImg.startsWith("assets/") ? `${BASE}${rawImg}` : `/${rawImg}`}
+                        alt={item.name}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground/30 text-5xl">🍲</div>
+                    )}
+                  </div>
+                  <div className="p-6 flex flex-col flex-1 gap-3">
+                    <h3 className="text-xl font-bold font-display leading-tight">{item.name}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
 
-                  {item.sizes.length > 0 && (
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
-                        {item.sizes.length === 1 ? "Price" : "Sizes & Prices"}
-                      </p>
-                      <div className="space-y-2">
-                        {item.sizes.map((size) => {
-                          const isContactUs = size.price === 0;
-                          return (
-                            <div key={size.label} className="flex items-center justify-between gap-2 text-sm">
-                              {item.sizes.length > 1 && (
-                                <span className="text-foreground min-w-0 flex-1 truncate">{size.label}</span>
-                              )}
-                              {isContactUs ? (
-                                <a
-                                  href="https://wa.me/2348105506052?text=Hi%2C%20I%27d%20like%20a%20quote%20for%20a%20cooler%20size%20soup%20order"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full text-white hover:opacity-90 transition-opacity flex items-center gap-1"
-                                  style={{ background: "#25D366" }}
-                                >
-                                  <MessageCircle className="w-3 h-3" /> Contact Us
-                                </a>
-                              ) : (
-                                <>
-                                  <span className="font-bold shrink-0">{formatNaira(size.price)}</span>
-                                  <Link
-                                    href={`/book?cat=${encodeURIComponent(category)}&item=${encodeURIComponent(item.name)}&size=${encodeURIComponent(size.label)}`}
-                                    className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full text-white hover:opacity-90 transition-opacity"
-                                    style={{ background: "#0F9E0F" }}
+                    {item.sizes.length > 0 && (
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                          {item.sizes.length === 1 ? "Price" : "Sizes & Prices"}
+                        </p>
+                        <div className="space-y-2">
+                          {item.sizes.map((size: any) => {
+                            const isContactUs = size.price === 0;
+                            return (
+                              <div key={size.label} className="flex items-center justify-between gap-2 text-sm">
+                                {item.sizes.length > 1 && (
+                                  <span className="text-foreground min-w-0 flex-1 truncate">{size.label}</span>
+                                )}
+                                {isContactUs ? (
+                                  <a
+                                    href="https://wa.me/2348105506052?text=Hi%2C%20I%27d%20like%20a%20quote%20for%20a%20cooler%20size%20soup%20order"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full text-white hover:opacity-90 transition-opacity flex items-center gap-1"
+                                    style={{ background: "#25D366" }}
                                   >
-                                    Book →
-                                  </Link>
-                                </>
-                              )}
-                            </div>
-                          );
-                        })}
+                                    <MessageCircle className="w-3 h-3" /> Contact Us
+                                  </a>
+                                ) : (
+                                  <>
+                                    <span className="font-bold shrink-0">{formatNaira(size.price)}</span>
+                                    <Link
+                                      href={`/book?cat=${encodeURIComponent(category)}&item=${encodeURIComponent(item.name)}&size=${encodeURIComponent(size.label)}`}
+                                      className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full text-white hover:opacity-90 transition-opacity"
+                                      style={{ background: "#0F9E0F" }}
+                                    >
+                                      Book →
+                                    </Link>
+                                  </>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {item.proteins.length > 0 && (
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Add Protein</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {item.proteins.map((protein) => (
-                          <span key={protein.name} className="inline-flex items-center text-xs bg-muted rounded-full px-2.5 py-1 gap-1">
-                            {protein.name}
-                            <span className="font-bold text-foreground">+{formatNaira(protein.extraCost)}</span>
-                          </span>
-                        ))}
+                    {item.proteins && item.proteins.length > 0 && (
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Add Protein</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {item.proteins.map((protein: any) => (
+                            <span key={protein.name} className="inline-flex items-center text-xs bg-muted rounded-full px-2.5 py-1 gap-1">
+                              {protein.name}
+                              <span className="font-bold text-foreground">+{formatNaira(protein.extraCost)}</span>
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
